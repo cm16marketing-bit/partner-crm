@@ -1,722 +1,816 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#014486">
-<meta name="description" content="Gestisci i tuoi contatti commerciali">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>Partner CRM</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#0176d3;--primary-dark:#014486;--bg:#f3f3f3;--card:#fff;--text:#181818;--text2:#555;--border:#d8dde6;--success:#2e844a;--danger:#ea001e;--warning:#fe9339;--radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08)}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-/* NAV */
-.nav{background:var(--primary-dark);color:#fff;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.nav h1{font-size:18px;font-weight:600;letter-spacing:.5px}
-.nav-right{display:flex;align-items:center;gap:12px}
-.nav button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:8px 16px;border-radius:var(--radius);cursor:pointer;font-size:13px;transition:.2s}
-.nav button:hover{background:rgba(255,255,255,.25)}
-.user-badge{font-size:12px;opacity:.8}
-/* LAYOUT */
-.container{max-width:1100px;margin:0 auto;padding:20px}
-/* TABS */
-.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0}
-.tab{padding:10px 20px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text2);border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s}
-.tab:hover{color:var(--primary)}
-.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
-/* CARD */
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:20px}
-.card h2{font-size:20px;margin-bottom:20px;color:var(--primary-dark)}
-/* STEPPER */
-.stepper{display:flex;gap:0;margin-bottom:28px;overflow-x:auto;padding-bottom:8px}
-.step-dot{display:flex;align-items:center;gap:0}
-.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:2px solid var(--border);color:var(--text2);background:#fff;flex-shrink:0;transition:.3s}
-.step-circle.active{border-color:var(--primary);background:var(--primary);color:#fff}
-.step-circle.done{border-color:var(--success);background:var(--success);color:#fff}
-.step-line{width:32px;height:2px;background:var(--border);flex-shrink:0}
-.step-line.done{background:var(--success)}
-.step-label{font-size:10px;text-align:center;margin-top:4px;color:var(--text2);max-width:60px}
-.step-item{display:flex;flex-direction:column;align-items:center}
-/* FORM */
-.form-step{display:none}
-.form-step.active{display:block;animation:fadeIn .3s}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.field input,.field textarea,.field select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;transition:.2s;font-family:inherit}
-.field input:focus,.field textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(1,118,211,.15)}
-.field textarea{resize:vertical;min-height:80px}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-/* TAGS */
-.tags-container{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#e1f5fe;color:var(--primary-dark);border-radius:20px;font-size:12px;font-weight:500}
-.tag .remove-tag{cursor:pointer;font-size:14px;opacity:.6;margin-left:2px}
-.tag .remove-tag:hover{opacity:1}
-.tag-input-wrap{display:flex;gap:8px}
-.tag-input-wrap input{flex:1}
-.tag-input-wrap button{padding:8px 16px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;white-space:nowrap}
-.saved-tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
-.saved-tag{padding:4px 10px;background:#f0f0f0;border:1px solid var(--border);border-radius:20px;font-size:11px;cursor:pointer;transition:.2s}
-.saved-tag:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
-/* BUTTONS */
-.btn-row{display:flex;justify-content:space-between;margin-top:24px}
-.btn{padding:10px 24px;border:none;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;transition:.2s}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-dark)}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2)}
-.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-.btn-success{background:var(--success);color:#fff;font-size:16px;padding:14px 36px}
-.btn-success:hover{background:#236b3b}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-/* TABLE */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:10px 12px;background:#fafafa;border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
-td{padding:10px 12px;border-bottom:1px solid #eee}
-tr:hover td{background:#f8fbff}
-.contact-name{font-weight:600;color:var(--primary)}
-.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500}
-/* REMINDER TYPE */
-.reminder-row{display:flex;gap:12px;align-items:end}
-.reminder-row .field{flex:1}
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:24px;padding:14px 24px;background:var(--success);color:#fff;border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,.15);font-size:14px;transform:translateY(100px);opacity:0;transition:.4s;z-index:200}
-.toast.show{transform:translateY(0);opacity:1}
-/* LOGIN */
-.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--primary-dark),var(--primary))}
-.login-card{background:#fff;border-radius:12px;padding:48px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);max-width:400px;width:90%}
-.login-card h1{color:var(--primary-dark);margin-bottom:8px;font-size:28px}
-.login-card p{color:var(--text2);margin-bottom:28px;font-size:14px}
-.login-card .btn{width:100%;padding:14px;font-size:15px}
-.login-card .logo{font-size:48px;margin-bottom:16px}
-/* SEARCH */
-.search-bar{display:flex;gap:12px;margin-bottom:16px}
-.search-bar input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px}
-.search-bar select{padding:10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;min-width:140px}
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.stat-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center;border-left:4px solid var(--primary)}
-.stat-card .num{font-size:28px;font-weight:700;color:var(--primary)}
-.stat-card .label{font-size:11px;color:var(--text2);text-transform:uppercase;margin-top:4px}
-/* DETAIL MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;display:none;align-items:center;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:12px;padding:32px;max-width:540px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.2)}
-.modal h2{margin-bottom:16px;color:var(--primary-dark)}
-.modal .detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px}
-.modal .detail-label{color:var(--text2);font-weight:500}
-.modal .close-btn{float:right;background:none;border:none;font-size:24px;cursor:pointer;color:var(--text2)}
-@media(max-width:600px){.field-row{grid-template-columns:1fr}.container{padding:12px}.card{padding:18px}.stepper{gap:0}.step-line{width:16px}.reminder-row{flex-direction:column}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Partner CRM</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1565c0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Partner CRM">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --primary: #1565c0; --primary-light: #1976d2; --primary-dark: #0d47a1;
+      --accent: #ff6f00; --bg: #f0f4f9; --surface: #ffffff;
+      --text: #1a1a2e; --text-sec: #6b7a99; --border: #dde3f0;
+      --danger: #c62828; --success: #2e7d32;
+      --shadow: 0 2px 8px rgba(21,101,192,0.10);
+      --shadow-lg: 0 8px 32px rgba(21,101,192,0.16);
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 32px 24px;
+      background: linear-gradient(145deg, var(--primary-dark) 0%, var(--primary-light) 60%, #1a88d8 100%);
+    }
+    .login-logo { font-size: 64px; margin-bottom: 20px; filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3)); }
+    .login-title { color: #fff; font-size: 30px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .login-sub { color: rgba(255,255,255,0.75); font-size: 16px; margin-bottom: 48px; text-align: center; line-height: 1.5; }
+    .btn-google {
+      display: flex; align-items: center; gap: 12px;
+      background: #fff; color: #333; border: none; border-radius: 12px;
+      padding: 16px 28px; font-size: 16px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: transform .15s, box-shadow .15s;
+    }
+    .btn-google:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    .login-note { color: rgba(255,255,255,0.55); font-size: 13px; margin-top: 20px; text-align: center; }
+
+    /* ── APP SHELL ── */
+    #app { display: none; min-height: 100vh; padding-bottom: 80px; }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--primary); color: #fff;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(13,71,161,0.3);
+    }
+    .header-top { display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 12px 0 16px; }
+    .header-title { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
+    .header-actions { display: flex; gap: 2px; }
+    .icon-btn {
+      background: none; border: none; color: #fff; cursor: pointer;
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 19px;
+      transition: background .15s; position: relative;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.18); }
+    .icon-btn[title]:hover::after {
+      content: attr(title); position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.75); color: #fff; font-size: 11px; padding: 3px 8px;
+      border-radius: 4px; white-space: nowrap; pointer-events: none; z-index: 200;
+    }
+    .search-wrap { padding: 0 12px 10px; }
+    .search-input {
+      width: 100%; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 10px; padding: 10px 14px 10px 38px; color: #fff; font-size: 15px;
+      outline: none; transition: background .15s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: 12px center;
+    }
+    .search-input::placeholder { color: rgba(255,255,255,0.55); }
+    .search-input:focus { background-color: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); }
+
+    /* sync status */
+    .sync-bar { display: flex; align-items: center; gap: 6px; padding: 0 14px 8px; font-size: 11.5px; color: rgba(255,255,255,0.65); }
+    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #66bb6a; flex-shrink: 0; }
+    .sync-dot.syncing { background: #ffa726; animation: pulse 1s ease-in-out infinite; }
+    .sync-dot.error { background: #ef5350; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── FILTER CHIPS ── */
+    .chips { display: flex; gap: 8px; padding: 12px 14px; overflow-x: auto; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0; background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600;
+      color: var(--text-sec); cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 2px 8px rgba(21,101,192,0.3); }
+    .chip span { font-weight: 700; }
+
+    /* ── CONTACT LIST ── */
+    .list { padding: 0 14px; }
+    .section-label { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; padding: 8px 2px 6px; }
+    .card {
+      background: var(--surface); border-radius: 14px; padding: 14px 16px;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: transform .15s, box-shadow .15s;
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+    }
+    .card:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .avatar {
+      width: 46px; height: 46px; border-radius: 50%; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; font-weight: 800; flex-shrink: 0; letter-spacing: -1px;
+    }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name { font-size: 15.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-sub { font-size: 13px; color: var(--text-sec); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .badge { font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 700; flex-shrink: 0; }
+    .b-cliente   { background: #e3f2fd; color: #1565c0; }
+    .b-partner   { background: #e8f5e9; color: #2e7d32; }
+    .b-fornitore { background: #fff3e0; color: #e65100; }
+    .b-prospect  { background: #f3e5f5; color: #6a1b9a; }
+    .b-altro     { background: #f5f5f5; color: #616161; }
+
+    /* ── EMPTY STATE ── */
+    .empty { text-align: center; padding: 64px 24px; color: var(--text-sec); }
+    .empty-icon { font-size: 60px; margin-bottom: 16px; }
+    .empty-title { font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .empty-text { font-size: 15px; line-height: 1.6; }
+
+    /* ── FAB ── */
+    .fab {
+      position: fixed; bottom: 24px; right: 20px;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none; cursor: pointer;
+      font-size: 30px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(255,111,0,0.45); transition: transform .15s, box-shadow .15s; z-index: 99;
+    }
+    .fab:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(255,111,0,0.55); }
+
+    /* ── MODALS ── */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(10,20,60,0.5); z-index: 200;
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s;
+    }
+    .overlay.show { opacity: 1; visibility: visible; }
+    .modal {
+      background: var(--surface); border-radius: 22px 22px 0 0;
+      width: 100%; max-width: 620px; max-height: 93vh; overflow-y: auto;
+      transform: translateY(100%); transition: transform .3s cubic-bezier(.32,.72,0,1);
+    }
+    .overlay.show .modal { transform: translateY(0); }
+    @media (min-width: 640px) {
+      .overlay { align-items: center; padding: 24px; }
+      .modal { border-radius: 20px; max-height: 88vh; }
+    }
+    .modal-head {
+      position: sticky; top: 0; background: var(--surface); z-index: 1;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px; border-bottom: 1px solid var(--border);
+    }
+    .modal-title { font-size: 18px; font-weight: 800; }
+    .modal-close {
+      background: var(--bg); border: none; width: 32px; height: 32px; border-radius: 50%;
+      cursor: pointer; font-size: 16px; color: var(--text-sec);
+      display: flex; align-items: center; justify-content: center; transition: background .15s;
+    }
+    .modal-close:hover { background: var(--border); }
+    .modal-body { padding: 20px; }
+
+    /* ── FORM ── */
+    .fg { margin-bottom: 15px; }
+    .fl { display: block; font-size: 11.5px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 5px; }
+    .fi, .fs, .ft {
+      width: 100%; background: var(--bg); border: 2px solid var(--border);
+      border-radius: 10px; padding: 11px 13px; font-size: 15.5px; color: var(--text);
+      outline: none; transition: border-color .15s; font-family: inherit;
+    }
+    .fi:focus, .fs:focus, .ft:focus { border-color: var(--primary); background: #fff; }
+    .ft { resize: vertical; min-height: 80px; }
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .btn { flex: 1; padding: 13px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity .15s, transform .1s; }
+    .btn:hover { opacity: .9; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-secondary { background: var(--bg); color: var(--text); border: 2px solid var(--border); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-export { background: #1b5e20; color: #fff; }
+
+    /* ── DETAIL ── */
+    .detail-avatar-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 20px 16px; border-bottom: 1px solid var(--border); }
+    .detail-avatar { width: 72px; height: 72px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+    .detail-name { font-size: 20px; font-weight: 800; text-align: center; }
+    .detail-company { font-size: 14px; color: var(--text-sec); margin-top: 3px; }
+    .detail-fields { padding: 16px 20px; }
+    .df { margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px; }
+    .df-icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; width: 24px; text-align: center; }
+    .df-content { flex: 1; min-width: 0; }
+    .df-label { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 2px; }
+    .df-value { font-size: 15px; color: var(--text); word-break: break-word; }
+    .df-value a { color: var(--primary); text-decoration: none; }
+    .df-value a:hover { text-decoration: underline; }
+    .detail-actions { display: flex; gap: 10px; padding: 0 20px 20px; }
+
+    /* ── LOADING ── */
+    .loading-overlay {
+      position: fixed; inset: 0; background: rgba(255,255,255,0.92);
+      display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 500;
+    }
+    .spinner { width: 42px; height: 42px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 14px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--text-sec); font-size: 15px; font-weight: 600; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(16px);
+      background: #1a1a2e; color: #fff; padding: 12px 20px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; opacity: 0; transition: all .3s;
+      z-index: 999; pointer-events: none; white-space: nowrap; max-width: 90vw;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginScreen" class="login-screen">
-  <div class="login-card">
-    <div class="logo">🤝</div>
-    <h1>Partner CRM</h1>
-    <p>Gestisci i tuoi contatti commerciali in un click</p>
-    <button class="btn btn-primary" onclick="handleLogin()">Accedi con Google</button>
-    <p style="margin-top:16px;font-size:11px;color:#999">Connette Google Sheets + Calendar</p>
-  </div>
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div class="login-logo">📋</div>
+  <h1 class="login-title">Partner CRM</h1>
+  <p class="login-sub">Gestisci i tuoi contatti business<br>sincronizzati su tutti i dispositivi</p>
+  <button class="btn-google" onclick="signIn()">
+    <svg width="22" height="22" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+    Accedi con Google
+  </button>
+  <p class="login-note">I tuoi dati sono salvati nel tuo Google Drive personale</p>
 </div>
 
-<!-- MAIN APP -->
-<div id="app" style="display:none">
-  <nav class="nav">
-    <h1>🤝 Partner CRM</h1>
-    <div class="nav-right">
-      <span class="user-badge" id="userEmail"></span>
-      <button onclick="handleLogout()">Esci</button>
-    </div>
-  </nav>
-
-  <div class="container">
-    <!-- TABS -->
-    <div class="tabs">
-      <div class="tab active" data-tab="new" onclick="switchTab('new')">+ Nuovo Partner</div>
-      <div class="tab" data-tab="list" onclick="switchTab('list')">📋 Lista Contatti</div>
-    </div>
-
-    <!-- TAB: NEW PARTNER -->
-    <div id="tab-new">
-      <div class="card">
-        <h2>Nuovo Partner</h2>
-
-        <!-- STEPPER -->
-        <div class="stepper" id="stepper"></div>
-
-        <!-- FORM STEPS -->
-        <form id="partnerForm" onsubmit="return false">
-
-          <!-- Step 1: Nome -->
-          <div class="form-step active" data-step="0">
-            <div class="field-row">
-              <div class="field">
-                <label>Nome *</label>
-                <input type="text" id="f_nome" required placeholder="Mario">
-              </div>
-              <div class="field">
-                <label>Cognome *</label>
-                <input type="text" id="f_cognome" required placeholder="Rossi">
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 2: Azienda -->
-          <div class="form-step" data-step="1">
-            <div class="field">
-              <label>Azienda *</label>
-              <input type="text" id="f_azienda" required placeholder="Nome azienda">
-            </div>
-          </div>
-
-          <!-- Step 3: Ruolo -->
-          <div class="form-step" data-step="2">
-            <div class="field">
-              <label>Ruolo</label>
-              <input type="text" id="f_ruolo" placeholder="CEO, CTO, Sales Manager...">
-            </div>
-          </div>
-
-          <!-- Step 4: Contatti -->
-          <div class="form-step" data-step="3">
-            <div class="field-row">
-              <div class="field">
-                <label>Telefono</label>
-                <input type="tel" id="f_telefono" placeholder="+39 333 1234567">
-              </div>
-              <div class="field">
-                <label>Email</label>
-                <input type="email" id="f_email" placeholder="mario@azienda.com">
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label>Telegram</label>
-                <input type="text" id="f_telegram" placeholder="@username">
-              </div>
-              <div class="field">
-                <label>Teams</label>
-                <input type="text" id="f_teams" placeholder="mario@azienda.com">
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 5: Nota -->
-          <div class="form-step" data-step="4">
-            <div class="field">
-              <label>Note</label>
-              <textarea id="f_nota" placeholder="Appunti sul partner, contesto, interessi..."></textarea>
-            </div>
-          </div>
-
-          <!-- Step 6: Progetto -->
-          <div class="form-step" data-step="5">
-            <div class="field">
-              <label>Progetto su cui lavora</label>
-              <input type="text" id="f_progetto" placeholder="Nome del progetto">
-            </div>
-          </div>
-
-          <!-- Step 7: Reminder -->
-          <div class="form-step" data-step="6">
-            <div class="reminder-row">
-              <div class="field">
-                <label>Data Reminder</label>
-                <input type="date" id="f_reminder_date">
-              </div>
-              <div class="field">
-                <label>Ora</label>
-                <input type="time" id="f_reminder_time" value="09:00">
-              </div>
-            </div>
-            <div class="field" style="margin-top:12px">
-              <label>Nota Reminder</label>
-              <input type="text" id="f_reminder_note" placeholder="Es: Follow-up proposta commerciale">
-            </div>
-          </div>
-
-          <!-- Step 8: Tags -->
-          <div class="form-step" data-step="7">
-            <div class="field">
-              <label>Categorie / Tag</label>
-              <div class="tag-input-wrap">
-                <input type="text" id="f_tag_input" placeholder="Aggiungi tag e premi Invio" onkeydown="if(event.key==='Enter'){event.preventDefault();addTag()}">
-                <button type="button" onclick="addTag()">+ Aggiungi</button>
-              </div>
-              <div class="tags-container" id="currentTags"></div>
-              <div style="margin-top:12px">
-                <label style="font-size:11px;margin-bottom:4px;display:block">Tag salvati (click per aggiungere):</label>
-                <div class="saved-tags" id="savedTagsList"></div>
-              </div>
-            </div>
-          </div>
-
-        </form>
-
-        <!-- NAV BUTTONS -->
-        <div class="btn-row">
-          <button class="btn btn-outline" id="btnPrev" onclick="prevStep()" style="visibility:hidden">← Indietro</button>
-          <button class="btn btn-primary" id="btnNext" onclick="nextStep()">Avanti →</button>
-          <button class="btn btn-success" id="btnSubmit" onclick="submitPartner()" style="display:none">✓ Salva Partner</button>
-        </div>
+<!-- ══ APP ══ -->
+<div id="app">
+  <div class="header">
+    <div class="header-top">
+      <div class="header-title">📋 Partner CRM</div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="syncData()" title="Sincronizza">🔄</button>
+        <button class="icon-btn" onclick="exportToExcel()" title="Esporta Excel su Drive">📊</button>
+        <button class="icon-btn" onclick="signOut()" title="Esci">🚪</button>
       </div>
     </div>
-
-    <!-- TAB: LIST -->
-    <div id="tab-list" style="display:none">
-      <div class="stats" id="statsBar"></div>
-      <div class="card">
-        <div class="search-bar">
-          <input type="text" id="searchInput" placeholder="Cerca per nome, azienda, progetto..." oninput="renderTable()">
-          <select id="filterTag" onchange="renderTable()">
-            <option value="">Tutti i tag</option>
-          </select>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Nome</th><th>Azienda</th><th>Ruolo</th><th>Progetto</th><th>Tag</th><th>Reminder</th><th></th></tr>
-            </thead>
-            <tbody id="contactsBody"></tbody>
-          </table>
-        </div>
-        <p id="emptyMsg" style="text-align:center;padding:32px;color:var(--text2);display:none">Nessun contatto ancora. Aggiungi il primo partner!</p>
-      </div>
+    <div class="search-wrap">
+      <input class="search-input" id="search" type="search" placeholder="Cerca per nome, azienda, email…" oninput="render()">
+    </div>
+    <div class="sync-bar">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">In attesa…</span>
     </div>
   </div>
+
+  <div class="chips" id="chips">
+    <div class="chip active" data-filter="tutti" onclick="setFilter(this)">Tutti <span id="n-tutti">0</span></div>
+    <div class="chip" data-filter="Cliente"   onclick="setFilter(this)">Clienti <span id="n-cliente">0</span></div>
+    <div class="chip" data-filter="Partner"   onclick="setFilter(this)">Partner <span id="n-partner">0</span></div>
+    <div class="chip" data-filter="Fornitore" onclick="setFilter(this)">Fornitori <span id="n-fornitore">0</span></div>
+    <div class="chip" data-filter="Prospect"  onclick="setFilter(this)">Prospect <span id="n-prospect">0</span></div>
+    <div class="chip" data-filter="Altro"     onclick="setFilter(this)">Altro <span id="n-altro">0</span></div>
+  </div>
+
+  <div class="list" id="list"></div>
+  <button class="fab" onclick="openAdd()">+</button>
 </div>
 
-<!-- DETAIL MODAL -->
-<div class="modal-overlay" id="detailModal">
-  <div class="modal" id="modalContent"></div>
+<!-- ══ LOADING ══ -->
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loader-text">Caricamento…</div>
 </div>
 
-<!-- TOAST -->
+<!-- ══ TOAST ══ -->
 <div class="toast" id="toast"></div>
 
+<!-- ══ FORM MODAL (add / edit) ══ -->
+<div class="overlay" id="form-overlay" onclick="overlayClick(event,'form-overlay')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="form-title">Nuovo Contatto</div>
+      <button class="modal-close" onclick="closeModal('form-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="f-id">
+      <div class="frow">
+        <div class="fg"><label class="fl">Nome *</label><input class="fi" id="f-nome" placeholder="Mario" type="text"></div>
+        <div class="fg"><label class="fl">Cognome</label><input class="fi" id="f-cognome" placeholder="Rossi" type="text"></div>
+      </div>
+      <div class="fg"><label class="fl">Azienda</label><input class="fi" id="f-azienda" placeholder="Acme S.r.l." type="text"></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="f-email" placeholder="mario@acme.it" type="email"></div>
+        <div class="fg"><label class="fl">Telefono</label><input class="fi" id="f-tel" placeholder="+39 333…" type="tel"></div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="fl">Categoria</label>
+          <select class="fs" id="f-cat">
+            <option value="">— Seleziona —</option>
+            <option>Cliente</option><option>Partner</option>
+            <option>Fornitore</option><option>Prospect</option><option>Altro</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Sito Web</label><input class="fi" id="f-sito" placeholder="https://…" type="url"></div>
+      </div>
+      <div class="fg"><label class="fl">Note</label><textarea class="ft" id="f-note" placeholder="Aggiungi note…"></textarea></div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="closeModal('form-overlay')">Annulla</button>
+        <button class="btn btn-primary" onclick="saveContact()">💾 Salva</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DETAIL MODAL ══ -->
+<div class="overlay" id="detail-overlay" onclick="overlayClick(event,'detail-overlay')">
+  <div class="modal" id="detail-modal">
+    <div class="modal-head">
+      <div class="modal-title">Dettagli</div>
+      <button class="modal-close" onclick="closeModal('detail-overlay')">✕</button>
+    </div>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ══ -->
 <script>
-// ====== CONFIG ======
-// 👇 INSERISCI QUI IL TUO CLIENT ID DA GOOGLE CLOUD CONSOLE
+// ━━━━━━━━━━━━━━━━━ CONFIG ━━━━━━━━━━━━━━━━━
 const CLIENT_ID = '525708495290-u14oducrh67egbjcueh8o1pd088oe60c.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyAupghWIaITFNT7oIf7EpM1DPclf8q3gNE';
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/calendar.events';
-const DISCOVERY_DOCS = [
-  'https://sheets.googleapis.com/$discovery/rest?version=v4',
-  'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'
-];
+const SCOPES    = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
+const SHEET_TITLE  = 'Partner CRM - Contatti';
+const TAB_NAME     = 'Contatti';
+const HEADERS      = ['ID','Nome','Cognome','Azienda','Email','Telefono','Categoria','Sito Web','Note','Data Creazione','Ultima Modifica'];
 
-let SPREADSHEET_ID = null;
-const SHEET_NAME = 'Contatti';
+// ━━━━━━━━━━━━━━━━━ STATE ━━━━━━━━━━━━━━━━━
+let token     = null;
+let sheetId   = localStorage.getItem('crm_sheetId') || null;
+let contacts  = [];         // always loaded fresh from Sheets
+let filter    = 'tutti';
+let editingId = null;
 
-// ====== STATE ======
-let currentStep = 0;
-const STEPS = ['Nome', 'Azienda', 'Ruolo', 'Contatti', 'Note', 'Progetto', 'Reminder', 'Tag'];
-let currentTags = [];
-let savedTags = JSON.parse(localStorage.getItem('crm_tags') || '[]');
-let contacts = [];
-let tokenClient;
-let gapiInited = false;
-let gisInited = false;
-
-// ====== STEPPER ======
-function buildStepper() {
-  const s = document.getElementById('stepper');
-  s.innerHTML = STEPS.map((label, i) => {
-    const circleClass = i < currentStep ? 'done' : i === currentStep ? 'active' : '';
-    const lineClass = i < currentStep ? 'done' : '';
-    return `<div class="step-dot"><div class="step-item"><div class="step-circle ${circleClass}">${i < currentStep ? '✓' : i + 1}</div><div class="step-label">${label}</div></div>${i < STEPS.length - 1 ? `<div class="step-line ${lineClass}"></div>` : ''}</div>`;
-  }).join('');
-}
-
-// ====== NAVIGATION ======
-function showStep(n) {
-  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-  document.querySelector(`.form-step[data-step="${n}"]`).classList.add('active');
-  document.getElementById('btnPrev').style.visibility = n === 0 ? 'hidden' : 'visible';
-  document.getElementById('btnNext').style.display = n === STEPS.length - 1 ? 'none' : '';
-  document.getElementById('btnSubmit').style.display = n === STEPS.length - 1 ? '' : 'none';
-  buildStepper();
-}
-
-function nextStep() {
-  if (currentStep === 0 && (!val('f_nome') || !val('f_cognome'))) { shake('f_nome'); return; }
-  if (currentStep === 1 && !val('f_azienda')) { shake('f_azienda'); return; }
-  if (currentStep < STEPS.length - 1) { currentStep++; showStep(currentStep); }
-}
-
-function prevStep() {
-  if (currentStep > 0) { currentStep--; showStep(currentStep); }
-}
-
-function val(id) { return document.getElementById(id).value.trim(); }
-
-function shake(id) {
-  const el = document.getElementById(id);
-  el.style.borderColor = 'var(--danger)';
-  el.focus();
-  setTimeout(() => el.style.borderColor = '', 1500);
-}
-
-// ====== TABS ======
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-  document.getElementById('tab-new').style.display = tab === 'new' ? '' : 'none';
-  document.getElementById('tab-list').style.display = tab === 'list' ? '' : 'none';
-  if (tab === 'list') { loadContacts(); }
-}
-
-// ====== TAGS ======
-function addTag(tagName) {
-  const input = document.getElementById('f_tag_input');
-  const t = tagName || input.value.trim();
-  if (!t || currentTags.includes(t)) return;
-  currentTags.push(t);
-  if (!savedTags.includes(t)) { savedTags.push(t); localStorage.setItem('crm_tags', JSON.stringify(savedTags)); }
-  input.value = '';
-  renderTags();
-}
-
-function removeTag(t) {
-  currentTags = currentTags.filter(x => x !== t);
-  renderTags();
-}
-
-function renderTags() {
-  document.getElementById('currentTags').innerHTML = currentTags.map(t =>
-    `<span class="tag">${t}<span class="remove-tag" onclick="removeTag('${t}')">&times;</span></span>`
-  ).join('');
-  document.getElementById('savedTagsList').innerHTML = savedTags.filter(t => !currentTags.includes(t)).map(t =>
-    `<span class="saved-tag" onclick="addTag('${t}')">${t}</span>`
-  ).join('');
-  // Update filter dropdown
-  const sel = document.getElementById('filterTag');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">Tutti i tag</option>' + savedTags.map(t => `<option value="${t}">${t}</option>`).join('');
-  sel.value = cur;
-}
-
-// ====== GOOGLE API ======
-function gapiLoaded() {
-  gapi.load('client', async () => {
-    await gapi.client.init({ apiKey: API_KEY, discoveryDocs: DISCOVERY_DOCS });
-    gapiInited = true;
-  });
-}
-
-function gisLoaded() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
+// ━━━━━━━━━━━━━━━━━ AUTH ━━━━━━━━━━━━━━━━━
+function signIn() {
+  const client = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: (resp) => {
-      if (resp.error) return;
-      onLoggedIn();
+    callback: async r => {
+      if (r.error) { toast('❌ Errore accesso: ' + r.error); return; }
+      token = r.access_token;
+      await boot();
     }
   });
-  gisInited = true;
+  client.requestAccessToken();
 }
 
-function handleLogin() {
-  if (!gapiInited || !gisInited) {
-    // API not loaded yet, try fallback - offline mode
-    showToast('⚠️ Google API non ancora caricata. Riprova tra un secondo.');
+function signOut() {
+  if (token) google.accounts.oauth2.revoke(token);
+  token = null; contacts = [];
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ━━━━━━━━━━━━━━━━━ BOOT ━━━━━━━━━━━━━━━━━
+async function boot() {
+  loading('Connessione a Google Drive…');
+  try {
+    await ensureSpreadsheet();
+    loading('Caricamento contatti…');
+    await fetchContacts();
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    hideLoad();
+    render();
+    setSyncStatus('ok');
+  } catch(e) {
+    hideLoad();
+    toast('❌ ' + e.message);
+    console.error(e);
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━ SHEETS API ━━━━━━━━━━━━━━━━━
+async function sheets(path, method='GET', body=null) {
+  const r = await fetch('https://sheets.googleapis.com/v4/spreadsheets'+path, {
+    method, headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
+    ...(body ? {body: JSON.stringify(body)} : {})
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error?.message || 'Sheets API error '+r.status);
+  return d;
+}
+
+async function driveSearch(name) {
+  const q = encodeURIComponent(`name='${name}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false and 'me' in owners`);
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, {
+    headers: { Authorization:'Bearer '+token }
+  });
+  const d = await r.json();
+  return d.files || [];
+}
+
+// ━━━━━━━━━━━━━━━━━ SPREADSHEET SETUP ━━━━━━━━━━━━━━━━━
+async function ensureSpreadsheet() {
+  // 1. Try cached ID
+  if (sheetId) {
+    try {
+      await sheets('/'+sheetId+'?fields=spreadsheetId');
+      return;
+    } catch(e) { sheetId = null; localStorage.removeItem('crm_sheetId'); }
+  }
+  // 2. Search Drive
+  const files = await driveSearch(SHEET_TITLE);
+  if (files.length > 0) {
+    sheetId = files[0].id;
+    localStorage.setItem('crm_sheetId', sheetId);
     return;
   }
-  tokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-function handleLogout() {
-  const token = gapi.client.getToken();
-  if (token) {
-    google.accounts.oauth2.revoke(token.access_token);
-    gapi.client.setToken('');
-  }
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginScreen').style.display = '';
-}
-
-async function onLoggedIn() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = '';
-  // Get user info
-  try {
-    const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: { Authorization: `Bearer ${gapi.client.getToken().access_token}` }
-    });
-    const user = await res.json();
-    document.getElementById('userEmail').textContent = user.email || '';
-  } catch(e) {}
-  await ensureSpreadsheet();
-  buildStepper();
-  renderTags();
-  setDefaultReminderDate();
-}
-
-// ====== SPREADSHEET ======
-async function ensureSpreadsheet() {
-  // Check if we have a saved spreadsheet ID
-  SPREADSHEET_ID = localStorage.getItem('crm_spreadsheet_id');
-  if (SPREADSHEET_ID) {
-    try {
-      await gapi.client.sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
-      return; // exists
-    } catch(e) {
-      SPREADSHEET_ID = null;
-      localStorage.removeItem('crm_spreadsheet_id');
-    }
-  }
-  // Create new spreadsheet
-  const res = await gapi.client.sheets.spreadsheets.create({
-    resource: {
-      properties: { title: 'Partner CRM - Contatti' },
-      sheets: [{ properties: { title: SHEET_NAME } }]
-    }
+  // 3. Create new
+  const ss = await sheets('', 'POST', {
+    properties: { title: SHEET_TITLE },
+    sheets: [{ properties: { title: TAB_NAME, sheetId: 0 } }]
   });
-  SPREADSHEET_ID = res.result.spreadsheetId;
-  localStorage.setItem('crm_spreadsheet_id', SPREADSHEET_ID);
-  // Add headers
-  await gapi.client.sheets.spreadsheets.values.update({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET_NAME}!A1:L1`,
-    valueInputOption: 'RAW',
-    resource: {
-      values: [['Data', 'Nome', 'Cognome', 'Azienda', 'Ruolo', 'Telefono', 'Email', 'Telegram', 'Teams', 'Note', 'Progetto', 'Tag', 'Reminder']]
-    }
-  });
-}
-
-// ====== SUBMIT ======
-async function submitPartner() {
-  const btn = document.getElementById('btnSubmit');
-  btn.disabled = true;
-  btn.textContent = 'Salvando...';
-
-  const data = {
-    nome: val('f_nome'),
-    cognome: val('f_cognome'),
-    azienda: val('f_azienda'),
-    ruolo: val('f_ruolo'),
-    telefono: val('f_telefono'),
-    email: val('f_email'),
-    telegram: val('f_telegram'),
-    teams: val('f_teams'),
-    nota: val('f_nota'),
-    progetto: val('f_progetto'),
-    tags: currentTags.join(', '),
-    reminderDate: val('f_reminder_date'),
-    reminderTime: val('f_reminder_time'),
-    reminderNote: val('f_reminder_note')
-  };
-
-  try {
-    // 1. Save to Google Sheets
-    await gapi.client.sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:M`,
-      valueInputOption: 'RAW',
-      insertDataOption: 'INSERT_ROWS',
-      resource: {
-        values: [[
-          new Date().toISOString().split('T')[0],
-          data.nome, data.cognome, data.azienda, data.ruolo,
-          data.telefono, data.email, data.telegram, data.teams,
-          data.nota, data.progetto, data.tags,
-          data.reminderDate ? `${data.reminderDate} ${data.reminderTime}` : ''
-        ]]
+  sheetId = ss.spreadsheetId;
+  localStorage.setItem('crm_sheetId', sheetId);
+  // Write headers
+  await sheets(`/${sheetId}/values/${enc(TAB_NAME+'!A1')}?valueInputOption=RAW`, 'PUT', { values:[HEADERS] });
+  // Format header row
+  await sheets(`/${sheetId}:batchUpdate`, 'POST', { requests:[
+    { repeatCell: {
+        range:{ sheetId:0, startRowIndex:0, endRowIndex:1 },
+        cell:{ userEnteredFormat:{
+          backgroundColor:{ red:.083, green:.396, blue:.753 },
+          textFormat:{ foregroundColor:{red:1,green:1,blue:1}, bold:true },
+          horizontalAlignment:'CENTER'
+        }},
+        fields:'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)'
       }
-    });
-
-    // 2. Create Google Calendar reminder
-    if (data.reminderDate) {
-      const startDT = `${data.reminderDate}T${data.reminderTime || '09:00'}:00`;
-      const endDate = new Date(startDT);
-      endDate.setHours(endDate.getHours() + 1);
-      const endDT = endDate.toISOString().replace('.000Z', '');
-
-      await gapi.client.calendar.events.insert({
-        calendarId: 'primary',
-        resource: {
-          summary: `📞 Contattare: ${data.nome} ${data.cognome} (${data.azienda})`,
-          description: `Ruolo: ${data.ruolo}\nProgetto: ${data.progetto}\nNote: ${data.reminderNote || data.nota}\n\n📧 ${data.email}\n📱 ${data.telefono}\n💬 Telegram: ${data.telegram}`,
-          start: { dateTime: startDT, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
-          end: { dateTime: new Date(new Date(startDT).getTime() + 3600000).toISOString(), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
-          reminders: { useDefault: false, overrides: [{ method: 'popup', minutes: 30 }, { method: 'email', minutes: 60 }] }
-        }
-      });
-    }
-
-    showToast('✅ Partner salvato + Reminder creato!');
-    resetForm();
-  } catch(e) {
-    console.error(e);
-    showToast('❌ Errore: ' + (e.result?.error?.message || e.message || 'Sconosciuto'));
-  }
-
-  btn.disabled = false;
-  btn.textContent = '✓ Salva Partner';
+    },
+    { updateSheetProperties:{ properties:{ sheetId:0, gridProperties:{ frozenRowCount:1 } }, fields:'gridProperties.frozenRowCount' } }
+  ]});
 }
 
-function resetForm() {
-  document.getElementById('partnerForm').reset();
-  currentTags = [];
-  currentStep = 0;
-  showStep(0);
-  renderTags();
-  setDefaultReminderDate();
-}
+function enc(s) { return encodeURIComponent(s); }
 
-function setDefaultReminderDate() {
-  const d = new Date();
-  d.setDate(d.getDate() + 3);
-  document.getElementById('f_reminder_date').value = d.toISOString().split('T')[0];
-}
-
-// ====== LOAD CONTACTS ======
-async function loadContacts() {
-  try {
-    const res = await gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A2:M1000`
-    });
-    const rows = res.result.values || [];
-    contacts = rows.map(r => ({
-      data: r[0] || '', nome: r[1] || '', cognome: r[2] || '',
-      azienda: r[3] || '', ruolo: r[4] || '', telefono: r[5] || '',
-      email: r[6] || '', telegram: r[7] || '', teams: r[8] || '',
-      nota: r[9] || '', progetto: r[10] || '', tags: r[11] || '',
-      reminder: r[12] || ''
+// ━━━━━━━━━━━━━━━━━ DATA OPERATIONS ━━━━━━━━━━━━━━━━━
+async function fetchContacts() {
+  // Always read fresh from Sheets — this is the source of truth for all devices
+  const d = await sheets(`/${sheetId}/values/${enc(TAB_NAME+'!A:K')}`);
+  const rows = (d.values || []).slice(1); // skip header
+  contacts = rows
+    .filter(r => r[0]) // must have an ID
+    .map(r => ({
+      id:             r[0]  || '',
+      nome:           r[1]  || '',
+      cognome:        r[2]  || '',
+      azienda:        r[3]  || '',
+      email:          r[4]  || '',
+      telefono:       r[5]  || '',
+      categoria:      r[6]  || '',
+      sito:           r[7]  || '',
+      note:           r[8]  || '',
+      dataCreazione:  r[9]  || '',
+      ultimaModifica: r[10] || ''
     }));
-    renderTable();
-    renderStats();
+}
+
+async function appendRow(row) {
+  await sheets(
+    `/${sheetId}/values/${enc(TAB_NAME+'!A1')}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
+    'POST', { values:[row] }
+  );
+}
+
+async function updateRow(id, row) {
+  // Find the row index (1-based) by searching the ID column
+  const d = await sheets(`/${sheetId}/values/${enc(TAB_NAME+'!A:A')}`);
+  const ids = (d.values || []).map(r => r[0]||'');
+  const idx = ids.indexOf(id);
+  if (idx === -1) throw new Error('Contatto non trovato nel foglio');
+  const rowNum = idx + 1;
+  await sheets(
+    `/${sheetId}/values/${enc(TAB_NAME+'!A'+rowNum+':K'+rowNum)}?valueInputOption=RAW`,
+    'PUT', { values:[row] }
+  );
+}
+
+async function deleteRow(id) {
+  const d = await sheets(`/${sheetId}/values/${enc(TAB_NAME+'!A:A')}`);
+  const ids = (d.values || []).map(r => r[0]||'');
+  const idx = ids.indexOf(id);
+  if (idx === -1) throw new Error('Contatto non trovato');
+  // Get integer sheetId for batchUpdate
+  const meta = await sheets(`/${sheetId}?fields=sheets.properties`);
+  const tabId = meta.sheets.find(s => s.properties.title === TAB_NAME)?.properties.sheetId ?? 0;
+  await sheets(`/${sheetId}:batchUpdate`, 'POST', { requests:[{
+    deleteDimension:{ range:{ sheetId:tabId, dimension:'ROWS', startIndex:idx, endIndex:idx+1 } }
+  }]});
+}
+
+// ━━━━━━━━━━━━━━━━━ SYNC ━━━━━━━━━━━━━━━━━
+async function syncData() {
+  if (!token) return;
+  setSyncStatus('syncing');
+  try {
+    await fetchContacts();
+    render();
+    setSyncStatus('ok');
+    toast('✅ Dati aggiornati!');
   } catch(e) {
+    setSyncStatus('error');
+    toast('❌ Errore sync: ' + e.message);
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━ EXCEL EXPORT ━━━━━━━━━━━━━━━━━
+async function exportToExcel() {
+  if (!sheetId) { toast('❌ Nessun dato da esportare'); return; }
+  loading('Esportazione Excel…');
+  try {
+    // Export the Google Sheet as XLSX
+    const res = await fetch(
+      `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`,
+      { headers: { Authorization:'Bearer '+token } }
+    );
+    if (!res.ok) throw new Error('Export fallito (status '+res.status+')');
+    const blob = await res.blob();
+
+    // Build filename with today's date
+    const today = new Date();
+    const dateStr = [
+      String(today.getDate()).padStart(2,'0'),
+      String(today.getMonth()+1).padStart(2,'0'),
+      today.getFullYear()
+    ].join('-');
+    const filename = `Partner CRM Export ${dateStr}.xlsx`;
+
+    // Upload to Google Drive
+    const meta = JSON.stringify({
+      name: filename,
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    const form = new FormData();
+    form.append('metadata', new Blob([meta], { type:'application/json' }));
+    form.append('file', blob, filename);
+
+    const up = await fetch(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+      { method:'POST', headers:{ Authorization:'Bearer '+token }, body:form }
+    );
+    if (!up.ok) throw new Error('Upload Drive fallito');
+    const f = await up.json();
+
+    // Also trigger local download
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+
+    hideLoad();
+    toast('✅ Excel salvato su Drive!');
+    console.log('Drive file id:', f.id);
+  } catch(e) {
+    hideLoad();
+    toast('❌ Errore export: ' + e.message);
     console.error(e);
   }
 }
 
-function renderTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const tagFilter = document.getElementById('filterTag').value;
-  let filtered = contacts.filter(c => {
-    const match = `${c.nome} ${c.cognome} ${c.azienda} ${c.progetto} ${c.ruolo}`.toLowerCase().includes(q);
-    const tagMatch = !tagFilter || (c.tags && c.tags.split(',').map(t=>t.trim()).includes(tagFilter));
-    return match && tagMatch;
-  });
-  const body = document.getElementById('contactsBody');
-  const empty = document.getElementById('emptyMsg');
-  if (filtered.length === 0) { body.innerHTML = ''; empty.style.display = ''; return; }
-  empty.style.display = 'none';
-  body.innerHTML = filtered.map((c, i) => {
-    const tagsHtml = c.tags ? c.tags.split(',').map(t => `<span class="badge" style="background:#e1f5fe;color:var(--primary-dark);margin:1px">${t.trim()}</span>`).join('') : '';
-    const reminderBadge = c.reminder ? `<span class="badge" style="background:#fff8e1;color:#e65100">${c.reminder.split(' ')[0]}</span>` : '—';
-    return `<tr onclick="showDetail(${i})" style="cursor:pointer">
-      <td class="contact-name">${c.nome} ${c.cognome}</td>
-      <td>${c.azienda}</td><td>${c.ruolo}</td><td>${c.progetto}</td>
-      <td>${tagsHtml}</td><td>${reminderBadge}</td>
-      <td><button class="btn btn-outline" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();showDetail(${i})">Dettagli</button></td>
-    </tr>`;
+// ━━━━━━━━━━━━━━━━━ UI — RENDER LIST ━━━━━━━━━━━━━━━━━
+function render() {
+  const q = (document.getElementById('search').value || '').toLowerCase();
+
+  // Counts
+  const bycat = c => ({
+    tutti:c.length,
+    Cliente:   c.filter(x=>x.categoria==='Cliente').length,
+    Partner:   c.filter(x=>x.categoria==='Partner').length,
+    Fornitore: c.filter(x=>x.categoria==='Fornitore').length,
+    Prospect:  c.filter(x=>x.categoria==='Prospect').length,
+    Altro:     c.filter(x=>!['Cliente','Partner','Fornitore','Prospect'].includes(x.categoria)).length
+  })(contacts);
+  document.getElementById('n-tutti').textContent     = bycat.tutti;
+  document.getElementById('n-cliente').textContent   = bycat.Cliente;
+  document.getElementById('n-partner').textContent   = bycat.Partner;
+  document.getElementById('n-fornitore').textContent = bycat.Fornitore;
+  document.getElementById('n-prospect').textContent  = bycat.Prospect;
+  document.getElementById('n-altro').textContent     = bycat.Altro;
+
+  // Filter + search
+  let list = contacts.filter(c => {
+    const catOk = filter === 'tutti' || c.categoria === filter ||
+      (filter === 'Altro' && !['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria));
+    const srchOk = !q || `${c.nome} ${c.cognome} ${c.azienda} ${c.email} ${c.telefono}`.toLowerCase().includes(q);
+    return catOk && srchOk;
+  }).sort((a,b) => `${a.nome}${a.cognome}`.localeCompare(`${b.nome}${b.cognome}`));
+
+  const el = document.getElementById('list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-icon">${q ? '🔍' : '👥'}</div>
+      <div class="empty-title">${q ? 'Nessun risultato' : 'Nessun contatto'}</div>
+      <div class="empty-text">${q ? 'Prova con un\'altra ricerca' : 'Premi <strong>+</strong> per aggiungere il primo contatto'}</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = list.map(c => {
+    const initials = ((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase() || '?';
+    const bclass = 'b-'+(c.categoria||'altro').toLowerCase();
+    const name   = [c.nome,c.cognome].filter(Boolean).join(' ');
+    const sub    = c.azienda || c.email || '—';
+    return `<div class="card" onclick="openDetail('${c.id}')">
+      <div class="avatar" style="background:${avatarBg(c.id)}">${esc(initials)}</div>
+      <div class="card-info">
+        <div class="card-name">${esc(name)}</div>
+        <div class="card-sub">${esc(sub)}</div>
+      </div>
+      ${c.categoria ? `<span class="badge ${bclass}">${esc(c.categoria)}</span>` : ''}
+    </div>`;
   }).join('');
 }
 
-function renderStats() {
-  const total = contacts.length;
-  const withReminder = contacts.filter(c => c.reminder).length;
-  const projects = [...new Set(contacts.map(c => c.progetto).filter(Boolean))].length;
-  const companies = [...new Set(contacts.map(c => c.azienda).filter(Boolean))].length;
-  document.getElementById('statsBar').innerHTML = `
-    <div class="stat-card"><div class="num">${total}</div><div class="label">Contatti</div></div>
-    <div class="stat-card" style="border-left-color:var(--warning)"><div class="num">${withReminder}</div><div class="label">Con Reminder</div></div>
-    <div class="stat-card" style="border-left-color:var(--success)"><div class="num">${projects}</div><div class="label">Progetti</div></div>
-    <div class="stat-card" style="border-left-color:var(--danger)"><div class="num">${companies}</div><div class="label">Aziende</div></div>`;
+function setFilter(el) {
+  filter = el.dataset.filter;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  render();
 }
 
-function showDetail(i) {
-  const c = contacts[i];
-  document.getElementById('modalContent').innerHTML = `
-    <button class="close-btn" onclick="closeModal()">&times;</button>
-    <h2>${c.nome} ${c.cognome}</h2>
-    <div class="detail-row"><span class="detail-label">Azienda</span><span>${c.azienda}</span></div>
-    <div class="detail-row"><span class="detail-label">Ruolo</span><span>${c.ruolo}</span></div>
-    <div class="detail-row"><span class="detail-label">Telefono</span><span>${c.telefono ? `<a href="tel:${c.telefono}">${c.telefono}</a>` : '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Email</span><span>${c.email ? `<a href="mailto:${c.email}">${c.email}</a>` : '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Telegram</span><span>${c.telegram || '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Teams</span><span>${c.teams || '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Progetto</span><span>${c.progetto || '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Tag</span><span>${c.tags || '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Reminder</span><span>${c.reminder || '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Note</span><span>${c.nota || '—'}</span></div>
-    <div class="detail-row"><span class="detail-label">Aggiunto il</span><span>${c.data}</span></div>`;
-  document.getElementById('detailModal').classList.add('show');
+// ━━━━━━━━━━━━━━━━━ UI — ADD / EDIT MODAL ━━━━━━━━━━━━━━━━━
+function openAdd() {
+  editingId = null;
+  document.getElementById('form-title').textContent = '➕ Nuovo Contatto';
+  ['nome','cognome','azienda','email','note','sito'].forEach(f => document.getElementById('f-'+f).value='');
+  document.getElementById('f-tel').value = '';
+  document.getElementById('f-cat').value = '';
+  document.getElementById('f-id').value  = '';
+  openModal('form-overlay');
+  setTimeout(()=>document.getElementById('f-nome').focus(), 350);
 }
 
-function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
-document.getElementById('detailModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-
-// ====== TOAST ======
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+function openEdit(id) {
+  const c = contacts.find(x=>x.id===id);
+  if (!c) return;
+  editingId = id;
+  document.getElementById('form-title').textContent = '✏️ Modifica Contatto';
+  document.getElementById('f-id').value      = id;
+  document.getElementById('f-nome').value    = c.nome;
+  document.getElementById('f-cognome').value = c.cognome;
+  document.getElementById('f-azienda').value = c.azienda;
+  document.getElementById('f-email').value   = c.email;
+  document.getElementById('f-tel').value     = c.telefono;
+  document.getElementById('f-cat').value     = c.categoria;
+  document.getElementById('f-sito').value    = c.sito;
+  document.getElementById('f-note').value    = c.note;
+  closeModal('detail-overlay');
+  openModal('form-overlay');
 }
 
-// ====== PWA INSTALL ======
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallBanner();
-});
+async function saveContact() {
+  const nome = document.getElementById('f-nome').value.trim();
+  if (!nome) { toast('⚠️ Il nome è obbligatorio'); return; }
+  const data = {
+    nome, cognome: document.getElementById('f-cognome').value.trim(),
+    azienda:   document.getElementById('f-azienda').value.trim(),
+    email:     document.getElementById('f-email').value.trim(),
+    telefono:  document.getElementById('f-tel').value.trim(),
+    categoria: document.getElementById('f-cat').value,
+    sito:      document.getElementById('f-sito').value.trim(),
+    note:      document.getElementById('f-note').value.trim()
+  };
 
-function showInstallBanner() {
-  if (document.getElementById('installBanner')) return;
-  const banner = document.createElement('div');
-  banner.id = 'installBanner';
-  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#014486;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;z-index:300;box-shadow:0 -2px 12px rgba(0,0,0,.2)';
-  banner.innerHTML = '<span style="font-size:14px">Installa Partner CRM sul tuo telefono</span><div><button onclick="installPWA()" style="background:#fff;color:#014486;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;margin-right:8px">Installa</button><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:1px solid rgba(255,255,255,.4);color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer">No</button></div>';
-  document.body.appendChild(banner);
+  closeModal('form-overlay');
+  const isEdit = !!editingId;
+  loading(isEdit ? 'Aggiornamento…' : 'Salvataggio…');
+  setSyncStatus('syncing');
+
+  try {
+    const now = fmtDate(new Date());
+    if (isEdit) {
+      const orig = contacts.find(c=>c.id===editingId);
+      const row  = [editingId, data.nome, data.cognome, data.azienda, data.email, data.telefono, data.categoria, data.sito, data.note, orig?.dataCreazione||now, now];
+      await updateRow(editingId, row);
+      const i = contacts.findIndex(c=>c.id===editingId);
+      if (i!==-1) contacts[i] = { ...contacts[i], ...data, ultimaModifica:now };
+      toast('✅ Contatto aggiornato!');
+    } else {
+      const id = Date.now().toString();
+      const row = [id, data.nome, data.cognome, data.azienda, data.email, data.telefono, data.categoria, data.sito, data.note, now, now];
+      await appendRow(row);
+      contacts.push({ ...data, id, dataCreazione:now, ultimaModifica:now });
+      toast('✅ Contatto salvato!');
+    }
+    setSyncStatus('ok');
+    hideLoad();
+    render();
+  } catch(e) {
+    setSyncStatus('error');
+    hideLoad();
+    toast('❌ Errore: '+e.message);
+    console.error(e);
+  }
 }
 
-async function installPWA() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') showToast('App installata!');
-  deferredPrompt = null;
-  document.getElementById('installBanner')?.remove();
+// ━━━━━━━━━━━━━━━━━ UI — DETAIL MODAL ━━━━━━━━━━━━━━━━━
+function openDetail(id) {
+  const c = contacts.find(x=>x.id===id);
+  if (!c) return;
+  const name = [c.nome,c.cognome].filter(Boolean).join(' ');
+  const initials = ((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
+  const bclass = 'b-'+(c.categoria||'altro').toLowerCase();
+
+  const field = (icon,label,val,link=null) => val ? `
+    <div class="df">
+      <div class="df-icon">${icon}</div>
+      <div class="df-content">
+        <div class="df-label">${label}</div>
+        <div class="df-value">${link ? `<a href="${link}" target="_blank">${esc(val)}</a>` : esc(val)}</div>
+      </div>
+    </div>` : '';
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-avatar-wrap">
+      <div class="detail-avatar" style="background:${avatarBg(c.id)}">${esc(initials)}</div>
+      <div class="detail-name">${esc(name)}</div>
+      ${c.azienda ? `<div class="detail-company">${esc(c.azienda)}</div>` : ''}
+      ${c.categoria ? `<span class="badge ${bclass}" style="margin-top:8px">${esc(c.categoria)}</span>` : ''}
+    </div>
+    <div class="detail-fields">
+      ${field('📧','Email',c.email,'mailto:'+c.email)}
+      ${field('📞','Telefono',c.telefono,'tel:'+c.telefono)}
+      ${field('🌐','Sito Web',c.sito,c.sito)}
+      ${field('📝','Note',c.note ? c.note.replace(/\n/g,'<br>') : '')}
+      ${field('📅','Creato il',c.dataCreazione)}
+      ${field('🔄','Ultima modifica',c.ultimaModifica)}
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-danger"    onclick="doDelete('${c.id}')">🗑️ Elimina</button>
+      <button class="btn btn-primary"   onclick="openEdit('${c.id}')">✏️ Modifica</button>
+    </div>
+  `;
+  openModal('detail-overlay');
 }
 
-// iOS install hint (iOS non supporta beforeinstallprompt)
-function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
-function isInStandaloneMode() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone; }
-
-if (isIOS() && !isInStandaloneMode()) {
-  setTimeout(() => {
-    const hint = document.createElement('div');
-    hint.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#014486;color:#fff;padding:16px 20px;z-index:300;text-align:center;font-size:14px;box-shadow:0 -2px 12px rgba(0,0,0,.2)';
-    hint.innerHTML = 'Per installare: tocca <strong style="font-size:18px">⎙</strong> (Condividi) poi <strong>"Aggiungi a Home"</strong> <button onclick="this.parentElement.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#fff;font-size:20px;cursor:pointer">&times;</button>';
-    document.body.appendChild(hint);
-  }, 3000);
+async function doDelete(id) {
+  const c = contacts.find(x=>x.id===id);
+  const name = c ? [c.nome,c.cognome].filter(Boolean).join(' ') : id;
+  if (!confirm(`Eliminare "${name}"?\nQuesta azione non può essere annullata.`)) return;
+  closeModal('detail-overlay');
+  loading('Eliminazione…');
+  setSyncStatus('syncing');
+  try {
+    await deleteRow(id);
+    contacts = contacts.filter(x=>x.id!==id);
+    setSyncStatus('ok');
+    hideLoad();
+    render();
+    toast('✅ Contatto eliminato');
+  } catch(e) {
+    setSyncStatus('error');
+    hideLoad();
+    toast('❌ Errore: '+e.message);
+  }
 }
 
-// ====== SERVICE WORKER ======
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+// ━━━━━━━━━━━━━━━━━ MODAL HELPERS ━━━━━━━━━━━━━━━━━
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function overlayClick(e,id) { if (e.target.id===id) closeModal(id); }
+
+// ━━━━━━━━━━━━━━━━━ LOADING / TOAST / SYNC ━━━━━━━━━━━━━━━━━
+function loading(txt) {
+  document.getElementById('loader-text').textContent = txt || 'Caricamento…';
+  document.getElementById('loader').style.display = 'flex';
+}
+function hideLoad() { document.getElementById('loader').style.display = 'none'; }
+
+let _toastTimer;
+function toast(msg, ms=3500) {
+  clearTimeout(_toastTimer);
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  _toastTimer = setTimeout(()=>el.classList.remove('show'), ms);
 }
 
-// ====== INIT ======
-buildStepper();
-renderTags();
+function setSyncStatus(status) {
+  const dot  = document.getElementById('sync-dot');
+  const text = document.getElementById('sync-text');
+  dot.className = 'sync-dot' + (status==='syncing' ? ' syncing' : status==='error' ? ' error' : '');
+  if (status==='syncing') { text.textContent = 'Sincronizzazione in corso…'; }
+  else if (status==='ok') {
+    const t = new Date();
+    text.textContent = `Sincronizzato alle ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+  } else { text.textContent = 'Errore sincronizzazione'; }
+}
+
+// ━━━━━━━━━━━━━━━━━ UTILS ━━━━━━━━━━━━━━━━━
+function fmtDate(d) { return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function avatarBg(id) {
+  const c = ['#1565c0','#2e7d32','#e65100','#6a1b9a','#c62828','#00695c','#283593','#4e342e','#37474f','#880e4f'];
+  return c[parseInt(id||'0') % c.length];
+}
+
+// ━━━━━━━━━━━━━━━━━ INIT ━━━━━━━━━━━━━━━━━
+hideLoad();
 </script>
-
-<!-- Google API Scripts -->
-<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-
+<script src="https://accounts.google.com/gsi/client" async></script>
 </body>
 </html>
