@@ -171,6 +171,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* TOAST */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a1a2e;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* FILTER BAR */
+.fbar{display:flex;align-items:center;gap:6px;padding:7px 14px 7px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bd);background:var(--sf);min-height:42px}
+.fbar::-webkit-scrollbar{display:none}
+.fbar-btn{display:flex;align-items:center;gap:5px;background:var(--p);color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;transition:opacity .15s;font-family:inherit}
+.fbar-btn:hover{opacity:.85}
+.fbar-btn.has-filters{background:var(--ac)}
+.fbadge{display:flex;align-items:center;gap:4px;background:#e3f2fd;color:var(--p);border-radius:20px;padding:4px 9px;font-size:11.5px;font-weight:600;flex-shrink:0;white-space:nowrap}
+.fbadge button{background:none;border:none;cursor:pointer;color:var(--p);font-size:14px;line-height:1;padding:0;opacity:.65;display:flex;align-items:center}
+.fbadge button:hover{opacity:1}
+.fbar-clear{background:none;border:none;color:var(--ts);font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;padding:4px 6px;border-radius:6px;transition:background .15s;font-family:inherit}
+.fbar-clear:hover{background:var(--bd)}
+
+/* FILTER PANEL */
+.fp-sec{font-size:10.5px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.7px;margin:14px 0 7px}
+.fchips{display:flex;flex-wrap:wrap;gap:6px}
+.fchip{background:var(--bg);border:1.5px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--ts);cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap}
+.fchip:hover{border-color:var(--p);color:var(--p)}
+.fchip.on{background:var(--p);color:#fff;border-color:var(--p)}
+.fchip.on-hot{background:#fff8e1;color:#e65100;border-color:#e65100}
+.fchip.on-tag{background:#e8f5e9;color:var(--grn);border-color:var(--grn)}
+.fchip.on-crypto-si{background:#e8f5e9;color:var(--grn);border-color:var(--grn)}
+.fchip.on-crypto-no{background:#ffebee;color:var(--red);border-color:var(--red)}
+
+/* AUTOCOMPLETE */
+.ac-wrap{position:relative}
+.ac-inp{width:100%;background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:15px;color:var(--tx);outline:none;transition:border-color .15s;font-family:inherit}
+.ac-inp:focus{border-color:var(--p);background:#fff}
+.ac-drop{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;margin-top:4px;overflow:hidden;display:none}
+.ac-item{padding:10px 13px;font-size:14px;cursor:pointer;transition:background .12s;color:var(--tx)}
+.ac-item:hover{background:var(--bg)}
+.ac-item strong{color:var(--p)}
+.fp-mh{display:flex;align-items:center;justify-content:space-between}
+.fp-reset{background:none;border:none;color:var(--ts);font-size:13px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:8px;font-family:inherit}
+.fp-reset:hover{background:var(--bg);color:var(--red)}
   </style>
 </head>
 <body>
@@ -215,6 +250,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div id="tag-fw" style="display:none">
     <div class="chips-lbl">Filtra per tag</div>
     <div class="chips-row" id="tag-chips"></div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="fbar" id="fbar">
+    <button class="fbar-btn" id="fbar-btn" onclick="openFilters()">⚡ Filtri</button>
+    <div id="fbar-badges" style="display:flex;gap:6px;align-items:center;flex-shrink:0"></div>
+    <button class="fbar-clear" id="fbar-clear" style="display:none" onclick="resetFilters()">Azzera tutto</button>
   </div>
 
   <div class="list" id="list"></div>
@@ -350,6 +392,63 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
+<!-- FILTER MODAL -->
+<div class="ov" id="filter-ov" onclick="ovc(event,'filter-ov')">
+<div class="modal">
+  <div class="mh">
+    <div class="fp-mh" style="width:100%">
+      <div class="mt">⚡ Filtri</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="fp-reset" onclick="resetFilters()">🗑 Azzera</button>
+        <button class="mx" onclick="closeM('filter-ov')">✕</button>
+      </div>
+    </div>
+  </div>
+  <div class="mb">
+
+    <div class="fp-sec">🏢 Azienda</div>
+    <div class="ac-wrap">
+      <input class="ac-inp" id="fp-azienda" type="text" placeholder="Cerca azienda…" oninput="fpAC('fp-azienda','azienda')" autocomplete="off">
+      <div class="ac-drop" id="fp-azienda-drop"></div>
+    </div>
+
+    <div class="fp-sec">🔐 Crypto</div>
+    <div class="fchips" id="fp-crypto-chips">
+      <button class="fchip" data-v="" onclick="fpCrypto(this)">Tutti</button>
+      <button class="fchip" data-v="Sì" onclick="fpCrypto(this)">✅ Sì</button>
+      <button class="fchip" data-v="No" onclick="fpCrypto(this)">❌ No</button>
+    </div>
+
+    <div class="fp-sec">⭐ Priorità contatto</div>
+    <div class="fchips" id="fp-hot-chips">
+      <button class="fchip" data-v="C-Level" onclick="fpHot(this)">⭐⭐⭐ C-Level</button>
+      <button class="fchip" data-v="Importante" onclick="fpHot(this)">⭐⭐ Importante</button>
+      <button class="fchip" data-v="Medio" onclick="fpHot(this)">⭐ Medio</button>
+    </div>
+
+    <div class="fp-sec">🌍 Main GEO</div>
+    <select class="fs" id="fp-geo" onchange="fpLiveRender()">
+      <option value="">— Tutti i GEO —</option>
+    </select>
+
+    <div class="fp-sec">📍 Città (Located In)</div>
+    <div class="ac-wrap">
+      <input class="ac-inp" id="fp-citta" type="text" placeholder="es. Milano, Roma…" oninput="fpAC('fp-citta','locatedIn')" autocomplete="off">
+      <div class="ac-drop" id="fp-citta-drop"></div>
+    </div>
+
+    <div class="fp-sec">🏷️ Tag</div>
+    <div class="fchips" id="fp-tag-chips"></div>
+
+    <div class="fa" style="margin-top:20px">
+      <button class="btn bs" onclick="closeM('filter-ov')">Chiudi</button>
+      <button class="btn bp" onclick="applyFilters()">✅ Applica filtri</button>
+    </div>
+
+  </div>
+</div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════
 // CONFIG
@@ -378,6 +477,9 @@ let editingId = null;
 let formTags  = [];
 let calContactId = null;
 let calMode  = 'a';
+
+// ── FILTRI AVANZATI ──
+let filters = { azienda:'', crypto:'', hot:[], geo:'', citta:'', tags:[] };
 
 // ═══════════════════════════════════════════════════
 // INIT GEO SELECT
@@ -752,6 +854,176 @@ async function createCalEvent() {
 }
 
 // ═══════════════════════════════════════════════════
+// FILTRI AVANZATI
+// ═══════════════════════════════════════════════════
+
+function openFilters() {
+  // Popola GEO dropdown
+  const gsel = document.getElementById('fp-geo');
+  gsel.innerHTML = '<option value="">— Tutti i GEO —</option>' +
+    GEOS.filter(g=>!g.startsWith('—')).map(g=>`<option value="${esc(g)}" ${filters.geo===g?'selected':''}>${esc(g)}</option>`).join('');
+
+  // Ripristina stato campi testo
+  document.getElementById('fp-azienda').value = filters.azienda;
+  document.getElementById('fp-citta').value   = filters.citta;
+  document.getElementById('fp-azienda-drop').style.display = 'none';
+  document.getElementById('fp-citta-drop').style.display   = 'none';
+
+  // Crypto chips
+  document.querySelectorAll('#fp-crypto-chips .fchip').forEach(btn => {
+    const v = btn.dataset.v;
+    btn.className = 'fchip' + (filters.crypto===v ? (v==='Sì'?' on-crypto-si':v==='No'?' on-crypto-no':' on') : '');
+  });
+
+  // Hot chips
+  document.querySelectorAll('#fp-hot-chips .fchip').forEach(btn => {
+    btn.className = 'fchip' + (filters.hot.includes(btn.dataset.v) ? ' on-hot' : '');
+  });
+
+  // Tag chips — genera dai contatti
+  const allTags = [...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean).sort();
+  document.getElementById('fp-tag-chips').innerHTML = allTags.length
+    ? allTags.map(t=>`<button class="fchip${filters.tags.includes(t)?' on-tag':''}" data-v="${esc(t)}" onclick="fpTag(this)">${esc(t)}</button>`).join('')
+    : '<span style="color:var(--ts);font-size:13px">Nessun tag disponibile</span>';
+
+  openM('filter-ov');
+}
+
+// Chip Crypto — selezione singola
+function fpCrypto(btn) {
+  const v = btn.dataset.v;
+  filters.crypto = (filters.crypto === v) ? '' : v;
+  document.querySelectorAll('#fp-crypto-chips .fchip').forEach(b => {
+    const bv = b.dataset.v;
+    b.className = 'fchip' + (filters.crypto===bv && bv!=='' ? (bv==='Sì'?' on-crypto-si':' on-crypto-no') : (filters.crypto===''&&bv===''?' on':''));
+  });
+  fpLiveRender();
+}
+
+// Chip Priorità — multi-select
+function fpHot(btn) {
+  const v = btn.dataset.v;
+  filters.hot = filters.hot.includes(v) ? filters.hot.filter(x=>x!==v) : [...filters.hot, v];
+  document.querySelectorAll('#fp-hot-chips .fchip').forEach(b => {
+    b.className = 'fchip' + (filters.hot.includes(b.dataset.v) ? ' on-hot' : '');
+  });
+  fpLiveRender();
+}
+
+// Chip Tag — multi-select
+function fpTag(btn) {
+  const v = btn.dataset.v;
+  filters.tags = filters.tags.includes(v) ? filters.tags.filter(x=>x!==v) : [...filters.tags, v];
+  btn.className = 'fchip' + (filters.tags.includes(v) ? ' on-tag' : '');
+  fpLiveRender();
+}
+
+// Autocomplete per Azienda e Città
+function fpAC(inputId, field) {
+  const input = document.getElementById(inputId);
+  const drop  = document.getElementById(inputId + '-drop');
+  const val   = input.value.trim();
+
+  // Aggiorna filtro live mentre si digita
+  if (field==='azienda') filters.azienda = val;
+  if (field==='locatedIn') filters.citta = val;
+  fpLiveRender();
+
+  if (!val) { drop.style.display='none'; return; }
+
+  const lower = val.toLowerCase();
+  const uniq = [...new Set(contacts.map(c=>c[field]).filter(Boolean))]
+    .filter(v=>v.toLowerCase().includes(lower))
+    .sort().slice(0,6);
+
+  if (!uniq.length) { drop.style.display='none'; return; }
+
+  drop.innerHTML = uniq.map(v => {
+    const hi = v.replace(new RegExp(`(${val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<strong>$1</strong>');
+    return `<div class="ac-item" onclick="fpACSelect('${inputId}','${field}','${v.replace(/'/g,"\\'")}')"> ${hi}</div>`;
+  }).join('');
+  drop.style.display = 'block';
+}
+
+function fpACSelect(inputId, field, val) {
+  document.getElementById(inputId).value = val;
+  document.getElementById(inputId+'-drop').style.display = 'none';
+  if (field==='azienda')   filters.azienda = val;
+  if (field==='locatedIn') filters.citta   = val;
+  fpLiveRender();
+}
+
+// Aggiorna render in tempo reale mentre il pannello è aperto
+function fpLiveRender() {
+  filters.geo = document.getElementById('fp-geo')?.value || filters.geo;
+  render();
+}
+
+// Applica e chiudi pannello
+function applyFilters() {
+  filters.geo     = document.getElementById('fp-geo').value;
+  filters.azienda = document.getElementById('fp-azienda').value.trim();
+  filters.citta   = document.getElementById('fp-citta').value.trim();
+  closeM('filter-ov');
+  renderFilterBar();
+  render();
+}
+
+// Reset completo
+function resetFilters() {
+  filters = { azienda:'', crypto:'', hot:[], geo:'', citta:'', tags:[] };
+  // Reset UI se il pannello è aperto
+  const az=document.getElementById('fp-azienda'); if(az) az.value='';
+  const ci=document.getElementById('fp-citta');   if(ci) ci.value='';
+  const geo=document.getElementById('fp-geo');    if(geo) geo.value='';
+  document.querySelectorAll('#fp-crypto-chips .fchip').forEach(b=>b.className='fchip');
+  document.querySelectorAll('#fp-hot-chips .fchip').forEach(b=>b.className='fchip');
+  document.querySelectorAll('#fp-tag-chips .fchip').forEach(b=>b.className='fchip');
+  renderFilterBar(); render();
+}
+
+// Rimuovi singolo filtro dalla barra
+function removeFBadge(key, val) {
+  if (key==='azienda') filters.azienda='';
+  else if (key==='citta') filters.citta='';
+  else if (key==='crypto') filters.crypto='';
+  else if (key==='geo') filters.geo='';
+  else if (key==='hot') filters.hot=filters.hot.filter(x=>x!==val);
+  else if (key==='tags') filters.tags=filters.tags.filter(x=>x!==val);
+  renderFilterBar(); render();
+}
+
+// Aggiorna la barra con i badge attivi
+function renderFilterBar() {
+  const badges = [];
+  if (filters.azienda) badges.push({key:'azienda', label:'🏢 '+filters.azienda, val:''});
+  if (filters.crypto)  badges.push({key:'crypto',  label:'🔐 '+filters.crypto, val:''});
+  if (filters.geo)     badges.push({key:'geo',     label:'🌍 '+filters.geo, val:''});
+  if (filters.citta)   badges.push({key:'citta',   label:'📍 '+filters.citta, val:''});
+  filters.hot.forEach(h  => badges.push({key:'hot',  label:'⭐ '+h, val:h}));
+  filters.tags.forEach(t => badges.push({key:'tags', label:'🏷️ '+t, val:t}));
+
+  const hasFilters = badges.length > 0;
+  document.getElementById('fbar-btn').className = 'fbar-btn' + (hasFilters?' has-filters':'');
+  document.getElementById('fbar-btn').textContent = hasFilters ? `⚡ Filtri (${badges.length})` : '⚡ Filtri';
+  document.getElementById('fbar-clear').style.display = hasFilters ? 'block' : 'none';
+  document.getElementById('fbar-badges').innerHTML = badges.map(b=>
+    `<span class="fbadge">${esc(b.label)}<button onclick="removeFBadge('${b.key}','${esc(b.val)}')">×</button></span>`
+  ).join('');
+}
+
+// Verifica se un contatto passa tutti i filtri avanzati (logica AND)
+function matchesFilters(c) {
+  if (filters.azienda && !c.azienda.toLowerCase().includes(filters.azienda.toLowerCase())) return false;
+  if (filters.crypto  && c.crypto !== filters.crypto) return false;
+  if (filters.hot.length && !filters.hot.includes(c.contattoHot)) return false;
+  if (filters.geo     && c.mainGeo !== filters.geo) return false;
+  if (filters.citta   && !c.locatedIn.toLowerCase().includes(filters.citta.toLowerCase())) return false;
+  if (filters.tags.length && !filters.tags.every(t=>c.tags.includes(t))) return false;
+  return true;
+}
+
+// ═══════════════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════════════
 function render() {
@@ -770,7 +1042,8 @@ function render() {
     const catOk = catFilter==='tutti'||c.categoria===catFilter||(catFilter==='Altro'&&!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria));
     const tagOk = !tagFilter||c.tags.includes(tagFilter);
     const srOk  = !q||`${c.nome} ${c.cognome} ${c.azienda} ${c.email} ${c.telefono} ${c.mainGeo} ${c.tags.join(' ')}`.toLowerCase().includes(q);
-    return catOk && tagOk && srOk;
+    const advOk = matchesFilters(c);
+    return catOk && tagOk && srOk && advOk;
   }).sort((a,b)=>`${a.nome}${a.cognome}`.localeCompare(`${b.nome}${b.cognome}`));
   const el = document.getElementById('list');
   if (!list.length) {
