@@ -358,7 +358,7 @@ const CLIENT_ID   = '525708495290-u14oducrh67egbjcueh8o1pd088oe60c.apps.googleus
 const SCOPES      = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/calendar.events';
 const SHEET_TITLE = 'Partner CRM - Contatti';
 const TAB         = 'Contatti';
-const CONFIG_FILE = 'crm-config.json'; // Saved in hidden App Data folder
+const CONFIG_FILE = '_crm_sync_config'; // File di config nel Drive normale
 
 const FIXED_H = ['ID','Nome','Cognome','Azienda','Email','Telefono','Categoria','Sito Web','LinkedIn','Role','Contatto Hot','CRYPTO','Regulated','Main GEO','Located In','Tags','Note','Data Creazione','Ultima Modifica'];
 
@@ -453,43 +453,45 @@ async function driveReq(path, opts={}) {
 }
 
 // ═══════════════════════════════════════════════════
-// APP DATA FOLDER — cartella nascosta per-account,
-//   sincronizzata automaticamente su tutti i device.
-//   Salviamo qui il crm-config.json con lo sheetId
-//   canonico: garantisce che desktop e mobile usino
-//   sempre e solo lo stesso Google Sheet.
+// CONFIG FILE su Drive normale — stesso scope `drive`
+//   già abilitato. Tutti i device cercano il file
+//   _crm_sync_config e leggono lo sheetId canonico.
+//   Nessun scope extra, nessuna App Data Folder.
 // ═══════════════════════════════════════════════════
-async function appDataFind() {
-  const r = await driveReq(
-    `/files?spaces=appDataFolder&q=name%3D'${CONFIG_FILE}'&fields=files(id)&pageSize=1`
+async function cfgFind() {
+  const q = `name='${CONFIG_FILE}' and trashed=false and mimeType='application/json'`;
+  const r = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)&pageSize=1`,
+    { headers: { Authorization: 'Bearer ' + token } }
   );
   const d = await r.json();
   return (d.files || [])[0] || null;
 }
 
 async function appDataRead() {
-  const file = await appDataFind();
+  const file = await cfgFind();
   if (!file) return null;
-  const r = await driveReq(`/files/${file.id}?alt=media`);
+  const r = await fetch(
+    `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
+    { headers: { Authorization: 'Bearer ' + token } }
+  );
   if (!r.ok) return null;
   try { return await r.json(); } catch { return null; }
 }
 
 async function appDataWrite(cfg) {
-  const file = await appDataFind();
+  const file = await cfgFind();
   const blob = new Blob([JSON.stringify(cfg)], { type: 'application/json' });
 
   if (file) {
-    // PATCH esistente (solo il contenuto, non la metadata)
-    const form = new FormData();
-    form.append('file', blob);
-    await driveReq(
-      `/upload/files/${file.id}?uploadType=media`,
-      { method: 'PATCH', body: blob, headers: { 'Content-Type': 'application/json' } }
+    // Aggiorna il contenuto del file esistente
+    await fetch(
+      `https://www.googleapis.com/upload/drive/v3/files/${file.id}?uploadType=media`,
+      { method: 'PATCH', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: blob }
     );
   } else {
-    // POST nuovo file nella appDataFolder
-    const meta = JSON.stringify({ name: CONFIG_FILE, parents: ['appDataFolder'] });
+    // Crea nuovo file di config nel Drive
+    const meta = JSON.stringify({ name: CONFIG_FILE, mimeType: 'application/json' });
     const form = new FormData();
     form.append('metadata', new Blob([meta], { type: 'application/json' }));
     form.append('file', blob);
