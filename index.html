@@ -441,10 +441,18 @@ async function api(path, method='GET', body=null) {
   return d;
 }
 
+// ═══════════════════════════════════════════════════
+// DRIVE SEARCH — FIX: orderBy=createdTime garantisce
+//   che tutti i dispositivi trovino SEMPRE lo stesso
+//   file (il più vecchio = quello canonico).
+//   Senza orderBy, Drive restituisce risultati in
+//   ordine non deterministico: desktop e mobile
+//   potevano ricevere file diversi e non sincronizzarsi.
+// ═══════════════════════════════════════════════════
 async function driveSearch() {
   const q = `name='${SHEET_TITLE}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
   const r = await fetch(
-    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,
+    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)&orderBy=createdTime&spaces=drive`,
     { headers: { Authorization: 'Bearer ' + token } }
   );
   const d = await r.json();
@@ -459,20 +467,44 @@ function CL(n) {
 }
 
 // ═══════════════════════════════════════════════════
-// SPREADSHEET SETUP
+// SPREADSHEET SETUP — FIX: Drive è ora la fonte di
+//   verità. Cerchiamo SEMPRE su Drive per trovare il
+//   file canonico (il più vecchio grazie a orderBy).
+//   localStorage è solo una cache per velocizzare i
+//   caricamenti successivi, non la fonte primaria.
+//   Questo risolve: file duplicati, desktop≠mobile.
 // ═══════════════════════════════════════════════════
 async function ensureSheet() {
+  // STEP 1: Cerca SEMPRE su Drive (fonte di verità)
+  // orderBy=createdTime assicura che files[0] sia sempre
+  // il file più vecchio = lo stesso su tutti i dispositivi
+  const files = await driveSearch();
+
+  if (files.length > 0) {
+    const canonicalId = files[0].id; // Il più vecchio = canonico
+
+    // Avvisa se ci sono duplicati (da sessioni precedenti buggose)
+    if (files.length > 1) {
+      console.warn(`[CRM] Trovati ${files.length} fogli su Drive. Uso il più vecchio.`);
+      toast(`⚠️ Trovati ${files.length} fogli duplicati su Drive. Uso il più vecchio. Elimina i duplicati manualmente da drive.google.com`, 7000);
+    }
+
+    // Aggiorna localStorage se punta a un file diverso
+    if (sheetId !== canonicalId) {
+      sheetId = canonicalId;
+      localStorage.setItem('crm_sid', sheetId);
+    }
+    return; // ← tutti i dispositivi usano lo stesso sheetId
+  }
+
+  // STEP 2: Nessun file su Drive → verifica cache localStorage
+  // (edge case: file eliminato manualmente da Drive)
   if (sheetId) {
     try { await api('/' + sheetId + '?fields=spreadsheetId'); return; }
     catch(e) { sheetId = null; localStorage.removeItem('crm_sid'); }
   }
-  const files = await driveSearch();
-  if (files.length > 0) {
-    sheetId = files[0].id;
-    localStorage.setItem('crm_sid', sheetId);
-    return;
-  }
-  // Create new spreadsheet
+
+  // STEP 3: Nessun file trovato → crea nuovo foglio
   const ss = await api('', 'POST', {
     properties: { title: SHEET_TITLE },
     sheets: [{ properties: { title: TAB, sheetId: 0 } }]
