@@ -1,0 +1,14 @@
+{
+  "name": "Partner CRM",
+  "short_name": "CRM",
+  "description": "Gestisci i tuoi contatti commerciali",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f3f3f3",
+  "theme_color": "#014486",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
