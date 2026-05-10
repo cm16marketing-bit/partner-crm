@@ -354,12 +354,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 // ═══════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════
-const CLIENT_ID  = '525708495290-u14oducrh67egbjcueh8o1pd088oe60c.apps.googleusercontent.com';
-const SCOPES     = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/calendar.events';
+const CLIENT_ID   = '525708495290-u14oducrh67egbjcueh8o1pd088oe60c.apps.googleusercontent.com';
+const SCOPES      = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/calendar.events';
 const SHEET_TITLE = 'Partner CRM - Contatti';
-const TAB        = 'Contatti';
+const TAB         = 'Contatti';
+const CONFIG_FILE = 'crm-config.json'; // Saved in hidden App Data folder
 
-// Fixed column headers (order matters for new sheets)
 const FIXED_H = ['ID','Nome','Cognome','Azienda','Email','Telefono','Categoria','Sito Web','LinkedIn','Role','Contatto Hot','CRYPTO','Regulated','Main GEO','Located In','Tags','Note','Data Creazione','Ultima Modifica'];
 
 const GEOS = ['Any GEO','— Europa —','Albania','Andorra','Austria','Belgio','Bosnia','Bulgaria','Bielorussia','Cipro','Croazia','Danimarca','Estonia','Finlandia','Francia','Germania','Grecia','Irlanda','Islanda','Italia','Kosovo','Lettonia','Lituania','Lussemburgo','Malta','Moldova','Montenegro','Norvegia','Olanda','Polonia','Portogallo','Rep. Ceca','Romania','Russia','Serbia','Slovacchia','Slovenia','Spagna','Svezia','Svizzera','Turchia','Ucraina','UK','Ungheria','— Americhe —','Argentina','Bahamas','Belize','Bolivia','Brasile','Canada','Cile','Colombia','Costa Rica','Ecuador','El Salvador','Giamaica','Guatemala','Honduras','Messico','Panama','Paraguay','Perù','Puerto Rico','Uruguay','USA','Venezuela','— Asia —','Armenia','Azerbaijan','Bangladesh','Cambogia','Cina','Corea del Sud','Filippine','Georgia','Giappone','Hong Kong','India','Indonesia','Kazakistan','Laos','Macau','Malesia','Mongolia','Myanmar','Nepal','Pakistan','Singapore','Sri Lanka','Taiwan','Tailandia','Uzbekistan','Vietnam','— Medio Oriente —','Arabia Saudita','Bahrain','Egitto','Emirati Arabi Uniti','Giordania','Iran','Iraq','Israele','Kuwait','Libano','Oman','Qatar','Yemen','— Africa —','Algeria','Angola','Camerun',"Costa d'Avorio",'Etiopia','Ghana','Kenya','Libia','Marocco','Mauritius','Nigeria','Senegal','Sudafrica','Tanzania','Tunisia','Uganda','Zimbabwe','— Oceania —','Australia','Nuova Zelanda','Papua Nuova Guinea'];
@@ -370,8 +370,8 @@ const GEOS = ['Any GEO','— Europa —','Albania','Andorra','Austria','Belgio',
 let token    = null;
 let sheetId  = localStorage.getItem('crm_sid') || null;
 let contacts = [];
-let headerMap = {};    // headerName → 0-based colIndex (reflects ACTUAL sheet headers)
-let dynCols   = {};    // extraSourceName → colIndex
+let headerMap = {};
+let dynCols   = {};
 let catFilter = 'tutti';
 let tagFilter = null;
 let editingId = null;
@@ -426,8 +426,7 @@ async function boot() {
 }
 
 // ═══════════════════════════════════════════════════
-// SHEETS API  — NOTE: ranges are NOT URL-encoded
-//   (encodeURIComponent breaks Google Sheets range parsing)
+// SHEETS API
 // ═══════════════════════════════════════════════════
 async function api(path, method='GET', body=null) {
   const url = 'https://sheets.googleapis.com/v4/spreadsheets' + path;
@@ -441,79 +440,117 @@ async function api(path, method='GET', body=null) {
   return d;
 }
 
+async function driveReq(path, opts={}) {
+  const r = await fetch('https://www.googleapis.com/drive/v3' + path, {
+    ...opts,
+    headers: { Authorization: 'Bearer ' + token, ...(opts.headers||{}) }
+  });
+  if (!r.ok && r.status !== 404) {
+    const e = await r.json().catch(()=>({}));
+    throw new Error(e.error?.message || 'Drive error ' + r.status);
+  }
+  return r;
+}
+
 // ═══════════════════════════════════════════════════
-// DRIVE SEARCH — FIX: orderBy=createdTime garantisce
-//   che tutti i dispositivi trovino SEMPRE lo stesso
-//   file (il più vecchio = quello canonico).
-//   Senza orderBy, Drive restituisce risultati in
-//   ordine non deterministico: desktop e mobile
-//   potevano ricevere file diversi e non sincronizzarsi.
+// APP DATA FOLDER — cartella nascosta per-account,
+//   sincronizzata automaticamente su tutti i device.
+//   Salviamo qui il crm-config.json con lo sheetId
+//   canonico: garantisce che desktop e mobile usino
+//   sempre e solo lo stesso Google Sheet.
 // ═══════════════════════════════════════════════════
-async function driveSearch() {
-  const q = `name='${SHEET_TITLE}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
-  const r = await fetch(
-    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)&orderBy=createdTime&spaces=drive`,
-    { headers: { Authorization: 'Bearer ' + token } }
+async function appDataFind() {
+  const r = await driveReq(
+    `/files?spaces=appDataFolder&q=name%3D'${CONFIG_FILE}'&fields=files(id)&pageSize=1`
   );
   const d = await r.json();
-  return d.files || [];
+  return (d.files || [])[0] || null;
 }
 
-// col index → letter(s): 0→A, 25→Z, 26→AA …
-function CL(n) {
-  let s = ''; n++;
-  while (n > 0) { n--; s = String.fromCharCode(65 + n % 26) + s; n = Math.floor(n / 26); }
-  return s;
+async function appDataRead() {
+  const file = await appDataFind();
+  if (!file) return null;
+  const r = await driveReq(`/files/${file.id}?alt=media`);
+  if (!r.ok) return null;
+  try { return await r.json(); } catch { return null; }
+}
+
+async function appDataWrite(cfg) {
+  const file = await appDataFind();
+  const blob = new Blob([JSON.stringify(cfg)], { type: 'application/json' });
+
+  if (file) {
+    // PATCH esistente (solo il contenuto, non la metadata)
+    const form = new FormData();
+    form.append('file', blob);
+    await driveReq(
+      `/upload/files/${file.id}?uploadType=media`,
+      { method: 'PATCH', body: blob, headers: { 'Content-Type': 'application/json' } }
+    );
+  } else {
+    // POST nuovo file nella appDataFolder
+    const meta = JSON.stringify({ name: CONFIG_FILE, parents: ['appDataFolder'] });
+    const form = new FormData();
+    form.append('metadata', new Blob([meta], { type: 'application/json' }));
+    form.append('file', blob);
+    await fetch(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+      { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form }
+    );
+  }
 }
 
 // ═══════════════════════════════════════════════════
-// SPREADSHEET SETUP — FIX: Drive è ora la fonte di
-//   verità. Cerchiamo SEMPRE su Drive per trovare il
-//   file canonico (il più vecchio grazie a orderBy).
-//   localStorage è solo una cache per velocizzare i
-//   caricamenti successivi, non la fonte primaria.
-//   Questo risolve: file duplicati, desktop≠mobile.
+// SPREADSHEET SETUP
+// Priorità: 1) App Data Config  2) Drive search  3) Crea nuovo
 // ═══════════════════════════════════════════════════
 async function ensureSheet() {
-  // STEP 1: Cerca SEMPRE su Drive (fonte di verità)
-  // orderBy=createdTime assicura che files[0] sia sempre
-  // il file più vecchio = lo stesso su tutti i dispositivi
-  const files = await driveSearch();
+
+  // ── PRIORITÀ 1: App Data Folder (unica fonte di verità cross-device) ──
+  load('Ricerca foglio su Drive…');
+  const cfg = await appDataRead();
+  if (cfg?.sheetId) {
+    try {
+      await api('/' + cfg.sheetId + '?fields=spreadsheetId');
+      sheetId = cfg.sheetId;
+      localStorage.setItem('crm_sid', sheetId);
+      console.log('[CRM] sheetId da App Data:', sheetId);
+      return; // ← tutti i dispositivi puntano allo stesso foglio
+    } catch(e) {
+      console.warn('[CRM] Foglio in App Data non trovato, cerco su Drive…');
+    }
+  }
+
+  // ── PRIORITÀ 2: Ricerca su Drive per nome (fallback) ──
+  const q = `name='${SHEET_TITLE}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
+  const sr = await driveReq(`/files?q=${encodeURIComponent(q)}&fields=files(id)&orderBy=createdTime&pageSize=10`);
+  const files = (await sr.json()).files || [];
 
   if (files.length > 0) {
-    const canonicalId = files[0].id; // Il più vecchio = canonico
-
-    // Avvisa se ci sono duplicati (da sessioni precedenti buggose)
+    sheetId = files[0].id;
+    localStorage.setItem('crm_sid', sheetId);
+    // Salva in App Data così la prossima volta tutti i device la trovano subito
+    await appDataWrite({ sheetId });
+    console.log('[CRM] sheetId da Drive search, salvato in App Data:', sheetId);
     if (files.length > 1) {
-      console.warn(`[CRM] Trovati ${files.length} fogli su Drive. Uso il più vecchio.`);
-      toast(`⚠️ Trovati ${files.length} fogli duplicati su Drive. Uso il più vecchio. Elimina i duplicati manualmente da drive.google.com`, 7000);
+      toast(`⚠️ ${files.length} fogli duplicati trovati. Elimina i duplicati da drive.google.com`, 7000);
     }
-
-    // Aggiorna localStorage se punta a un file diverso
-    if (sheetId !== canonicalId) {
-      sheetId = canonicalId;
-      localStorage.setItem('crm_sid', sheetId);
-    }
-    return; // ← tutti i dispositivi usano lo stesso sheetId
+    return;
   }
 
-  // STEP 2: Nessun file su Drive → verifica cache localStorage
-  // (edge case: file eliminato manualmente da Drive)
-  if (sheetId) {
-    try { await api('/' + sheetId + '?fields=spreadsheetId'); return; }
-    catch(e) { sheetId = null; localStorage.removeItem('crm_sid'); }
-  }
-
-  // STEP 3: Nessun file trovato → crea nuovo foglio
+  // ── PRIORITÀ 3: Crea nuovo foglio ──
+  console.log('[CRM] Nessun foglio trovato, creo nuovo…');
   const ss = await api('', 'POST', {
     properties: { title: SHEET_TITLE },
     sheets: [{ properties: { title: TAB, sheetId: 0 } }]
   });
   sheetId = ss.spreadsheetId;
   localStorage.setItem('crm_sid', sheetId);
-  // Write fixed headers
+  // Salva subito in App Data
+  await appDataWrite({ sheetId });
+  console.log('[CRM] Nuovo foglio creato e salvato in App Data:', sheetId);
+  // Scrivi headers e formato
   await api(`/${sheetId}/values/${TAB}!A1?valueInputOption=RAW`, 'PUT', { values: [FIXED_H] });
-  // Format header row
   await api(`/${sheetId}:batchUpdate`, 'POST', { requests: [
     { repeatCell: { range: { sheetId: 0, startRowIndex: 0, endRowIndex: 1 },
       cell: { userEnteredFormat: { backgroundColor: { red: .083, green: .396, blue: .753 },
@@ -524,106 +561,79 @@ async function ensureSheet() {
 }
 
 async function loadHeaders() {
-  // Always read the actual header row from the sheet
   const d = await api(`/${sheetId}/values/${TAB}!1:1`);
   const existing = d.values?.[0] || [];
   headerMap = {};
   existing.forEach((h, i) => { if (h) headerMap[h] = i; });
-
-  // Add any FIXED_H headers missing from the sheet
   const missing = FIXED_H.filter(h => headerMap[h] === undefined);
   if (missing.length > 0) {
     const nextIdx = existing.filter(Boolean).length;
-    const startCol = CL(nextIdx);
-    const endCol   = CL(nextIdx + missing.length - 1);
+    const startCol = CL(nextIdx); const endCol = CL(nextIdx + missing.length - 1);
     await api(`/${sheetId}/values/${TAB}!${startCol}1:${endCol}1?valueInputOption=RAW`, 'PUT', { values: [missing] });
     missing.forEach((h, i) => { headerMap[h] = nextIdx + i; });
   }
-
-  // Track dynamic (Other Sources) columns
   dynCols = {};
-  Object.entries(headerMap).forEach(([h, i]) => {
-    if (!FIXED_H.includes(h)) dynCols[h] = i;
-  });
+  Object.entries(headerMap).forEach(([h, i]) => { if (!FIXED_H.includes(h)) dynCols[h] = i; });
 }
 
 // ═══════════════════════════════════════════════════
 // DATA FETCH
 // ═══════════════════════════════════════════════════
 async function fetchContacts() {
-  // Read all columns (A to far right — ZZ covers up to 702 cols)
   const d = await api(`/${sheetId}/values/${TAB}!A:ZZ`);
   const rows = d.values || [];
   if (rows.length < 2) { contacts = []; return; }
-
-  // Rebuild headerMap from actual sheet (first row)
   const hrow = rows[0];
   headerMap = {};
   hrow.forEach((h, i) => { if (h) headerMap[h] = i; });
   dynCols = {};
   Object.entries(headerMap).forEach(([h, i]) => { if (!FIXED_H.includes(h)) dynCols[h] = i; });
-
-  const g = (row, key) => {
-    const idx = headerMap[key];
-    return (idx !== undefined && row[idx]) ? row[idx] : '';
-  };
-
+  const g = (row, key) => { const idx = headerMap[key]; return (idx !== undefined && row[idx]) ? row[idx] : ''; };
   contacts = rows.slice(1).filter(r => g(r,'ID')).map(r => {
     const otherSources = {};
     Object.entries(dynCols).forEach(([name, idx]) => { if (r[idx]) otherSources[name] = r[idx]; });
     return {
-      id:            g(r,'ID'),
-      nome:          g(r,'Nome'),
-      cognome:       g(r,'Cognome'),
-      azienda:       g(r,'Azienda'),
-      email:         g(r,'Email'),
-      telefono:      g(r,'Telefono'),
-      categoria:     g(r,'Categoria'),
-      sito:          g(r,'Sito Web'),
-      linkedin:      g(r,'LinkedIn'),
-      role:          g(r,'Role'),
-      contattoHot:   g(r,'Contatto Hot'),
-      crypto:        g(r,'CRYPTO'),
-      regulated:     g(r,'Regulated'),
-      mainGeo:       g(r,'Main GEO'),
-      locatedIn:     g(r,'Located In'),
-      tags:          g(r,'Tags').split(',').map(t=>t.trim()).filter(Boolean),
-      note:          g(r,'Note'),
-      dataCreazione: g(r,'Data Creazione'),
-      ultimaModifica:g(r,'Ultima Modifica'),
-      otherSources
+      id: g(r,'ID'), nome: g(r,'Nome'), cognome: g(r,'Cognome'), azienda: g(r,'Azienda'),
+      email: g(r,'Email'), telefono: g(r,'Telefono'), categoria: g(r,'Categoria'),
+      sito: g(r,'Sito Web'), linkedin: g(r,'LinkedIn'), role: g(r,'Role'),
+      contattoHot: g(r,'Contatto Hot'), crypto: g(r,'CRYPTO'), regulated: g(r,'Regulated'),
+      mainGeo: g(r,'Main GEO'), locatedIn: g(r,'Located In'),
+      tags: g(r,'Tags').split(',').map(t=>t.trim()).filter(Boolean),
+      note: g(r,'Note'), dataCreazione: g(r,'Data Creazione'),
+      ultimaModifica: g(r,'Ultima Modifica'), otherSources
     };
   });
 }
 
 // ═══════════════════════════════════════════════════
-// ROW BUILD (maps contact fields to actual column positions)
+// ROW BUILD
 // ═══════════════════════════════════════════════════
 function buildRow(contact, id, createdAt, updatedAt) {
   const totalCols = Math.max(...Object.values(headerMap)) + 1;
   const row = new Array(totalCols).fill('');
   const set = (key, val) => { const i = headerMap[key]; if (i !== undefined) row[i] = val || ''; };
-  set('ID', id);
-  set('Nome', contact.nome); set('Cognome', contact.cognome); set('Azienda', contact.azienda);
+  set('ID', id); set('Nome', contact.nome); set('Cognome', contact.cognome); set('Azienda', contact.azienda);
   set('Email', contact.email); set('Telefono', contact.telefono); set('Categoria', contact.categoria);
-  set('Sito Web', contact.sito); set('LinkedIn', contact.linkedin);
-  set('Role', contact.role); set('Contatto Hot', contact.contattoHot);
-  set('CRYPTO', contact.crypto); set('Regulated', contact.regulated);
+  set('Sito Web', contact.sito); set('LinkedIn', contact.linkedin); set('Role', contact.role);
+  set('Contatto Hot', contact.contattoHot); set('CRYPTO', contact.crypto); set('Regulated', contact.regulated);
   set('Main GEO', contact.mainGeo); set('Located In', contact.locatedIn);
-  set('Tags', (contact.tags||[]).join(','));
-  set('Note', contact.note);
+  set('Tags', (contact.tags||[]).join(',')); set('Note', contact.note);
   set('Data Creazione', createdAt); set('Ultima Modifica', updatedAt);
   Object.entries(contact.otherSources||{}).forEach(([k,v]) => { const i = headerMap[k]; if (i !== undefined) row[i] = v||''; });
   return row;
 }
 
-// Ensure a dynamic column exists in the sheet header row
+function CL(n) {
+  let s = ''; n++;
+  while (n > 0) { n--; s = String.fromCharCode(65 + n % 26) + s; n = Math.floor(n / 26); }
+  return s;
+}
+
 async function ensureDynCol(name) {
   if (headerMap[name] !== undefined) return;
   const nextIdx = Math.max(...Object.values(headerMap)) + 1;
   await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1?valueInputOption=RAW`, 'PUT', { values: [[name]] });
-  headerMap[name] = nextIdx;
-  dynCols[name]   = nextIdx;
+  headerMap[name] = nextIdx; dynCols[name] = nextIdx;
 }
 
 // ═══════════════════════════════════════════════════
@@ -632,7 +642,6 @@ async function ensureDynCol(name) {
 async function appendRow(row) {
   await api(`/${sheetId}/values/${TAB}!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, 'POST', { values: [row] });
 }
-
 async function updateRow(id, row) {
   const d = await api(`/${sheetId}/values/${TAB}!A:A`);
   const ids = (d.values||[]).map(r=>r[0]||'');
@@ -641,7 +650,6 @@ async function updateRow(id, row) {
   const lastCol = CL(row.length - 1);
   await api(`/${sheetId}/values/${TAB}!A${idx+1}:${lastCol}${idx+1}?valueInputOption=RAW`, 'PUT', { values: [row] });
 }
-
 async function deleteRow(id) {
   const d = await api(`/${sheetId}/values/${TAB}!A:A`);
   const ids = (d.values||[]).map(r=>r[0]||'');
@@ -692,10 +700,8 @@ function openCal(contactId) {
   document.getElementById('cal-s').value    = '10:00';
   document.getElementById('cal-e').value    = '11:00';
   document.getElementById('cal-desc').value = '';
-  setCalMode('a');
-  closeM('det-ov'); openM('cal-ov');
+  setCalMode('a'); closeM('det-ov'); openM('cal-ov');
 }
-
 function setCalMode(m) {
   calMode = m;
   document.getElementById('cm-a').classList.toggle('active', m==='a');
@@ -708,40 +714,38 @@ function setCalMode(m) {
     addGuest(c?.email||'');
   }
 }
-
 function addGuest(email) {
   const gl = document.getElementById('guests-list');
   const d = document.createElement('div'); d.className = 'guest-r';
   d.innerHTML = `<input class="fi" type="email" placeholder="email@esempio.com" value="${esc(email)}"><button class="grm" onclick="this.parentElement.remove()">✕</button>`;
   gl.appendChild(d);
 }
-
 async function createCalEvent() {
-  const tit  = document.getElementById('cal-tit').value.trim();
-  const data = document.getElementById('cal-d').value;
-  const s    = document.getElementById('cal-s').value;
-  const e    = document.getElementById('cal-e').value;
-  const desc = document.getElementById('cal-desc').value.trim();
-  if (!tit)  { toast('⚠️ Inserisci un titolo'); return; }
-  if (!data) { toast('⚠️ Seleziona una data');   return; }
+  const tit=document.getElementById('cal-tit').value.trim();
+  const data=document.getElementById('cal-d').value;
+  const s=document.getElementById('cal-s').value;
+  const e=document.getElementById('cal-e').value;
+  const desc=document.getElementById('cal-desc').value.trim();
+  if (!tit) { toast('⚠️ Inserisci un titolo'); return; }
+  if (!data) { toast('⚠️ Seleziona una data'); return; }
   const ev = {
-    summary: tit, description: desc,
-    start: { dateTime: `${data}T${s}:00`, timeZone: 'Europe/Rome' },
-    end:   { dateTime: `${data}T${e}:00`, timeZone: 'Europe/Rome' },
-    reminders: { useDefault: true }
+    summary:tit, description:desc,
+    start:{ dateTime:`${data}T${s}:00`, timeZone:'Europe/Rome' },
+    end:  { dateTime:`${data}T${e}:00`, timeZone:'Europe/Rome' },
+    reminders:{ useDefault:true }
   };
   if (calMode==='b') {
-    const gs = [...document.querySelectorAll('#guests-list .guest-r input')].map(i=>i.value.trim()).filter(Boolean);
-    if (gs.length) { ev.attendees = gs.map(email=>({email})); ev.sendUpdates = 'all'; }
+    const gs=[...document.querySelectorAll('#guests-list .guest-r input')].map(i=>i.value.trim()).filter(Boolean);
+    if (gs.length) { ev.attendees=gs.map(email=>({email})); ev.sendUpdates='all'; }
   }
   closeM('cal-ov'); load('Creazione evento…');
   try {
-    const r = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
+    const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
       method:'POST', headers:{ Authorization:'Bearer '+token, 'Content-Type':'application/json' }, body:JSON.stringify(ev)
     });
-    const d2 = await r.json();
+    const d2=await r.json();
     if (!r.ok) throw new Error(d2.error?.message||'Errore Calendar');
-    hideLoad(); toast(calMode==='b' ? '✅ Invito inviato a tutti!' : '✅ Reminder creato nel calendario!');
+    hideLoad(); toast(calMode==='b'?'✅ Invito inviato a tutti!':'✅ Reminder creato nel calendario!');
   } catch(e) { hideLoad(); toast('❌ '+e.message); console.error(e); }
 }
 
@@ -756,55 +760,46 @@ function render() {
   document.getElementById('n-fo').textContent = contacts.filter(c=>c.categoria==='Fornitore').length;
   document.getElementById('n-pr').textContent = contacts.filter(c=>c.categoria==='Prospect').length;
   document.getElementById('n-al').textContent = contacts.filter(c=>!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria)).length;
-
-  // Tag filter chips
   const allTags = [...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean).sort();
-  const tfw = document.getElementById('tag-fw');
   document.getElementById('tag-chips').innerHTML = allTags.map(t=>
-    `<div class="chip tg ${tagFilter===t?'active':''}" onclick="setTF('${esc(t)}')">${esc(t)}</div>`
-  ).join('');
-  tfw.style.display = allTags.length ? 'block' : 'none';
-
+    `<div class="chip tg ${tagFilter===t?'active':''}" onclick="setTF('${esc(t)}')">${esc(t)}</div>`).join('');
+  document.getElementById('tag-fw').style.display = allTags.length ? 'block' : 'none';
   let list = contacts.filter(c => {
     const catOk = catFilter==='tutti'||c.categoria===catFilter||(catFilter==='Altro'&&!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria));
     const tagOk = !tagFilter||c.tags.includes(tagFilter);
     const srOk  = !q||`${c.nome} ${c.cognome} ${c.azienda} ${c.email} ${c.telefono} ${c.mainGeo} ${c.tags.join(' ')}`.toLowerCase().includes(q);
     return catOk && tagOk && srOk;
   }).sort((a,b)=>`${a.nome}${a.cognome}`.localeCompare(`${b.nome}${b.cognome}`));
-
   const el = document.getElementById('list');
   if (!list.length) {
     el.innerHTML = `<div class="empty"><div class="ei">${q||tagFilter?'🔍':'👥'}</div><div class="et">${q||tagFilter?'Nessun risultato':'Nessun contatto'}</div><div class="es">${q||tagFilter?'Prova altri filtri':'Premi <strong>+</strong> per aggiungere il primo contatto'}</div></div>`;
     return;
   }
   el.innerHTML = list.map(c => {
-    const init = ((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
-    const bc   = 'b-'+(c.categoria||'altro').toLowerCase();
-    const name = [c.nome,c.cognome].filter(Boolean).join(' ');
-    const sub  = c.azienda||c.email||'—';
-    const pills = [
+    const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
+    const bc='b-'+(c.categoria||'altro').toLowerCase();
+    const name=[c.nome,c.cognome].filter(Boolean).join(' ');
+    const sub=c.azienda||c.email||'—';
+    const pills=[
       ...c.tags.map(t=>`<span class="cpill cpill-tag">${esc(t)}</span>`),
-      c.contattoHot ? `<span class="cpill cpill-hot">${esc(c.contattoHot)}</span>` : '',
-      c.mainGeo     ? `<span class="cpill cpill-geo">🌍 ${esc(c.mainGeo)}</span>` : '',
+      c.contattoHot?`<span class="cpill cpill-hot">${esc(c.contattoHot)}</span>`:'',
+      c.mainGeo?`<span class="cpill cpill-geo">🌍 ${esc(c.mainGeo)}</span>`:''
     ].join('');
     return `<div class="card" onclick="openDetail('${c.id}')">
       <div class="av" style="background:${avBg(c.id)}">${esc(init)}</div>
-      <div class="ci">
-        <div class="cn">${esc(name)}</div>
-        <div class="cs">${esc(sub)}</div>
+      <div class="ci"><div class="cn">${esc(name)}</div><div class="cs">${esc(sub)}</div>
         ${pills?`<div class="card-pills">${pills}</div>`:''}
       </div>
       ${c.categoria?`<span class="badge ${bc}">${esc(c.categoria)}</span>`:''}
     </div>`;
   }).join('');
 }
-
 function setCF(el) {
-  catFilter = el.dataset.f;
+  catFilter=el.dataset.f;
   document.querySelectorAll('#cat-chips .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active'); render();
 }
-function setTF(t) { tagFilter = tagFilter===t?null:t; render(); }
+function setTF(t) { tagFilter=tagFilter===t?null:t; render(); }
 
 // ═══════════════════════════════════════════════════
 // TAG INPUT
@@ -812,7 +807,7 @@ function setTF(t) { tagFilter = tagFilter===t?null:t; render(); }
 function handleTag(e) {
   if (e.key==='Enter'||e.key===',') {
     e.preventDefault();
-    const v = e.target.value.replace(/,/g,'').trim();
+    const v=e.target.value.replace(/,/g,'').trim();
     if (v&&!formTags.includes(v)) { formTags.push(v); renderPills(); }
     e.target.value='';
   }
@@ -821,28 +816,26 @@ function handleTag(e) {
 function rmTag(t) { formTags=formTags.filter(x=>x!==t); renderPills(); }
 function renderPills() {
   document.getElementById('tag-pills').innerHTML = formTags.map(t=>
-    `<span class="tpill">${esc(t)}<button type="button" onclick="rmTag('${esc(t)}')" tabindex="-1">×</button></span>`
-  ).join('');
+    `<span class="tpill">${esc(t)}<button type="button" onclick="rmTag('${esc(t)}')" tabindex="-1">×</button></span>`).join('');
 }
 
 // ═══════════════════════════════════════════════════
 // OTHER SOURCES
 // ═══════════════════════════════════════════════════
 function addSrcRow(name, val) {
-  const c = document.getElementById('src-container');
-  const d = document.createElement('div'); d.className = 'src-row';
-  d.innerHTML = `<input class="fi src-n" type="text" placeholder="Nome fonte (es. Telegram)" value="${esc(name)}">
+  const c=document.getElementById('src-container');
+  const d=document.createElement('div'); d.className='src-row';
+  d.innerHTML=`<input class="fi src-n" type="text" placeholder="Nome fonte (es. Telegram)" value="${esc(name)}">
     <input class="fi src-v" type="text" placeholder="Valore" value="${esc(val)}">
     <button type="button" class="src-del" onclick="this.parentElement.remove()">✕</button>`;
   c.appendChild(d);
 }
-
 function getSources() {
-  const out = {};
+  const out={};
   document.querySelectorAll('#src-container .src-row').forEach(row => {
-    const n = row.querySelector('.src-n').value.trim();
-    const v = row.querySelector('.src-v').value.trim();
-    if (n) out[n] = v;
+    const n=row.querySelector('.src-n').value.trim();
+    const v=row.querySelector('.src-v').value.trim();
+    if (n) out[n]=v;
   });
   return out;
 }
@@ -862,7 +855,6 @@ function openAdd() {
   renderPills(); openM('form-ov');
   setTimeout(()=>document.getElementById('f-nome').focus(),350);
 }
-
 function openEdit(id) {
   const c=contacts.find(x=>x.id===id); if(!c) return;
   editingId=id; formTags=[...(c.tags||[])];
@@ -876,12 +868,10 @@ function openEdit(id) {
   document.getElementById('f-crypto').value=c.crypto; document.getElementById('f-reg').value=c.regulated;
   document.getElementById('f-geo').value=c.mainGeo; document.getElementById('f-loc').value=c.locatedIn;
   document.getElementById('f-note').value=c.note; document.getElementById('f-ti').value='';
-  // Sources
   document.getElementById('src-container').innerHTML='';
   Object.entries(c.otherSources||{}).forEach(([n,v])=>addSrcRow(n,v));
   renderPills(); closeM('det-ov'); openM('form-ov');
 }
-
 async function saveContact() {
   const nome=document.getElementById('f-nome').value.trim();
   if(!nome){toast('⚠️ Il nome è obbligatorio');return;}
@@ -907,19 +897,18 @@ async function saveContact() {
   const isEdit=!!editingId;
   load(isEdit?'Aggiornamento…':'Salvataggio…'); setSS('syncing');
   try {
-    // Ensure dynamic columns exist for new sources
     for (const name of Object.keys(sources)) await ensureDynCol(name);
     const now=fmtDate(new Date());
     if (isEdit) {
       const orig=contacts.find(c=>c.id===editingId);
-      const row=buildRow(data, editingId, orig?.dataCreazione||now, now);
-      await updateRow(editingId, row);
+      const row=buildRow(data,editingId,orig?.dataCreazione||now,now);
+      await updateRow(editingId,row);
       const i=contacts.findIndex(c=>c.id===editingId);
       if(i!==-1) contacts[i]={...contacts[i],...data,ultimaModifica:now};
       toast('✅ Contatto aggiornato!');
     } else {
       const id=Date.now().toString();
-      const row=buildRow(data, id, now, now);
+      const row=buildRow(data,id,now,now);
       await appendRow(row);
       contacts.push({...data,id,dataCreazione:now,ultimaModifica:now});
       toast('✅ Contatto salvato!');
@@ -937,7 +926,7 @@ function openDetail(id) {
   const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
   const bc='b-'+(c.categoria||'altro').toLowerCase();
   const F=(icon,lbl,val,link=null)=>val?`<div class="df"><div class="dfi">${icon}</div><div class="dfc"><div class="dfl">${lbl}</div><div class="dfv">${link?`<a href="${link}" target="_blank">${esc(val)}</a>`:esc(val)}</div></div></div>`:'';
-  const srcHtml = Object.entries(c.otherSources||{}).map(([k,v])=>F('🔗',k,v)).join('');
+  const srcHtml=Object.entries(c.otherSources||{}).map(([k,v])=>F('🔗',k,v)).join('');
   document.getElementById('det-content').innerHTML=`
     <div class="mh"><div class="mt">Dettagli</div><button class="mx" onclick="closeM('det-ov')">✕</button></div>
     <div class="dav-w">
@@ -975,7 +964,6 @@ function openDetail(id) {
     </div>`;
   openM('det-ov');
 }
-
 async function doDelete(id) {
   const c=contacts.find(x=>x.id===id);
   const name=c?[c.nome,c.cognome].filter(Boolean).join(' '):id;
