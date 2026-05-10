@@ -1,6 +1,7 @@
-// Partner CRM Service Worker v4
+// Partner CRM Service Worker v5
 // Network-first for everything. API calls are NEVER cached.
-const CACHE = 'partner-crm-v4';
+// v5: bumped to force cache invalidation after sync bug fix
+const CACHE = 'partner-crm-v5';
 const SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 const NO_CACHE = ['googleapis.com', 'accounts.google.com', 'docs.google.com'];
 
