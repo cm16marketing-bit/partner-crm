@@ -2,7 +2,7 @@
   "name": "Partner CRM",
   "short_name": "CRM",
   "description": "Gestisci i tuoi contatti commerciali",
-  "start_url": "/index.html",
+  "start_url": "/partner-crm/",
   "display": "standalone",
   "background_color": "#f3f3f3",
   "theme_color": "#014486",
