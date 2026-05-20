@@ -798,8 +798,12 @@ function showTagAC(query) {
   const ac=document.getElementById('tag-ac');
   if(!query){ ac.style.display='none'; return; }
   const q=query.toLowerCase();
-  const allTags=[...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean);
-  const matches=allTags.filter(t=>t.toLowerCase().includes(q)&&!formTags.includes(t));
+  // Build frequency map: tag → number of contacts using it
+  const freq={};
+  contacts.forEach(c=>c.tags.forEach(t=>{ if(t) freq[t]=(freq[t]||0)+1; }));
+  const matches=Object.keys(freq)
+    .filter(t=>t.toLowerCase().includes(q)&&!formTags.includes(t))
+    .sort((a,b)=>(freq[b]-freq[a])||a.localeCompare(b));
   const trimmed=query.trim();
   let html=matches.slice(0,7).map(t=>
     `<div class="tag-ac-item tag-ac-exist" onmousedown="addTagFromAC('${esc(t)}')">🏷️ ${esc(t)}</div>`
