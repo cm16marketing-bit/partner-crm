@@ -319,6 +319,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <input class="tag-inner" id="f-ti" placeholder="Scrivi e premi Invio…"
             onkeydown="handleTag(event)"
             oninput="showTagAC(this.value)"
+            onfocus="showTagAC(this.value)"
             onblur="hideTagAC()"
             autocomplete="off">
         </div>
@@ -796,18 +797,20 @@ function handleTag(e) {
 
 function showTagAC(query) {
   const ac=document.getElementById('tag-ac');
-  if(!query){ ac.style.display='none'; return; }
-  const q=query.toLowerCase();
+  const q=(query||'').toLowerCase();
   // Build frequency map: tag → number of contacts using it
   const freq={};
   contacts.forEach(c=>c.tags.forEach(t=>{ if(t) freq[t]=(freq[t]||0)+1; }));
-  const matches=Object.keys(freq)
-    .filter(t=>t.toLowerCase().includes(q)&&!formTags.includes(t))
+  const allSorted=Object.keys(freq)
     .sort((a,b)=>(freq[b]-freq[a])||a.localeCompare(b));
-  const trimmed=query.trim();
-  let html=matches.slice(0,7).map(t=>
+  if(!allSorted.length){ ac.style.display='none'; return; }
+  const matches=allSorted
+    .filter(t=>(!q||t.toLowerCase().includes(q))&&!formTags.includes(t));
+  const trimmed=(query||'').trim();
+  let html=matches.slice(0,8).map(t=>
     `<div class="tag-ac-item tag-ac-exist" onmousedown="addTagFromAC('${esc(t)}')">🏷️ ${esc(t)}</div>`
   ).join('');
+  // "Crea" option only when user has typed something not already existing
   if(trimmed&&!matches.some(t=>t.toLowerCase()===q)&&!formTags.includes(trimmed))
     html+=`<div class="tag-ac-item tag-ac-new" onmousedown="addTagFromAC('${esc(trimmed)}')">➕ Crea "<strong>${esc(trimmed)}</strong>"</div>`;
   if(!html){ ac.style.display='none'; return; }
