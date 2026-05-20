@@ -113,13 +113,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .bcal{background:#0277bd;color:#fff}
 .bgrn{background:var(--grn);color:#fff}
 
-/* TAG INPUT */
+/* TAG INPUT + AUTOCOMPLETE */
+.tag-wrap{position:relative}
 .tag-box{background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:7px 9px;display:flex;flex-wrap:wrap;gap:5px;cursor:text;transition:border-color .15s;min-height:44px}
 .tag-box:focus-within{border-color:var(--p);background:#fff}
 .tpill{display:flex;align-items:center;gap:4px;background:var(--grn);color:#fff;border-radius:8px;padding:3px 8px;font-size:12.5px;font-weight:600}
 .tpill button{background:none;border:none;color:rgba(255,255,255,.8);cursor:pointer;font-size:13px;line-height:1;padding:0;display:flex;align-items:center}
 .tag-inner{border:none;background:none;outline:none;font-size:14px;color:var(--tx);min-width:80px;flex:1;padding:2px 4px;font-family:inherit}
 .tag-hint{font-size:11px;color:var(--ts);margin-top:3px}
+/* autocomplete dropdown */
+.tag-ac{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--sf);border:2px solid var(--p);border-radius:12px;box-shadow:var(--shl);z-index:400;max-height:200px;overflow-y:auto;display:none}
+.tag-ac-item{padding:10px 14px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;transition:background .1s}
+.tag-ac-item:hover{background:var(--bg)}
+.tag-ac-item:first-child{border-radius:10px 10px 0 0}
+.tag-ac-item:last-child{border-radius:0 0 10px 10px}
+.tag-ac-exist{color:var(--grn)}
+.tag-ac-new{color:var(--p)}
+
+/* FONTI multi-entry */
+.fonte-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.fonte-row .fi{flex:1;padding:9px 12px;font-size:14px}
+.fonte-del{background:none;border:none;cursor:pointer;font-size:18px;color:var(--red);padding:4px 6px;border-radius:6px;flex-shrink:0;transition:background .1s}
+.fonte-del:hover{background:#ffebee}
+.add-fonte{display:flex;align-items:center;gap:6px;background:none;border:1.5px dashed var(--bd);border-radius:10px;padding:8px 14px;width:100%;cursor:pointer;color:var(--ts);font-size:14px;font-weight:600;margin-top:2px;transition:all .15s;font-family:inherit}
+.add-fonte:hover{border-color:var(--p);color:var(--p)}
 
 /* OTHER SOURCES */
 .src-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
@@ -139,7 +156,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .dtag-tag{background:#e8f5e9;color:var(--grn)}
 .dtag-hot{background:#fff8e1;color:#e65100}
 .dtag-geo{background:#e3f2fd;color:var(--p)}
-.dtag-src{background:#f3e5f5;color:#6a1b9a}
 .dfs{padding:14px 20px}
 .df{margin-bottom:13px;display:flex;align-items:flex-start;gap:11px}
 .dfi{font-size:17px;margin-top:1px;flex-shrink:0;width:22px;text-align:center}
@@ -148,6 +164,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .dfv{font-size:15px;color:var(--tx);word-break:break-word}
 .dfv a{color:var(--p);text-decoration:none}
 .dfv a:hover{text-decoration:underline}
+.dfv-list{display:flex;flex-direction:column;gap:4px}
 .cal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 10px}
 .da{display:flex;gap:10px;padding:0 20px 20px}
 
@@ -162,50 +179,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .add-guest{display:flex;align-items:center;gap:6px;background:none;border:1.5px dashed var(--bd);border-radius:10px;padding:9px 14px;width:100%;cursor:pointer;color:var(--ts);font-size:14px;font-weight:600;margin-top:8px;transition:all .15s;font-family:inherit}
 .add-guest:hover{border-color:var(--p);color:var(--p)}
 
-/* LOADING */
+/* LOADING / TOAST */
 .ldo{position:fixed;inset:0;background:rgba(255,255,255,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500}
 .sp{width:42px;height:42px;border:4px solid var(--bd);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .ldt{color:var(--ts);font-size:15px;font-weight:600}
-
-/* TOAST */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a1a2e;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* FILTER BAR */
-.fbar{display:flex;align-items:center;gap:6px;padding:7px 14px 7px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bd);background:var(--sf);min-height:42px}
-.fbar::-webkit-scrollbar{display:none}
-.fbar-btn{display:flex;align-items:center;gap:5px;background:var(--p);color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;transition:opacity .15s;font-family:inherit}
-.fbar-btn:hover{opacity:.85}
-.fbar-btn.has-filters{background:var(--ac)}
-.fbadge{display:flex;align-items:center;gap:4px;background:#e3f2fd;color:var(--p);border-radius:20px;padding:4px 9px;font-size:11.5px;font-weight:600;flex-shrink:0;white-space:nowrap}
-.fbadge button{background:none;border:none;cursor:pointer;color:var(--p);font-size:14px;line-height:1;padding:0;opacity:.65;display:flex;align-items:center}
-.fbadge button:hover{opacity:1}
-.fbar-clear{background:none;border:none;color:var(--ts);font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;padding:4px 6px;border-radius:6px;transition:background .15s;font-family:inherit}
-.fbar-clear:hover{background:var(--bd)}
-
-/* FILTER PANEL */
-.fp-sec{font-size:10.5px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.7px;margin:14px 0 7px}
-.fchips{display:flex;flex-wrap:wrap;gap:6px}
-.fchip{background:var(--bg);border:1.5px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--ts);cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap}
-.fchip:hover{border-color:var(--p);color:var(--p)}
-.fchip.on{background:var(--p);color:#fff;border-color:var(--p)}
-.fchip.on-hot{background:#fff8e1;color:#e65100;border-color:#e65100}
-.fchip.on-tag{background:#e8f5e9;color:var(--grn);border-color:var(--grn)}
-.fchip.on-crypto-si{background:#e8f5e9;color:var(--grn);border-color:var(--grn)}
-.fchip.on-crypto-no{background:#ffebee;color:var(--red);border-color:var(--red)}
-
-/* AUTOCOMPLETE */
-.ac-wrap{position:relative}
-.ac-inp{width:100%;background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:15px;color:var(--tx);outline:none;transition:border-color .15s;font-family:inherit}
-.ac-inp:focus{border-color:var(--p);background:#fff}
-.ac-drop{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;margin-top:4px;overflow:hidden;display:none}
-.ac-item{padding:10px 13px;font-size:14px;cursor:pointer;transition:background .12s;color:var(--tx)}
-.ac-item:hover{background:var(--bg)}
-.ac-item strong{color:var(--p)}
-.fp-mh{display:flex;align-items:center;justify-content:space-between}
-.fp-reset{background:none;border:none;color:var(--ts);font-size:13px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:8px;font-family:inherit}
-.fp-reset:hover{background:var(--bg);color:var(--red)}
   </style>
 </head>
 <body>
@@ -252,22 +232,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="chips-row" id="tag-chips"></div>
   </div>
 
-  <!-- FILTER BAR -->
-  <div class="fbar" id="fbar">
-    <button class="fbar-btn" id="fbar-btn" onclick="openFilters()">⚡ Filtri</button>
-    <div id="fbar-badges" style="display:flex;gap:6px;align-items:center;flex-shrink:0"></div>
-    <button class="fbar-clear" id="fbar-clear" style="display:none" onclick="resetFilters()">Azzera tutto</button>
-  </div>
-
   <div class="list" id="list"></div>
   <button class="fab" onclick="openAdd()">+</button>
 </div>
 
-<!-- LOADING -->
+<!-- LOADING / TOAST -->
 <div class="ldo" id="loader"><div class="sp"></div><div class="ldt" id="ldtxt">Caricamento…</div></div>
 <div class="toast" id="toast"></div>
 
-<!-- FORM MODAL -->
+<!-- ══ FORM MODAL ══ -->
 <div class="ov" id="form-ov" onclick="ovc(event,'form-ov')">
 <div class="modal">
   <div class="mh"><div class="mt" id="ftitle">Nuovo Contatto</div><button class="mx" onclick="closeM('form-ov')">✕</button></div>
@@ -287,8 +260,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="fg"><label class="fl">Telefono</label><input class="fi" id="f-tel" type="tel" placeholder="+39 333…"></div>
     </div>
     <div class="frow">
+      <div class="fg"><label class="fl">Telegram</label><input class="fi" id="f-telegram" type="text" placeholder="@username"></div>
       <div class="fg"><label class="fl">LinkedIn</label><input class="fi" id="f-linkedin" type="url" placeholder="https://linkedin.com/in/…"></div>
-      <div class="fg"><label class="fl">Sito Web</label><input class="fi" id="f-sito" type="url" placeholder="https://…"></div>
+    </div>
+    <!-- FONTI multi-entry -->
+    <div class="fg">
+      <label class="fl">Fonti <span style="font-weight:400;text-transform:none;font-size:10px;letter-spacing:0">(premi Invio per aggiungerne un'altra)</span></label>
+      <div id="fonti-container"></div>
+      <button type="button" class="add-fonte" onclick="addFonteRow('')">＋ Aggiungi fonte</button>
     </div>
 
     <div class="fsec">🏷️ Classificazione</div>
@@ -334,11 +313,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
     <div class="fsec">🏷️ Tag</div>
     <div class="fg">
-      <div class="tag-box" onclick="document.getElementById('f-ti').focus()">
-        <div id="tag-pills"></div>
-        <input class="tag-inner" id="f-ti" placeholder="Scrivi e premi Invio…" onkeydown="handleTag(event)" autocomplete="off">
+      <div class="tag-wrap">
+        <div class="tag-box" onclick="document.getElementById('f-ti').focus()">
+          <div id="tag-pills"></div>
+          <input class="tag-inner" id="f-ti" placeholder="Scrivi e premi Invio…"
+            onkeydown="handleTag(event)"
+            oninput="showTagAC(this.value)"
+            onblur="hideTagAC()"
+            autocomplete="off">
+        </div>
+        <div class="tag-ac" id="tag-ac"></div>
       </div>
-      <div class="tag-hint">Premi <strong>Invio</strong> o <strong>,</strong> per aggiungere un tag</div>
+      <div class="tag-hint">Premi <strong>Invio</strong> o <strong>,</strong> · Suggerimenti dai tag esistenti</div>
     </div>
 
     <div class="fsec">🔗 Other Sources <span style="font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">(ogni fonte = nuova colonna nel foglio Drive)</span></div>
@@ -356,12 +342,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<!-- DETAIL MODAL -->
+<!-- ══ DETAIL MODAL ══ -->
 <div class="ov" id="det-ov" onclick="ovc(event,'det-ov')">
   <div class="modal"><div id="det-content"></div></div>
 </div>
 
-<!-- CALENDAR MODAL -->
+<!-- ══ CALENDAR MODAL ══ -->
 <div class="ov" id="cal-ov" onclick="ovc(event,'cal-ov')">
 <div class="modal">
   <div class="mh"><div class="mt">📅 Crea Evento Calendario</div><button class="mx" onclick="closeM('cal-ov')">✕</button></div>
@@ -392,63 +378,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<!-- FILTER MODAL -->
-<div class="ov" id="filter-ov" onclick="ovc(event,'filter-ov')">
-<div class="modal">
-  <div class="mh">
-    <div class="fp-mh" style="width:100%">
-      <div class="mt">⚡ Filtri</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <button class="fp-reset" onclick="resetFilters()">🗑 Azzera</button>
-        <button class="mx" onclick="closeM('filter-ov')">✕</button>
-      </div>
-    </div>
-  </div>
-  <div class="mb">
-
-    <div class="fp-sec">🏢 Azienda</div>
-    <div class="ac-wrap">
-      <input class="ac-inp" id="fp-azienda" type="text" placeholder="Cerca azienda…" oninput="fpAC('fp-azienda','azienda')" autocomplete="off">
-      <div class="ac-drop" id="fp-azienda-drop"></div>
-    </div>
-
-    <div class="fp-sec">🔐 Crypto</div>
-    <div class="fchips" id="fp-crypto-chips">
-      <button class="fchip" data-v="" onclick="fpCrypto(this)">Tutti</button>
-      <button class="fchip" data-v="Sì" onclick="fpCrypto(this)">✅ Sì</button>
-      <button class="fchip" data-v="No" onclick="fpCrypto(this)">❌ No</button>
-    </div>
-
-    <div class="fp-sec">⭐ Priorità contatto</div>
-    <div class="fchips" id="fp-hot-chips">
-      <button class="fchip" data-v="C-Level" onclick="fpHot(this)">⭐⭐⭐ C-Level</button>
-      <button class="fchip" data-v="Importante" onclick="fpHot(this)">⭐⭐ Importante</button>
-      <button class="fchip" data-v="Medio" onclick="fpHot(this)">⭐ Medio</button>
-    </div>
-
-    <div class="fp-sec">🌍 Main GEO</div>
-    <select class="fs" id="fp-geo" onchange="fpLiveRender()">
-      <option value="">— Tutti i GEO —</option>
-    </select>
-
-    <div class="fp-sec">📍 Città (Located In)</div>
-    <div class="ac-wrap">
-      <input class="ac-inp" id="fp-citta" type="text" placeholder="es. Milano, Roma…" oninput="fpAC('fp-citta','locatedIn')" autocomplete="off">
-      <div class="ac-drop" id="fp-citta-drop"></div>
-    </div>
-
-    <div class="fp-sec">🏷️ Tag</div>
-    <div class="fchips" id="fp-tag-chips"></div>
-
-    <div class="fa" style="margin-top:20px">
-      <button class="btn bs" onclick="closeM('filter-ov')">Chiudi</button>
-      <button class="btn bp" onclick="applyFilters()">✅ Applica filtri</button>
-    </div>
-
-  </div>
-</div>
-</div>
-
 <script>
 // ═══════════════════════════════════════════════════
 // CONFIG
@@ -457,9 +386,18 @@ const CLIENT_ID   = '525708495290-u14oducrh67egbjcueh8o1pd088oe60c.apps.googleus
 const SCOPES      = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/calendar.events';
 const SHEET_TITLE = 'Partner CRM - Contatti';
 const TAB         = 'Contatti';
-const CONFIG_FILE = '_crm_sync_config'; // File di config nel Drive normale
 
-const FIXED_H = ['ID','Nome','Cognome','Azienda','Email','Telefono','Categoria','Sito Web','LinkedIn','Role','Contatto Hot','CRYPTO','Regulated','Main GEO','Located In','Tags','Note','Data Creazione','Ultima Modifica'];
+// Fixed headers — 'Fonti' stores multiple URLs pipe-separated (|)
+// 'Sito Web' kept for backward-compat reading from older sheets
+const FIXED_H = [
+  'ID','Nome','Cognome','Azienda',
+  'Email','Telefono','Telegram',
+  'Categoria','LinkedIn','Fonti',
+  'Role','Contatto Hot','CRYPTO','Regulated',
+  'Main GEO','Located In',
+  'Tags','Note',
+  'Data Creazione','Ultima Modifica'
+];
 
 const GEOS = ['Any GEO','— Europa —','Albania','Andorra','Austria','Belgio','Bosnia','Bulgaria','Bielorussia','Cipro','Croazia','Danimarca','Estonia','Finlandia','Francia','Germania','Grecia','Irlanda','Islanda','Italia','Kosovo','Lettonia','Lituania','Lussemburgo','Malta','Moldova','Montenegro','Norvegia','Olanda','Polonia','Portogallo','Rep. Ceca','Romania','Russia','Serbia','Slovacchia','Slovenia','Spagna','Svezia','Svizzera','Turchia','Ucraina','UK','Ungheria','— Americhe —','Argentina','Bahamas','Belize','Bolivia','Brasile','Canada','Cile','Colombia','Costa Rica','Ecuador','El Salvador','Giamaica','Guatemala','Honduras','Messico','Panama','Paraguay','Perù','Puerto Rico','Uruguay','USA','Venezuela','— Asia —','Armenia','Azerbaijan','Bangladesh','Cambogia','Cina','Corea del Sud','Filippine','Georgia','Giappone','Hong Kong','India','Indonesia','Kazakistan','Laos','Macau','Malesia','Mongolia','Myanmar','Nepal','Pakistan','Singapore','Sri Lanka','Taiwan','Tailandia','Uzbekistan','Vietnam','— Medio Oriente —','Arabia Saudita','Bahrain','Egitto','Emirati Arabi Uniti','Giordania','Iran','Iraq','Israele','Kuwait','Libano','Oman','Qatar','Yemen','— Africa —','Algeria','Angola','Camerun',"Costa d'Avorio",'Etiopia','Ghana','Kenya','Libia','Marocco','Mauritius','Nigeria','Senegal','Sudafrica','Tanzania','Tunisia','Uganda','Zimbabwe','— Oceania —','Australia','Nuova Zelanda','Papua Nuova Guinea'];
 
@@ -478,13 +416,10 @@ let formTags  = [];
 let calContactId = null;
 let calMode  = 'a';
 
-// ── FILTRI AVANZATI ──
-let filters = { azienda:'', crypto:'', hot:[], geo:'', citta:'', tags:[] };
-
 // ═══════════════════════════════════════════════════
 // INIT GEO SELECT
 // ═══════════════════════════════════════════════════
-(function initGeo() {
+(function initGeo(){
   const sel = document.getElementById('f-geo');
   sel.innerHTML = '<option value="">— Seleziona —</option>' +
     GEOS.map(g => g.startsWith('—') ? `<option disabled>${g}</option>` : `<option>${g}</option>`).join('');
@@ -528,139 +463,63 @@ async function boot() {
 }
 
 // ═══════════════════════════════════════════════════
-// SHEETS API
+// SHEETS API — ranges NOT URL-encoded (breaks Google parsing)
 // ═══════════════════════════════════════════════════
 async function api(path, method='GET', body=null) {
-  const url = 'https://sheets.googleapis.com/v4/spreadsheets' + path;
-  const r = await fetch(url, {
+  const r = await fetch('https://sheets.googleapis.com/v4/spreadsheets' + path, {
     method,
-    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-    ...(body ? { body: JSON.stringify(body) } : {})
+    headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
+    ...(body ? {body:JSON.stringify(body)} : {})
   });
   const d = await r.json();
   if (!r.ok) throw new Error(d.error?.message || 'Sheets error ' + r.status);
   return d;
 }
 
-async function driveReq(path, opts={}) {
-  const r = await fetch('https://www.googleapis.com/drive/v3' + path, {
-    ...opts,
-    headers: { Authorization: 'Bearer ' + token, ...(opts.headers||{}) }
-  });
-  if (!r.ok && r.status !== 404) {
-    const e = await r.json().catch(()=>({}));
-    throw new Error(e.error?.message || 'Drive error ' + r.status);
-  }
-  return r;
-}
-
-// ═══════════════════════════════════════════════════
-// CONFIG FILE su Drive normale — stesso scope `drive`
-//   già abilitato. Tutti i device cercano il file
-//   _crm_sync_config e leggono lo sheetId canonico.
-//   Nessun scope extra, nessuna App Data Folder.
-// ═══════════════════════════════════════════════════
-async function cfgFind() {
-  const q = `name='${CONFIG_FILE}' and trashed=false and mimeType='application/json'`;
+async function driveSearch() {
+  const q = `name='${SHEET_TITLE}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
   const r = await fetch(
-    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)&pageSize=1`,
-    { headers: { Authorization: 'Bearer ' + token } }
+    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,
+    { headers:{ Authorization:'Bearer '+token } }
   );
   const d = await r.json();
-  return (d.files || [])[0] || null;
+  return d.files || [];
 }
 
-async function appDataRead() {
-  const file = await cfgFind();
-  if (!file) return null;
-  const r = await fetch(
-    `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
-    { headers: { Authorization: 'Bearer ' + token } }
-  );
-  if (!r.ok) return null;
-  try { return await r.json(); } catch { return null; }
-}
-
-async function appDataWrite(cfg) {
-  const file = await cfgFind();
-  const blob = new Blob([JSON.stringify(cfg)], { type: 'application/json' });
-
-  if (file) {
-    // Aggiorna il contenuto del file esistente
-    await fetch(
-      `https://www.googleapis.com/upload/drive/v3/files/${file.id}?uploadType=media`,
-      { method: 'PATCH', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: blob }
-    );
-  } else {
-    // Crea nuovo file di config nel Drive
-    const meta = JSON.stringify({ name: CONFIG_FILE, mimeType: 'application/json' });
-    const form = new FormData();
-    form.append('metadata', new Blob([meta], { type: 'application/json' }));
-    form.append('file', blob);
-    await fetch(
-      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
-      { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: form }
-    );
-  }
+// col index → letter: 0→A, 25→Z, 26→AA …
+function CL(n) {
+  let s=''; n++;
+  while(n>0){ n--; s=String.fromCharCode(65+n%26)+s; n=Math.floor(n/26); }
+  return s;
 }
 
 // ═══════════════════════════════════════════════════
 // SPREADSHEET SETUP
-// Priorità: 1) App Data Config  2) Drive search  3) Crea nuovo
 // ═══════════════════════════════════════════════════
 async function ensureSheet() {
-
-  // ── PRIORITÀ 1: App Data Folder (unica fonte di verità cross-device) ──
-  load('Ricerca foglio su Drive…');
-  const cfg = await appDataRead();
-  if (cfg?.sheetId) {
-    try {
-      await api('/' + cfg.sheetId + '?fields=spreadsheetId');
-      sheetId = cfg.sheetId;
-      localStorage.setItem('crm_sid', sheetId);
-      console.log('[CRM] sheetId da App Data:', sheetId);
-      return; // ← tutti i dispositivi puntano allo stesso foglio
-    } catch(e) {
-      console.warn('[CRM] Foglio in App Data non trovato, cerco su Drive…');
-    }
+  if (sheetId) {
+    try { await api('/'+sheetId+'?fields=spreadsheetId'); return; }
+    catch(e) { sheetId=null; localStorage.removeItem('crm_sid'); }
   }
-
-  // ── PRIORITÀ 2: Ricerca su Drive per nome (fallback) ──
-  const q = `name='${SHEET_TITLE}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
-  const sr = await driveReq(`/files?q=${encodeURIComponent(q)}&fields=files(id)&orderBy=createdTime&pageSize=10`);
-  const files = (await sr.json()).files || [];
-
+  const files = await driveSearch();
   if (files.length > 0) {
     sheetId = files[0].id;
     localStorage.setItem('crm_sid', sheetId);
-    // Salva in App Data così la prossima volta tutti i device la trovano subito
-    await appDataWrite({ sheetId });
-    console.log('[CRM] sheetId da Drive search, salvato in App Data:', sheetId);
-    if (files.length > 1) {
-      toast(`⚠️ ${files.length} fogli duplicati trovati. Elimina i duplicati da drive.google.com`, 7000);
-    }
     return;
   }
-
-  // ── PRIORITÀ 3: Crea nuovo foglio ──
-  console.log('[CRM] Nessun foglio trovato, creo nuovo…');
-  const ss = await api('', 'POST', {
-    properties: { title: SHEET_TITLE },
-    sheets: [{ properties: { title: TAB, sheetId: 0 } }]
+  const ss = await api('','POST',{
+    properties:{title:SHEET_TITLE},
+    sheets:[{properties:{title:TAB,sheetId:0}}]
   });
   sheetId = ss.spreadsheetId;
   localStorage.setItem('crm_sid', sheetId);
-  // Salva subito in App Data
-  await appDataWrite({ sheetId });
-  console.log('[CRM] Nuovo foglio creato e salvato in App Data:', sheetId);
-  // Scrivi headers e formato
-  await api(`/${sheetId}/values/${TAB}!A1?valueInputOption=RAW`, 'PUT', { values: [FIXED_H] });
-  await api(`/${sheetId}:batchUpdate`, 'POST', { requests: [
-    { repeatCell: { range: { sheetId: 0, startRowIndex: 0, endRowIndex: 1 },
-      cell: { userEnteredFormat: { backgroundColor: { red: .083, green: .396, blue: .753 },
-        textFormat: { foregroundColor: { red:1,green:1,blue:1 }, bold: true } } },
-      fields: 'userEnteredFormat(backgroundColor,textFormat)' } },
-    { updateSheetProperties: { properties: { sheetId:0, gridProperties:{ frozenRowCount:1 } }, fields:'gridProperties.frozenRowCount' } }
+  await api(`/${sheetId}/values/${TAB}!A1?valueInputOption=RAW`,'PUT',{values:[FIXED_H]});
+  await api(`/${sheetId}:batchUpdate`,'POST',{requests:[
+    {repeatCell:{range:{sheetId:0,startRowIndex:0,endRowIndex:1},
+      cell:{userEnteredFormat:{backgroundColor:{red:.083,green:.396,blue:.753},
+        textFormat:{foregroundColor:{red:1,green:1,blue:1},bold:true}}},
+      fields:'userEnteredFormat(backgroundColor,textFormat)'}},
+    {updateSheetProperties:{properties:{sheetId:0,gridProperties:{frozenRowCount:1}},fields:'gridProperties.frozenRowCount'}}
   ]});
 }
 
@@ -668,16 +527,15 @@ async function loadHeaders() {
   const d = await api(`/${sheetId}/values/${TAB}!1:1`);
   const existing = d.values?.[0] || [];
   headerMap = {};
-  existing.forEach((h, i) => { if (h) headerMap[h] = i; });
-  const missing = FIXED_H.filter(h => headerMap[h] === undefined);
+  existing.forEach((h,i) => { if(h) headerMap[h]=i; });
+  const missing = FIXED_H.filter(h => headerMap[h]===undefined);
   if (missing.length > 0) {
     const nextIdx = existing.filter(Boolean).length;
-    const startCol = CL(nextIdx); const endCol = CL(nextIdx + missing.length - 1);
-    await api(`/${sheetId}/values/${TAB}!${startCol}1:${endCol}1?valueInputOption=RAW`, 'PUT', { values: [missing] });
-    missing.forEach((h, i) => { headerMap[h] = nextIdx + i; });
+    await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1:${CL(nextIdx+missing.length-1)}1?valueInputOption=RAW`,'PUT',{values:[missing]});
+    missing.forEach((h,i) => { headerMap[h]=nextIdx+i; });
   }
   dynCols = {};
-  Object.entries(headerMap).forEach(([h, i]) => { if (!FIXED_H.includes(h)) dynCols[h] = i; });
+  Object.entries(headerMap).forEach(([h,i]) => { if(!FIXED_H.includes(h)) dynCols[h]=i; });
 }
 
 // ═══════════════════════════════════════════════════
@@ -686,25 +544,45 @@ async function loadHeaders() {
 async function fetchContacts() {
   const d = await api(`/${sheetId}/values/${TAB}!A:ZZ`);
   const rows = d.values || [];
-  if (rows.length < 2) { contacts = []; return; }
+  if (rows.length < 2) { contacts=[]; return; }
   const hrow = rows[0];
   headerMap = {};
-  hrow.forEach((h, i) => { if (h) headerMap[h] = i; });
+  hrow.forEach((h,i) => { if(h) headerMap[h]=i; });
   dynCols = {};
-  Object.entries(headerMap).forEach(([h, i]) => { if (!FIXED_H.includes(h)) dynCols[h] = i; });
-  const g = (row, key) => { const idx = headerMap[key]; return (idx !== undefined && row[idx]) ? row[idx] : ''; };
-  contacts = rows.slice(1).filter(r => g(r,'ID')).map(r => {
-    const otherSources = {};
-    Object.entries(dynCols).forEach(([name, idx]) => { if (r[idx]) otherSources[name] = r[idx]; });
+  Object.entries(headerMap).forEach(([h,i]) => { if(!FIXED_H.includes(h)) dynCols[h]=i; });
+
+  const g = (row,key) => {
+    const idx = headerMap[key];
+    return (idx!==undefined && row[idx]) ? row[idx] : '';
+  };
+
+  contacts = rows.slice(1).filter(r=>g(r,'ID')).map(r => {
+    const otherSources={};
+    Object.entries(dynCols).forEach(([name,idx]) => { if(r[idx]) otherSources[name]=r[idx]; });
+    // 'Fonti' is pipe-separated; fall back to legacy 'Sito Web' for old contacts
+    const fontiRaw = g(r,'Fonti') || g(r,'Sito Web');
     return {
-      id: g(r,'ID'), nome: g(r,'Nome'), cognome: g(r,'Cognome'), azienda: g(r,'Azienda'),
-      email: g(r,'Email'), telefono: g(r,'Telefono'), categoria: g(r,'Categoria'),
-      sito: g(r,'Sito Web'), linkedin: g(r,'LinkedIn'), role: g(r,'Role'),
-      contattoHot: g(r,'Contatto Hot'), crypto: g(r,'CRYPTO'), regulated: g(r,'Regulated'),
-      mainGeo: g(r,'Main GEO'), locatedIn: g(r,'Located In'),
-      tags: g(r,'Tags').split(',').map(t=>t.trim()).filter(Boolean),
-      note: g(r,'Note'), dataCreazione: g(r,'Data Creazione'),
-      ultimaModifica: g(r,'Ultima Modifica'), otherSources
+      id:            g(r,'ID'),
+      nome:          g(r,'Nome'),
+      cognome:       g(r,'Cognome'),
+      azienda:       g(r,'Azienda'),
+      email:         g(r,'Email'),
+      telefono:      g(r,'Telefono'),
+      telegram:      g(r,'Telegram'),
+      categoria:     g(r,'Categoria'),
+      linkedin:      g(r,'LinkedIn'),
+      fonti:         fontiRaw.split('|').map(f=>f.trim()).filter(Boolean),
+      role:          g(r,'Role'),
+      contattoHot:   g(r,'Contatto Hot'),
+      crypto:        g(r,'CRYPTO'),
+      regulated:     g(r,'Regulated'),
+      mainGeo:       g(r,'Main GEO'),
+      locatedIn:     g(r,'Located In'),
+      tags:          g(r,'Tags').split(',').map(t=>t.trim()).filter(Boolean),
+      note:          g(r,'Note'),
+      dataCreazione: g(r,'Data Creazione'),
+      ultimaModifica:g(r,'Ultima Modifica'),
+      otherSources
     };
   });
 }
@@ -715,81 +593,75 @@ async function fetchContacts() {
 function buildRow(contact, id, createdAt, updatedAt) {
   const totalCols = Math.max(...Object.values(headerMap)) + 1;
   const row = new Array(totalCols).fill('');
-  const set = (key, val) => { const i = headerMap[key]; if (i !== undefined) row[i] = val || ''; };
-  set('ID', id); set('Nome', contact.nome); set('Cognome', contact.cognome); set('Azienda', contact.azienda);
-  set('Email', contact.email); set('Telefono', contact.telefono); set('Categoria', contact.categoria);
-  set('Sito Web', contact.sito); set('LinkedIn', contact.linkedin); set('Role', contact.role);
-  set('Contatto Hot', contact.contattoHot); set('CRYPTO', contact.crypto); set('Regulated', contact.regulated);
-  set('Main GEO', contact.mainGeo); set('Located In', contact.locatedIn);
-  set('Tags', (contact.tags||[]).join(',')); set('Note', contact.note);
-  set('Data Creazione', createdAt); set('Ultima Modifica', updatedAt);
-  Object.entries(contact.otherSources||{}).forEach(([k,v]) => { const i = headerMap[k]; if (i !== undefined) row[i] = v||''; });
+  const set = (key,val) => { const i=headerMap[key]; if(i!==undefined) row[i]=val||''; };
+  set('ID',id);
+  set('Nome',contact.nome); set('Cognome',contact.cognome); set('Azienda',contact.azienda);
+  set('Email',contact.email); set('Telefono',contact.telefono); set('Telegram',contact.telegram);
+  set('Categoria',contact.categoria); set('LinkedIn',contact.linkedin);
+  set('Fonti', (contact.fonti||[]).join('|'));
+  set('Role',contact.role); set('Contatto Hot',contact.contattoHot);
+  set('CRYPTO',contact.crypto); set('Regulated',contact.regulated);
+  set('Main GEO',contact.mainGeo); set('Located In',contact.locatedIn);
+  set('Tags',(contact.tags||[]).join(','));
+  set('Note',contact.note);
+  set('Data Creazione',createdAt); set('Ultima Modifica',updatedAt);
+  Object.entries(contact.otherSources||{}).forEach(([k,v]) => { const i=headerMap[k]; if(i!==undefined) row[i]=v||''; });
   return row;
 }
 
-function CL(n) {
-  let s = ''; n++;
-  while (n > 0) { n--; s = String.fromCharCode(65 + n % 26) + s; n = Math.floor(n / 26); }
-  return s;
-}
-
 async function ensureDynCol(name) {
-  if (headerMap[name] !== undefined) return;
+  if (headerMap[name]!==undefined) return;
   const nextIdx = Math.max(...Object.values(headerMap)) + 1;
-  await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1?valueInputOption=RAW`, 'PUT', { values: [[name]] });
-  headerMap[name] = nextIdx; dynCols[name] = nextIdx;
+  await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1?valueInputOption=RAW`,'PUT',{values:[[name]]});
+  headerMap[name]=nextIdx; dynCols[name]=nextIdx;
 }
 
 // ═══════════════════════════════════════════════════
-// APPEND / UPDATE / DELETE
+// CRUD
 // ═══════════════════════════════════════════════════
 async function appendRow(row) {
-  await api(`/${sheetId}/values/${TAB}!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, 'POST', { values: [row] });
+  await api(`/${sheetId}/values/${TAB}!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,'POST',{values:[row]});
 }
 async function updateRow(id, row) {
   const d = await api(`/${sheetId}/values/${TAB}!A:A`);
-  const ids = (d.values||[]).map(r=>r[0]||'');
-  const idx = ids.indexOf(id);
-  if (idx === -1) throw new Error('Contatto non trovato nel foglio');
-  const lastCol = CL(row.length - 1);
-  await api(`/${sheetId}/values/${TAB}!A${idx+1}:${lastCol}${idx+1}?valueInputOption=RAW`, 'PUT', { values: [row] });
+  const idx = (d.values||[]).map(r=>r[0]||'').indexOf(id);
+  if(idx===-1) throw new Error('Contatto non trovato');
+  await api(`/${sheetId}/values/${TAB}!A${idx+1}:${CL(row.length-1)}${idx+1}?valueInputOption=RAW`,'PUT',{values:[row]});
 }
 async function deleteRow(id) {
   const d = await api(`/${sheetId}/values/${TAB}!A:A`);
-  const ids = (d.values||[]).map(r=>r[0]||'');
-  const idx = ids.indexOf(id);
-  if (idx === -1) throw new Error('Contatto non trovato');
+  const idx = (d.values||[]).map(r=>r[0]||'').indexOf(id);
+  if(idx===-1) throw new Error('Contatto non trovato');
   const meta = await api(`/${sheetId}?fields=sheets.properties`);
-  const tabId = meta.sheets.find(s=>s.properties.title===TAB)?.properties.sheetId ?? 0;
-  await api(`/${sheetId}:batchUpdate`, 'POST', { requests:[{ deleteDimension:{ range:{ sheetId:tabId, dimension:'ROWS', startIndex:idx, endIndex:idx+1 } } }] });
+  const tabId = meta.sheets.find(s=>s.properties.title===TAB)?.properties.sheetId??0;
+  await api(`/${sheetId}:batchUpdate`,'POST',{requests:[{deleteDimension:{range:{sheetId:tabId,dimension:'ROWS',startIndex:idx,endIndex:idx+1}}}]});
 }
 
 // ═══════════════════════════════════════════════════
-// SYNC + EXCEL EXPORT
+// SYNC + EXPORT
 // ═══════════════════════════════════════════════════
 async function syncData() {
-  if (!token) return; setSS('syncing');
+  if(!token) return; setSS('syncing');
   try { await loadHeaders(); await fetchContacts(); render(); setSS('ok'); toast('✅ Dati aggiornati!'); }
-  catch(e) { setSS('er'); toast('❌ ' + e.message); }
+  catch(e) { setSS('er'); toast('❌ '+e.message); }
 }
-
 async function exportToExcel() {
-  if (!sheetId) { toast('❌ Nessun dato'); return; }
+  if(!sheetId){ toast('❌ Nessun dato'); return; }
   load('Esportazione Excel…');
   try {
-    const res = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`, { headers:{ Authorization:'Bearer '+token } });
-    if (!res.ok) throw new Error('Export fallito');
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`,{headers:{Authorization:'Bearer '+token}});
+    if(!res.ok) throw new Error('Export fallito');
     const blob = await res.blob();
     const ds = new Date(); const fn = `Partner CRM ${ds.getDate()}-${ds.getMonth()+1}-${ds.getFullYear()}.xlsx`;
-    const meta = JSON.stringify({ name:fn, mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const meta = JSON.stringify({name:fn,mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const form = new FormData();
-    form.append('metadata', new Blob([meta],{type:'application/json'}));
-    form.append('file', blob, fn);
-    const up = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{ method:'POST', headers:{ Authorization:'Bearer '+token }, body:form });
-    if (!up.ok) throw new Error('Upload Drive fallito');
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; a.click();
+    form.append('metadata',new Blob([meta],{type:'application/json'}));
+    form.append('file',blob,fn);
+    const up = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:'Bearer '+token},body:form});
+    if(!up.ok) throw new Error('Upload Drive fallito');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click();
     hideLoad(); toast('✅ Excel salvato su Drive!');
-  } catch(e) { hideLoad(); toast('❌ '+e.message); }
+  } catch(e){ hideLoad(); toast('❌ '+e.message); }
 }
 
 // ═══════════════════════════════════════════════════
@@ -804,253 +676,86 @@ function openCal(contactId) {
   document.getElementById('cal-s').value    = '10:00';
   document.getElementById('cal-e').value    = '11:00';
   document.getElementById('cal-desc').value = '';
-  setCalMode('a'); closeM('det-ov'); openM('cal-ov');
+  setCalMode('a');
+  closeM('det-ov'); openM('cal-ov');
 }
 function setCalMode(m) {
-  calMode = m;
-  document.getElementById('cm-a').classList.toggle('active', m==='a');
-  document.getElementById('cm-b').classList.toggle('active', m==='b');
-  const gs = document.getElementById('guests-sec');
-  gs.style.display = m==='b' ? 'block' : 'none';
-  if (m==='b') {
-    document.getElementById('guests-list').innerHTML = '';
-    const c = contacts.find(x=>x.id===calContactId);
+  calMode=m;
+  document.getElementById('cm-a').classList.toggle('active',m==='a');
+  document.getElementById('cm-b').classList.toggle('active',m==='b');
+  document.getElementById('guests-sec').style.display = m==='b'?'block':'none';
+  if(m==='b'){
+    document.getElementById('guests-list').innerHTML='';
+    const c=contacts.find(x=>x.id===calContactId);
     addGuest(c?.email||'');
   }
 }
 function addGuest(email) {
-  const gl = document.getElementById('guests-list');
-  const d = document.createElement('div'); d.className = 'guest-r';
-  d.innerHTML = `<input class="fi" type="email" placeholder="email@esempio.com" value="${esc(email)}"><button class="grm" onclick="this.parentElement.remove()">✕</button>`;
+  const gl=document.getElementById('guests-list');
+  const d=document.createElement('div'); d.className='guest-r';
+  d.innerHTML=`<input class="fi" type="email" placeholder="email@esempio.com" value="${esc(email)}"><button class="grm" onclick="this.parentElement.remove()">✕</button>`;
   gl.appendChild(d);
 }
 async function createCalEvent() {
-  const tit=document.getElementById('cal-tit').value.trim();
-  const data=document.getElementById('cal-d').value;
-  const s=document.getElementById('cal-s').value;
-  const e=document.getElementById('cal-e').value;
-  const desc=document.getElementById('cal-desc').value.trim();
-  if (!tit) { toast('⚠️ Inserisci un titolo'); return; }
-  if (!data) { toast('⚠️ Seleziona una data'); return; }
+  const tit  = document.getElementById('cal-tit').value.trim();
+  const data = document.getElementById('cal-d').value;
+  const s    = document.getElementById('cal-s').value;
+  const e    = document.getElementById('cal-e').value;
+  const desc = document.getElementById('cal-desc').value.trim();
+  if(!tit) { toast('⚠️ Inserisci un titolo'); return; }
+  if(!data){ toast('⚠️ Seleziona una data');   return; }
   const ev = {
     summary:tit, description:desc,
-    start:{ dateTime:`${data}T${s}:00`, timeZone:'Europe/Rome' },
-    end:  { dateTime:`${data}T${e}:00`, timeZone:'Europe/Rome' },
-    reminders:{ useDefault:true }
+    start:{dateTime:`${data}T${s}:00`,timeZone:'Europe/Rome'},
+    end:  {dateTime:`${data}T${e}:00`,timeZone:'Europe/Rome'},
+    reminders:{useDefault:true}
   };
-  if (calMode==='b') {
+  if(calMode==='b'){
     const gs=[...document.querySelectorAll('#guests-list .guest-r input')].map(i=>i.value.trim()).filter(Boolean);
-    if (gs.length) { ev.attendees=gs.map(email=>({email})); ev.sendUpdates='all'; }
+    if(gs.length){ ev.attendees=gs.map(email=>({email})); ev.sendUpdates='all'; }
   }
   closeM('cal-ov'); load('Creazione evento…');
   try {
     const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
-      method:'POST', headers:{ Authorization:'Bearer '+token, 'Content-Type':'application/json' }, body:JSON.stringify(ev)
+      method:'POST', headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify(ev)
     });
     const d2=await r.json();
-    if (!r.ok) throw new Error(d2.error?.message||'Errore Calendar');
+    if(!r.ok) throw new Error(d2.error?.message||'Errore Calendar');
     hideLoad(); toast(calMode==='b'?'✅ Invito inviato a tutti!':'✅ Reminder creato nel calendario!');
-  } catch(e) { hideLoad(); toast('❌ '+e.message); console.error(e); }
-}
-
-// ═══════════════════════════════════════════════════
-// FILTRI AVANZATI
-// ═══════════════════════════════════════════════════
-
-function openFilters() {
-  // Popola GEO dropdown
-  const gsel = document.getElementById('fp-geo');
-  gsel.innerHTML = '<option value="">— Tutti i GEO —</option>' +
-    GEOS.filter(g=>!g.startsWith('—')).map(g=>`<option value="${esc(g)}" ${filters.geo===g?'selected':''}>${esc(g)}</option>`).join('');
-
-  // Ripristina stato campi testo
-  document.getElementById('fp-azienda').value = filters.azienda;
-  document.getElementById('fp-citta').value   = filters.citta;
-  document.getElementById('fp-azienda-drop').style.display = 'none';
-  document.getElementById('fp-citta-drop').style.display   = 'none';
-
-  // Crypto chips
-  document.querySelectorAll('#fp-crypto-chips .fchip').forEach(btn => {
-    const v = btn.dataset.v;
-    btn.className = 'fchip' + (filters.crypto===v ? (v==='Sì'?' on-crypto-si':v==='No'?' on-crypto-no':' on') : '');
-  });
-
-  // Hot chips
-  document.querySelectorAll('#fp-hot-chips .fchip').forEach(btn => {
-    btn.className = 'fchip' + (filters.hot.includes(btn.dataset.v) ? ' on-hot' : '');
-  });
-
-  // Tag chips — genera dai contatti
-  const allTags = [...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean).sort();
-  document.getElementById('fp-tag-chips').innerHTML = allTags.length
-    ? allTags.map(t=>`<button class="fchip${filters.tags.includes(t)?' on-tag':''}" data-v="${esc(t)}" onclick="fpTag(this)">${esc(t)}</button>`).join('')
-    : '<span style="color:var(--ts);font-size:13px">Nessun tag disponibile</span>';
-
-  openM('filter-ov');
-}
-
-// Chip Crypto — selezione singola
-function fpCrypto(btn) {
-  const v = btn.dataset.v;
-  filters.crypto = (filters.crypto === v) ? '' : v;
-  document.querySelectorAll('#fp-crypto-chips .fchip').forEach(b => {
-    const bv = b.dataset.v;
-    b.className = 'fchip' + (filters.crypto===bv && bv!=='' ? (bv==='Sì'?' on-crypto-si':' on-crypto-no') : (filters.crypto===''&&bv===''?' on':''));
-  });
-  fpLiveRender();
-}
-
-// Chip Priorità — multi-select
-function fpHot(btn) {
-  const v = btn.dataset.v;
-  filters.hot = filters.hot.includes(v) ? filters.hot.filter(x=>x!==v) : [...filters.hot, v];
-  document.querySelectorAll('#fp-hot-chips .fchip').forEach(b => {
-    b.className = 'fchip' + (filters.hot.includes(b.dataset.v) ? ' on-hot' : '');
-  });
-  fpLiveRender();
-}
-
-// Chip Tag — multi-select
-function fpTag(btn) {
-  const v = btn.dataset.v;
-  filters.tags = filters.tags.includes(v) ? filters.tags.filter(x=>x!==v) : [...filters.tags, v];
-  btn.className = 'fchip' + (filters.tags.includes(v) ? ' on-tag' : '');
-  fpLiveRender();
-}
-
-// Autocomplete per Azienda e Città
-function fpAC(inputId, field) {
-  const input = document.getElementById(inputId);
-  const drop  = document.getElementById(inputId + '-drop');
-  const val   = input.value.trim();
-
-  // Aggiorna filtro live mentre si digita
-  if (field==='azienda') filters.azienda = val;
-  if (field==='locatedIn') filters.citta = val;
-  fpLiveRender();
-
-  if (!val) { drop.style.display='none'; return; }
-
-  const lower = val.toLowerCase();
-  const uniq = [...new Set(contacts.map(c=>c[field]).filter(Boolean))]
-    .filter(v=>v.toLowerCase().includes(lower))
-    .sort().slice(0,6);
-
-  if (!uniq.length) { drop.style.display='none'; return; }
-
-  drop.innerHTML = uniq.map(v => {
-    const hi = v.replace(new RegExp(`(${val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<strong>$1</strong>');
-    return `<div class="ac-item" onclick="fpACSelect('${inputId}','${field}','${v.replace(/'/g,"\\'")}')"> ${hi}</div>`;
-  }).join('');
-  drop.style.display = 'block';
-}
-
-function fpACSelect(inputId, field, val) {
-  document.getElementById(inputId).value = val;
-  document.getElementById(inputId+'-drop').style.display = 'none';
-  if (field==='azienda')   filters.azienda = val;
-  if (field==='locatedIn') filters.citta   = val;
-  fpLiveRender();
-}
-
-// Aggiorna render in tempo reale mentre il pannello è aperto
-function fpLiveRender() {
-  filters.geo = document.getElementById('fp-geo')?.value || filters.geo;
-  render();
-}
-
-// Applica e chiudi pannello
-function applyFilters() {
-  filters.geo     = document.getElementById('fp-geo').value;
-  filters.azienda = document.getElementById('fp-azienda').value.trim();
-  filters.citta   = document.getElementById('fp-citta').value.trim();
-  closeM('filter-ov');
-  renderFilterBar();
-  render();
-}
-
-// Reset completo
-function resetFilters() {
-  filters = { azienda:'', crypto:'', hot:[], geo:'', citta:'', tags:[] };
-  // Reset UI se il pannello è aperto
-  const az=document.getElementById('fp-azienda'); if(az) az.value='';
-  const ci=document.getElementById('fp-citta');   if(ci) ci.value='';
-  const geo=document.getElementById('fp-geo');    if(geo) geo.value='';
-  document.querySelectorAll('#fp-crypto-chips .fchip').forEach(b=>b.className='fchip');
-  document.querySelectorAll('#fp-hot-chips .fchip').forEach(b=>b.className='fchip');
-  document.querySelectorAll('#fp-tag-chips .fchip').forEach(b=>b.className='fchip');
-  renderFilterBar(); render();
-}
-
-// Rimuovi singolo filtro dalla barra
-function removeFBadge(key, val) {
-  if (key==='azienda') filters.azienda='';
-  else if (key==='citta') filters.citta='';
-  else if (key==='crypto') filters.crypto='';
-  else if (key==='geo') filters.geo='';
-  else if (key==='hot') filters.hot=filters.hot.filter(x=>x!==val);
-  else if (key==='tags') filters.tags=filters.tags.filter(x=>x!==val);
-  renderFilterBar(); render();
-}
-
-// Aggiorna la barra con i badge attivi
-function renderFilterBar() {
-  const badges = [];
-  if (filters.azienda) badges.push({key:'azienda', label:'🏢 '+filters.azienda, val:''});
-  if (filters.crypto)  badges.push({key:'crypto',  label:'🔐 '+filters.crypto, val:''});
-  if (filters.geo)     badges.push({key:'geo',     label:'🌍 '+filters.geo, val:''});
-  if (filters.citta)   badges.push({key:'citta',   label:'📍 '+filters.citta, val:''});
-  filters.hot.forEach(h  => badges.push({key:'hot',  label:'⭐ '+h, val:h}));
-  filters.tags.forEach(t => badges.push({key:'tags', label:'🏷️ '+t, val:t}));
-
-  const hasFilters = badges.length > 0;
-  document.getElementById('fbar-btn').className = 'fbar-btn' + (hasFilters?' has-filters':'');
-  document.getElementById('fbar-btn').textContent = hasFilters ? `⚡ Filtri (${badges.length})` : '⚡ Filtri';
-  document.getElementById('fbar-clear').style.display = hasFilters ? 'block' : 'none';
-  document.getElementById('fbar-badges').innerHTML = badges.map(b=>
-    `<span class="fbadge">${esc(b.label)}<button onclick="removeFBadge('${b.key}','${esc(b.val)}')">×</button></span>`
-  ).join('');
-}
-
-// Verifica se un contatto passa tutti i filtri avanzati (logica AND)
-function matchesFilters(c) {
-  if (filters.azienda && !c.azienda.toLowerCase().includes(filters.azienda.toLowerCase())) return false;
-  if (filters.crypto  && c.crypto !== filters.crypto) return false;
-  if (filters.hot.length && !filters.hot.includes(c.contattoHot)) return false;
-  if (filters.geo     && c.mainGeo !== filters.geo) return false;
-  if (filters.citta   && !c.locatedIn.toLowerCase().includes(filters.citta.toLowerCase())) return false;
-  if (filters.tags.length && !filters.tags.every(t=>c.tags.includes(t))) return false;
-  return true;
+  } catch(e){ hideLoad(); toast('❌ '+e.message); console.error(e); }
 }
 
 // ═══════════════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════════════
 function render() {
-  const q = (document.getElementById('search').value||'').toLowerCase();
+  const q=(document.getElementById('search').value||'').toLowerCase();
   document.getElementById('n-t').textContent  = contacts.length;
   document.getElementById('n-cl').textContent = contacts.filter(c=>c.categoria==='Cliente').length;
   document.getElementById('n-pa').textContent = contacts.filter(c=>c.categoria==='Partner').length;
   document.getElementById('n-fo').textContent = contacts.filter(c=>c.categoria==='Fornitore').length;
   document.getElementById('n-pr').textContent = contacts.filter(c=>c.categoria==='Prospect').length;
   document.getElementById('n-al').textContent = contacts.filter(c=>!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria)).length;
-  const allTags = [...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean).sort();
-  document.getElementById('tag-chips').innerHTML = allTags.map(t=>
-    `<div class="chip tg ${tagFilter===t?'active':''}" onclick="setTF('${esc(t)}')">${esc(t)}</div>`).join('');
-  document.getElementById('tag-fw').style.display = allTags.length ? 'block' : 'none';
-  let list = contacts.filter(c => {
-    const catOk = catFilter==='tutti'||c.categoria===catFilter||(catFilter==='Altro'&&!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria));
-    const tagOk = !tagFilter||c.tags.includes(tagFilter);
-    const srOk  = !q||`${c.nome} ${c.cognome} ${c.azienda} ${c.email} ${c.telefono} ${c.mainGeo} ${c.tags.join(' ')}`.toLowerCase().includes(q);
-    const advOk = matchesFilters(c);
-    return catOk && tagOk && srOk && advOk;
+
+  const allTags=[...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean).sort();
+  document.getElementById('tag-chips').innerHTML=allTags.map(t=>
+    `<div class="chip tg ${tagFilter===t?'active':''}" onclick="setTF('${esc(t)}')">${esc(t)}</div>`
+  ).join('');
+  document.getElementById('tag-fw').style.display=allTags.length?'block':'none';
+
+  let list=contacts.filter(c=>{
+    const catOk=catFilter==='tutti'||c.categoria===catFilter||(catFilter==='Altro'&&!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria));
+    const tagOk=!tagFilter||c.tags.includes(tagFilter);
+    const srOk=!q||`${c.nome} ${c.cognome} ${c.azienda} ${c.email} ${c.telefono} ${c.mainGeo} ${c.tags.join(' ')}`.toLowerCase().includes(q);
+    return catOk&&tagOk&&srOk;
   }).sort((a,b)=>`${a.nome}${a.cognome}`.localeCompare(`${b.nome}${b.cognome}`));
-  const el = document.getElementById('list');
-  if (!list.length) {
-    el.innerHTML = `<div class="empty"><div class="ei">${q||tagFilter?'🔍':'👥'}</div><div class="et">${q||tagFilter?'Nessun risultato':'Nessun contatto'}</div><div class="es">${q||tagFilter?'Prova altri filtri':'Premi <strong>+</strong> per aggiungere il primo contatto'}</div></div>`;
+
+  const el=document.getElementById('list');
+  if(!list.length){
+    el.innerHTML=`<div class="empty"><div class="ei">${q||tagFilter?'🔍':'👥'}</div><div class="et">${q||tagFilter?'Nessun risultato':'Nessun contatto'}</div><div class="es">${q||tagFilter?'Prova altri filtri':'Premi <strong>+</strong> per aggiungere il primo contatto'}</div></div>`;
     return;
   }
-  el.innerHTML = list.map(c => {
+  el.innerHTML=list.map(c=>{
     const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
     const bc='b-'+(c.categoria||'altro').toLowerCase();
     const name=[c.nome,c.cognome].filter(Boolean).join(' ');
@@ -1058,46 +763,111 @@ function render() {
     const pills=[
       ...c.tags.map(t=>`<span class="cpill cpill-tag">${esc(t)}</span>`),
       c.contattoHot?`<span class="cpill cpill-hot">${esc(c.contattoHot)}</span>`:'',
-      c.mainGeo?`<span class="cpill cpill-geo">🌍 ${esc(c.mainGeo)}</span>`:''
+      c.mainGeo?`<span class="cpill cpill-geo">🌍 ${esc(c.mainGeo)}</span>`:'',
     ].join('');
     return `<div class="card" onclick="openDetail('${c.id}')">
       <div class="av" style="background:${avBg(c.id)}">${esc(init)}</div>
-      <div class="ci"><div class="cn">${esc(name)}</div><div class="cs">${esc(sub)}</div>
+      <div class="ci">
+        <div class="cn">${esc(name)}</div>
+        <div class="cs">${esc(sub)}</div>
         ${pills?`<div class="card-pills">${pills}</div>`:''}
       </div>
       ${c.categoria?`<span class="badge ${bc}">${esc(c.categoria)}</span>`:''}
     </div>`;
   }).join('');
 }
-function setCF(el) {
-  catFilter=el.dataset.f;
-  document.querySelectorAll('#cat-chips .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active'); render();
-}
-function setTF(t) { tagFilter=tagFilter===t?null:t; render(); }
+function setCF(el){ catFilter=el.dataset.f; document.querySelectorAll('#cat-chips .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); render(); }
+function setTF(t){ tagFilter=tagFilter===t?null:t; render(); }
 
 // ═══════════════════════════════════════════════════
-// TAG INPUT
+// TAG INPUT + AUTOCOMPLETE
 // ═══════════════════════════════════════════════════
 function handleTag(e) {
-  if (e.key==='Enter'||e.key===',') {
+  if(e.key==='Enter'||e.key===','){
     e.preventDefault();
     const v=e.target.value.replace(/,/g,'').trim();
-    if (v&&!formTags.includes(v)) { formTags.push(v); renderPills(); }
+    if(v&&!formTags.includes(v)){ formTags.push(v); renderPills(); }
     e.target.value='';
+    document.getElementById('tag-ac').style.display='none';
+    return;
   }
-  if (e.key==='Backspace'&&!e.target.value&&formTags.length) { formTags.pop(); renderPills(); }
+  if(e.key==='Backspace'&&!e.target.value&&formTags.length){ formTags.pop(); renderPills(); }
 }
-function rmTag(t) { formTags=formTags.filter(x=>x!==t); renderPills(); }
-function renderPills() {
-  document.getElementById('tag-pills').innerHTML = formTags.map(t=>
-    `<span class="tpill">${esc(t)}<button type="button" onclick="rmTag('${esc(t)}')" tabindex="-1">×</button></span>`).join('');
+
+function showTagAC(query) {
+  const ac=document.getElementById('tag-ac');
+  if(!query){ ac.style.display='none'; return; }
+  const q=query.toLowerCase();
+  const allTags=[...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean);
+  const matches=allTags.filter(t=>t.toLowerCase().includes(q)&&!formTags.includes(t));
+  const trimmed=query.trim();
+  let html=matches.slice(0,7).map(t=>
+    `<div class="tag-ac-item tag-ac-exist" onmousedown="addTagFromAC('${esc(t)}')">🏷️ ${esc(t)}</div>`
+  ).join('');
+  if(trimmed&&!matches.some(t=>t.toLowerCase()===q)&&!formTags.includes(trimmed))
+    html+=`<div class="tag-ac-item tag-ac-new" onmousedown="addTagFromAC('${esc(trimmed)}')">➕ Crea "<strong>${esc(trimmed)}</strong>"</div>`;
+  if(!html){ ac.style.display='none'; return; }
+  ac.innerHTML=html; ac.style.display='block';
+}
+
+function addTagFromAC(tag){
+  if(!formTags.includes(tag)){ formTags.push(tag); renderPills(); }
+  document.getElementById('f-ti').value='';
+  document.getElementById('tag-ac').style.display='none';
+}
+function hideTagAC(){ setTimeout(()=>{ document.getElementById('tag-ac').style.display='none'; },150); }
+
+function rmTag(t){ formTags=formTags.filter(x=>x!==t); renderPills(); }
+function renderPills(){
+  document.getElementById('tag-pills').innerHTML=formTags.map(t=>
+    `<span class="tpill">${esc(t)}<button type="button" onmousedown="rmTag('${esc(t)}')" tabindex="-1">×</button></span>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// FONTI multi-entry
+// ═══════════════════════════════════════════════════
+function addFonteRow(val) {
+  const container=document.getElementById('fonti-container');
+  const row=document.createElement('div'); row.className='fonte-row';
+  const inp=document.createElement('input');
+  inp.className='fi'; inp.type='text'; inp.placeholder='https://… o nome canale';
+  inp.value=val||'';
+  inp.addEventListener('keydown', function(e){
+    if(e.key==='Enter'){
+      e.preventDefault();
+      const rows=document.querySelectorAll('#fonti-container .fonte-row');
+      const isLast=rows[rows.length-1]===row;
+      if(isLast&&this.value.trim()){
+        addFonteRow('');
+        setTimeout(()=>{
+          const nr=document.querySelectorAll('#fonti-container .fonte-row');
+          nr[nr.length-1].querySelector('input').focus();
+        },0);
+      } else if(!isLast){
+        // move focus to next row
+        const arr=[...rows]; const idx=arr.indexOf(row);
+        if(idx<arr.length-1) arr[idx+1].querySelector('input').focus();
+      }
+    }
+  });
+  const del=document.createElement('button');
+  del.type='button'; del.className='fonte-del'; del.textContent='✕';
+  del.onclick=()=>row.remove();
+  row.appendChild(inp); row.appendChild(del);
+  container.appendChild(row);
+  return inp;
+}
+
+function getFonti(){
+  return [...document.querySelectorAll('#fonti-container .fonte-row input')]
+    .map(i=>i.value.trim()).filter(Boolean);
 }
 
 // ═══════════════════════════════════════════════════
 // OTHER SOURCES
 // ═══════════════════════════════════════════════════
-function addSrcRow(name, val) {
+function addSrcRow(name,val){
   const c=document.getElementById('src-container');
   const d=document.createElement('div'); d.className='src-row';
   d.innerHTML=`<input class="fi src-n" type="text" placeholder="Nome fonte (es. Telegram)" value="${esc(name)}">
@@ -1105,12 +875,12 @@ function addSrcRow(name, val) {
     <button type="button" class="src-del" onclick="this.parentElement.remove()">✕</button>`;
   c.appendChild(d);
 }
-function getSources() {
+function getSources(){
   const out={};
-  document.querySelectorAll('#src-container .src-row').forEach(row => {
+  document.querySelectorAll('#src-container .src-row').forEach(row=>{
     const n=row.querySelector('.src-n').value.trim();
     const v=row.querySelector('.src-v').value.trim();
-    if (n) out[n]=v;
+    if(n) out[n]=v;
   });
   return out;
 }
@@ -1118,46 +888,57 @@ function getSources() {
 // ═══════════════════════════════════════════════════
 // FORM MODAL
 // ═══════════════════════════════════════════════════
-function openAdd() {
+function openAdd(){
   editingId=null; formTags=[];
   document.getElementById('ftitle').textContent='➕ Nuovo Contatto';
-  ['nome','cognome','azienda','email','sito','linkedin','role','loc'].forEach(f=>document.getElementById('f-'+f).value='');
+  ['nome','cognome','azienda','email','telegram','linkedin','role','loc'].forEach(f=>document.getElementById('f-'+f).value='');
   document.getElementById('f-tel').value=''; document.getElementById('f-cat').value='';
   document.getElementById('f-hot').value=''; document.getElementById('f-crypto').value='';
   document.getElementById('f-reg').value=''; document.getElementById('f-geo').value='';
   document.getElementById('f-note').value=''; document.getElementById('f-id').value='';
-  document.getElementById('f-ti').value=''; document.getElementById('src-container').innerHTML='';
+  document.getElementById('f-ti').value='';
+  document.getElementById('fonti-container').innerHTML='';
+  document.getElementById('src-container').innerHTML='';
+  addFonteRow(''); // start with one empty fonte row
   renderPills(); openM('form-ov');
   setTimeout(()=>document.getElementById('f-nome').focus(),350);
 }
-function openEdit(id) {
+
+function openEdit(id){
   const c=contacts.find(x=>x.id===id); if(!c) return;
   editingId=id; formTags=[...(c.tags||[])];
   document.getElementById('ftitle').textContent='✏️ Modifica Contatto';
   document.getElementById('f-id').value=id;
   document.getElementById('f-nome').value=c.nome; document.getElementById('f-cognome').value=c.cognome;
   document.getElementById('f-azienda').value=c.azienda; document.getElementById('f-email').value=c.email;
-  document.getElementById('f-tel').value=c.telefono; document.getElementById('f-sito').value=c.sito;
+  document.getElementById('f-tel').value=c.telefono; document.getElementById('f-telegram').value=c.telegram||'';
   document.getElementById('f-linkedin').value=c.linkedin; document.getElementById('f-role').value=c.role;
   document.getElementById('f-cat').value=c.categoria; document.getElementById('f-hot').value=c.contattoHot;
   document.getElementById('f-crypto').value=c.crypto; document.getElementById('f-reg').value=c.regulated;
   document.getElementById('f-geo').value=c.mainGeo; document.getElementById('f-loc').value=c.locatedIn;
   document.getElementById('f-note').value=c.note; document.getElementById('f-ti').value='';
+  // Fonti
+  document.getElementById('fonti-container').innerHTML='';
+  if(c.fonti&&c.fonti.length) c.fonti.forEach(f=>addFonteRow(f));
+  else addFonteRow('');
+  // Other sources
   document.getElementById('src-container').innerHTML='';
   Object.entries(c.otherSources||{}).forEach(([n,v])=>addSrcRow(n,v));
   renderPills(); closeM('det-ov'); openM('form-ov');
 }
-async function saveContact() {
+
+async function saveContact(){
   const nome=document.getElementById('f-nome').value.trim();
-  if(!nome){toast('⚠️ Il nome è obbligatorio');return;}
+  if(!nome){ toast('⚠️ Il nome è obbligatorio'); return; }
   const sources=getSources();
   const data={
     nome, cognome:document.getElementById('f-cognome').value.trim(),
     azienda:document.getElementById('f-azienda').value.trim(),
     email:document.getElementById('f-email').value.trim(),
     telefono:document.getElementById('f-tel').value.trim(),
-    sito:document.getElementById('f-sito').value.trim(),
+    telegram:document.getElementById('f-telegram').value.trim(),
     linkedin:document.getElementById('f-linkedin').value.trim(),
+    fonti:getFonti(),
     role:document.getElementById('f-role').value.trim(),
     categoria:document.getElementById('f-cat').value,
     contattoHot:document.getElementById('f-hot').value,
@@ -1172,9 +953,9 @@ async function saveContact() {
   const isEdit=!!editingId;
   load(isEdit?'Aggiornamento…':'Salvataggio…'); setSS('syncing');
   try {
-    for (const name of Object.keys(sources)) await ensureDynCol(name);
+    for(const name of Object.keys(sources)) await ensureDynCol(name);
     const now=fmtDate(new Date());
-    if (isEdit) {
+    if(isEdit){
       const orig=contacts.find(c=>c.id===editingId);
       const row=buildRow(data,editingId,orig?.dataCreazione||now,now);
       await updateRow(editingId,row);
@@ -1189,19 +970,29 @@ async function saveContact() {
       toast('✅ Contatto salvato!');
     }
     setSS('ok'); hideLoad(); render();
-  } catch(e){setSS('er');hideLoad();toast('❌ '+e.message);console.error(e);}
+  } catch(e){ setSS('er'); hideLoad(); toast('❌ '+e.message); console.error(e); }
 }
 
 // ═══════════════════════════════════════════════════
 // DETAIL MODAL
 // ═══════════════════════════════════════════════════
-function openDetail(id) {
+function openDetail(id){
   const c=contacts.find(x=>x.id===id); if(!c) return;
   const name=[c.nome,c.cognome].filter(Boolean).join(' ');
   const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
   const bc='b-'+(c.categoria||'altro').toLowerCase();
   const F=(icon,lbl,val,link=null)=>val?`<div class="df"><div class="dfi">${icon}</div><div class="dfc"><div class="dfl">${lbl}</div><div class="dfv">${link?`<a href="${link}" target="_blank">${esc(val)}</a>`:esc(val)}</div></div></div>`:'';
-  const srcHtml=Object.entries(c.otherSources||{}).map(([k,v])=>F('🔗',k,v)).join('');
+
+  // Fonti: each on its own line, as clickable links
+  const fontiHtml = c.fonti&&c.fonti.length
+    ? `<div class="df"><div class="dfi">🔗</div><div class="dfc"><div class="dfl">Fonti</div><div class="dfv dfv-list">${
+        c.fonti.map(f=>{
+          const isUrl=f.startsWith('http')||f.startsWith('www');
+          return isUrl?`<a href="${esc(f)}" target="_blank">${esc(f)}</a>`:`<span>${esc(f)}</span>`;
+        }).join('')
+      }</div></div></div>` : '';
+
+  const srcHtml=Object.entries(c.otherSources||{}).map(([k,v])=>F('📌',k,v)).join('');
   document.getElementById('det-content').innerHTML=`
     <div class="mh"><div class="mt">Dettagli</div><button class="mx" onclick="closeM('det-ov')">✕</button></div>
     <div class="dav-w">
@@ -1218,8 +1009,9 @@ function openDetail(id) {
     <div class="dfs">
       ${F('📧','Email',c.email,'mailto:'+c.email)}
       ${F('📞','Telefono',c.telefono,'tel:'+c.telefono)}
+      ${c.telegram?F('✈️','Telegram',c.telegram, c.telegram.startsWith('@')?`https://t.me/${c.telegram.slice(1)}`:null):''}
       ${F('💼','LinkedIn',c.linkedin,c.linkedin)}
-      ${F('🌐','Sito Web',c.sito,c.sito)}
+      ${fontiHtml}
       ${F('👤','Role',c.role)}
       ${F('🔐','CRYPTO',c.crypto)}
       ${F('📋','Regulated',c.regulated)}
@@ -1239,7 +1031,8 @@ function openDetail(id) {
     </div>`;
   openM('det-ov');
 }
-async function doDelete(id) {
+
+async function doDelete(id){
   const c=contacts.find(x=>x.id===id);
   const name=c?[c.nome,c.cognome].filter(Boolean).join(' '):id;
   if(!confirm(`Eliminare "${name}"?\nQuesta azione non può essere annullata.`)) return;
@@ -1247,11 +1040,11 @@ async function doDelete(id) {
   try {
     await deleteRow(id); contacts=contacts.filter(x=>x.id!==id);
     setSS('ok'); hideLoad(); render(); toast('✅ Contatto eliminato');
-  } catch(e){setSS('er');hideLoad();toast('❌ '+e.message);}
+  } catch(e){ setSS('er'); hideLoad(); toast('❌ '+e.message); }
 }
 
 // ═══════════════════════════════════════════════════
-// UI HELPERS
+// HELPERS
 // ═══════════════════════════════════════════════════
 function openM(id){document.getElementById(id).classList.add('show')}
 function closeM(id){document.getElementById(id).classList.remove('show')}
@@ -1260,7 +1053,7 @@ function load(t){document.getElementById('ldtxt').textContent=t||'Caricamento…
 function hideLoad(){document.getElementById('loader').style.display='none'}
 let _tt;
 function toast(msg,ms=3500){clearTimeout(_tt);const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');_tt=setTimeout(()=>el.classList.remove('show'),ms)}
-function setSS(s){const d=document.getElementById('sdot'),t=document.getElementById('stxt');d.className='sdot'+(s==='sy'||s==='syncing'?' sy':s==='er'||s==='error'?' er':'');if(s==='syncing'||s==='sy'){t.textContent='Sincronizzazione…'}else if(s==='ok'){const n=new Date();t.textContent=`Sincronizzato alle ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`}else{t.textContent='Errore sync'}}
+function setSS(s){const d=document.getElementById('sdot'),t=document.getElementById('stxt');d.className='sdot'+(s==='syncing'||s==='sy'?' sy':s==='er'||s==='error'?' er':'');if(s==='syncing'||s==='sy'){t.textContent='Sincronizzazione…'}else if(s==='ok'){const n=new Date();t.textContent=`Sincronizzato alle ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`}else{t.textContent='Errore sync'}}
 function fmtDate(d){return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function avBg(id){const c=['#1565c0','#2e7d32','#e65100','#6a1b9a','#c62828','#00695c','#283593','#4e342e','#37474f','#880e4f'];return c[parseInt(id||'0')%c.length]}
