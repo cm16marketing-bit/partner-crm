@@ -1,1885 +1,1180 @@
 <!DOCTYPE html>
-
 <html lang="it">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-<title>Partner CRM</title>
-
-<link rel="manifest" href="manifest.json">
-
-<meta name="theme-color" content="#1565c0">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<meta name="apple-mobile-web-app-title" content="Partner CRM">
-
-<link rel="apple-touch-icon" href="icon-192.png">
-
-<style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Partner CRM</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1565c0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Partner CRM">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
 :root{--p:#1565c0;--pl:#1976d2;--pd:#0d47a1;--ac:#ff6f00;--bg:#f0f4f9;--sf:#fff;--tx:#1a1a2e;--ts:#6b7a99;--bd:#dde3f0;--red:#c62828;--grn:#1b5e20;--sh:0 2px 8px rgba(21,101,192,.10);--shl:0 8px 32px rgba(21,101,192,.16)}
-
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
 
 /* LOGIN */
-
 #ls{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;background:linear-gradient(145deg,var(--pd) 0%,var(--pl) 60%,#1a88d8 100%)}
-
 .l-logo{font-size:64px;margin-bottom:20px}
-
 .l-title{color:#fff;font-size:30px;font-weight:800;margin-bottom:8px}
-
 .l-sub{color:rgba(255,255,255,.75);font-size:16px;margin-bottom:48px;text-align:center;line-height:1.5}
-
 .btng{display:flex;align-items:center;gap:12px;background:#fff;color:#333;border:none;border-radius:12px;padding:16px 28px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:transform .15s}
-
 .btng:hover{transform:translateY(-2px)}
-
 .l-note{color:rgba(255,255,255,.5);font-size:13px;margin-top:20px;text-align:center}
 
 /* APP */
-
 #app{display:none;min-height:100vh;padding-bottom:90px}
 
 /* HEADER */
-
 .hdr{background:var(--p);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(13,71,161,.3)}
-
 .hdr-top{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 8px 0 16px}
-
 .hdr-title{font-size:19px;font-weight:800}
-
 .hdr-acts{display:flex;gap:2px}
-
 .ic{background:none;border:none;color:#fff;cursor:pointer;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;transition:background .15s}
-
 .ic:hover{background:rgba(255,255,255,.18)}
-
 .srch-w{padding:0 12px 10px}
-
 .srch{width:100%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 14px 10px 38px;color:#fff;font-size:15px;outline:none;transition:background .15s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
-
 .srch::placeholder{color:rgba(255,255,255,.55)}
-
 .srch:focus{background-color:rgba(255,255,255,.22)}
-
 .sync-bar{display:flex;align-items:center;gap:6px;padding:0 14px 8px;font-size:11.5px;color:rgba(255,255,255,.65)}
-
 .sdot{width:7px;height:7px;border-radius:50%;background:#66bb6a;flex-shrink:0}
-
 .sdot.sy{background:#ffa726;animation:pulse 1s ease-in-out infinite}
-
 .sdot.er{background:#ef5350}
-
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* CHIPS */
-
 .chips-row{display:flex;gap:8px;padding:10px 14px 6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bd)}
-
 .chips-row::-webkit-scrollbar{display:none}
-
 .chip{flex-shrink:0;background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:5px 13px;font-size:12.5px;font-weight:600;color:var(--ts);cursor:pointer;transition:all .15s;white-space:nowrap}
-
 .chip.active{background:var(--p);color:#fff;border-color:var(--p)}
-
 .chip.tg{background:#e8f5e9;border-color:#a5d6a7;color:var(--grn)}
-
 .chip.tg.active{background:var(--grn);border-color:var(--grn);color:#fff}
-
 .chips-lbl{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.8px;padding:6px 14px 0;opacity:.7}
 
 /* LIST */
-
 .list{padding:8px 14px 0}
-
 .card{background:var(--sf);border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:flex-start;gap:13px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:var(--sh);border:1px solid var(--bd)}
-
 .card:hover{transform:translateY(-1px);box-shadow:var(--shl)}
-
 .av{width:46px;height:46px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0}
-
 .ci{flex:1;min-width:0}
-
 .cn{font-size:15.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
 .cs{font-size:13px;color:var(--ts);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
 .card-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-
 .cpill{font-size:10.5px;border-radius:8px;padding:2px 7px;font-weight:600}
-
 .cpill-tag{background:#e8f5e9;color:var(--grn)}
-
 .cpill-hot{background:#fff8e1;color:#e65100}
-
 .cpill-geo{background:#e3f2fd;color:var(--p)}
-
 .badge{font-size:11px;padding:3px 9px;border-radius:10px;font-weight:700;flex-shrink:0}
-
 .b-cliente{background:#e3f2fd;color:#1565c0}
-
 .b-partner{background:#e8f5e9;color:#2e7d32}
-
 .b-fornitore{background:#fff3e0;color:#e65100}
-
 .b-prospect{background:#f3e5f5;color:#6a1b9a}
-
 .b-altro{background:#f5f5f5;color:#616161}
 
 /* EMPTY */
-
 .empty{text-align:center;padding:64px 24px;color:var(--ts)}
-
 .ei{font-size:60px;margin-bottom:16px}
-
 .et{font-size:19px;font-weight:700;color:var(--tx);margin-bottom:8px}
-
 .es{font-size:15px;line-height:1.6}
 
 /* FAB */
-
 .fab{position:fixed;bottom:24px;right:20px;width:58px;height:58px;border-radius:50%;background:var(--ac);color:#fff;border:none;cursor:pointer;font-size:30px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,111,0,.45);transition:transform .15s;z-index:99}
-
 .fab:hover{transform:scale(1.08)}
 
 /* MODALS */
-
 .ov{position:fixed;inset:0;background:rgba(10,20,60,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
-
 .ov.show{opacity:1;visibility:visible}
-
 .modal{background:var(--sf);border-radius:22px 22px 0 0;width:100%;max-width:640px;max-height:94vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
-
 .ov.show .modal{transform:translateY(0)}
-
 @media(min-width:640px){.ov{align-items:center;padding:20px}.modal{border-radius:20px;max-height:90vh}}
-
 .mh{position:sticky;top:0;background:var(--sf);z-index:1;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd)}
-
 .mt{font-size:18px;font-weight:800}
-
 .mx{background:var(--bg);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--ts);display:flex;align-items:center;justify-content:center}
-
 .mx:hover{background:var(--bd)}
-
 .mb{padding:18px 20px}
 
 /* FORM */
-
 .fsec{font-size:11px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:.8px;padding:12px 0 8px;border-bottom:1px solid var(--bd);margin-bottom:12px;margin-top:4px}
-
 .fg{margin-bottom:13px}
-
 .fl{display:block;font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
-
 .fi,.fs,.ft{width:100%;background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:15px;color:var(--tx);outline:none;transition:border-color .15s;font-family:inherit}
-
 .fi:focus,.fs:focus,.ft:focus{border-color:var(--p);background:#fff}
-
 .ft{resize:vertical;min-height:68px}
-
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
 .fa{display:flex;gap:10px;margin-top:18px;padding-top:14px;border-top:1px solid var(--bd)}
-
 .btn{flex:1;padding:12px;border-radius:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s}
-
 .btn:hover{opacity:.9;transform:translateY(-1px)}
-
 .btn:active{transform:translateY(0)}
-
 .bp{background:var(--p);color:#fff}
-
 .bs{background:var(--bg);color:var(--tx);border:2px solid var(--bd)}
-
 .br{background:var(--red);color:#fff}
-
 .bcal{background:#0277bd;color:#fff}
-
 .bgrn{background:var(--grn);color:#fff}
 
 /* TAG INPUT + AUTOCOMPLETE */
-
 .tag-wrap{position:relative}
-
 .tag-box{background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:7px 9px;display:flex;flex-wrap:wrap;gap:5px;cursor:text;transition:border-color .15s;min-height:44px}
-
 .tag-box:focus-within{border-color:var(--p);background:#fff}
-
 .tpill{display:flex;align-items:center;gap:4px;background:var(--grn);color:#fff;border-radius:8px;padding:3px 8px;font-size:12.5px;font-weight:600}
-
 .tpill button{background:none;border:none;color:rgba(255,255,255,.8);cursor:pointer;font-size:13px;line-height:1;padding:0;display:flex;align-items:center}
-
 .tag-inner{border:none;background:none;outline:none;font-size:14px;color:var(--tx);min-width:80px;flex:1;padding:2px 4px;font-family:inherit}
-
 .tag-hint{font-size:11px;color:var(--ts);margin-top:3px}
-
 /* autocomplete dropdown */
-
 .tag-ac{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--sf);border:2px solid var(--p);border-radius:12px;box-shadow:var(--shl);z-index:400;max-height:200px;overflow-y:auto;display:none}
-
 .tag-ac-item{padding:10px 14px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;transition:background .1s}
-
 .tag-ac-item:hover{background:var(--bg)}
-
 .tag-ac-item:first-child{border-radius:10px 10px 0 0}
-
 .tag-ac-item:last-child{border-radius:0 0 10px 10px}
-
 .tag-ac-exist{color:var(--grn)}
-
 .tag-ac-new{color:var(--p)}
+.tag-ac-sep{padding:5px 14px;font-size:10.5px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;background:var(--bg);pointer-events:none}
 
 /* FONTI multi-entry */
-
 .fonte-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
-
 .fonte-row .fi{flex:1;padding:9px 12px;font-size:14px}
-
 .fonte-del{background:none;border:none;cursor:pointer;font-size:18px;color:var(--red);padding:4px 6px;border-radius:6px;flex-shrink:0;transition:background .1s}
-
 .fonte-del:hover{background:#ffebee}
-
 .add-fonte{display:flex;align-items:center;gap:6px;background:none;border:1.5px dashed var(--bd);border-radius:10px;padding:8px 14px;width:100%;cursor:pointer;color:var(--ts);font-size:14px;font-weight:600;margin-top:2px;transition:all .15s;font-family:inherit}
-
 .add-fonte:hover{border-color:var(--p);color:var(--p)}
 
 /* OTHER SOURCES */
-
 .src-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-
 .src-row .fi{flex:1;padding:9px 11px;font-size:14px}
-
 .src-del{background:none;border:none;cursor:pointer;font-size:18px;color:var(--red);padding:4px;border-radius:6px}
-
 .src-del:hover{background:#ffebee}
-
 .add-src{display:flex;align-items:center;gap:6px;background:none;border:1.5px dashed var(--bd);border-radius:10px;padding:9px 14px;width:100%;cursor:pointer;color:var(--ts);font-size:14px;font-weight:600;transition:all .15s;font-family:inherit}
-
 .add-src:hover{border-color:var(--p);color:var(--p)}
 
 /* DETAIL */
-
 .dav-w{display:flex;flex-direction:column;align-items:center;padding:22px 20px 14px;border-bottom:1px solid var(--bd)}
-
 .dav{width:68px;height:68px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin-bottom:10px}
-
 .dname{font-size:20px;font-weight:800;text-align:center}
-
 .dco{font-size:14px;color:var(--ts);margin-top:3px}
-
 .dtags-w{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center}
-
 .dtag{font-size:12px;border-radius:10px;padding:3px 10px;font-weight:600}
-
 .dtag-tag{background:#e8f5e9;color:var(--grn)}
-
 .dtag-hot{background:#fff8e1;color:#e65100}
-
 .dtag-geo{background:#e3f2fd;color:var(--p)}
-
 .dfs{padding:14px 20px}
-
 .df{margin-bottom:13px;display:flex;align-items:flex-start;gap:11px}
-
 .dfi{font-size:17px;margin-top:1px;flex-shrink:0;width:22px;text-align:center}
-
 .dfc{flex:1;min-width:0}
-
 .dfl{font-size:10.5px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:1px}
-
 .dfv{font-size:15px;color:var(--tx);word-break:break-word}
-
 .dfv a{color:var(--p);text-decoration:none}
-
 .dfv a:hover{text-decoration:underline}
-
 .dfv-list{display:flex;flex-direction:column;gap:4px}
-
 .cal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 10px}
-
 .da{display:flex;gap:10px;padding:0 20px 20px}
 
 /* CALENDAR */
-
 .cal-mode{display:flex;gap:10px;margin-bottom:16px}
-
 .cal-mb{flex:1;padding:11px;border-radius:10px;border:2px solid var(--bd);background:var(--bg);color:var(--ts);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;font-family:inherit}
-
 .cal-mb.active{border-color:var(--p);background:#e3f2fd;color:var(--p)}
-
 .guests-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-
 .guest-r{display:flex;align-items:center;gap:8px}
-
 .guest-r .fi{flex:1;padding:9px 12px;font-size:14px}
-
 .guest-r .grm{background:none;border:none;cursor:pointer;font-size:18px;color:var(--red);padding:4px;border-radius:6px}
-
 .add-guest{display:flex;align-items:center;gap:6px;background:none;border:1.5px dashed var(--bd);border-radius:10px;padding:9px 14px;width:100%;cursor:pointer;color:var(--ts);font-size:14px;font-weight:600;margin-top:8px;transition:all .15s;font-family:inherit}
-
 .add-guest:hover{border-color:var(--p);color:var(--p)}
 
 /* LOADING / TOAST */
-
 .ldo{position:fixed;inset:0;background:rgba(255,255,255,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500}
-
 .sp{width:42px;height:42px;border:4px solid var(--bd);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
-
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .ldt{color:var(--ts);font-size:15px;font-weight:600}
-
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a1a2e;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
-
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-</style>
-
+  </style>
 </head>
-
 <body>
 
 <!-- LOGIN -->
-
 <div id="ls">
-
-<div class="l-logo">📋</div>
-
-<h1 class="l-title">Partner CRM</h1>
-
-<p class="l-sub">Contatti business sincronizzati<br>su tutti i tuoi dispositivi</p>
-
-<button class="btng" onclick="signIn()">
-
-<svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-
-Accedi con Google
-
-</button>
-
-<p class="l-note">I tuoi dati sono salvati nel tuo Google Drive personale</p>
-
+  <div class="l-logo">📋</div>
+  <h1 class="l-title">Partner CRM</h1>
+  <p class="l-sub">Contatti business sincronizzati<br>su tutti i tuoi dispositivi</p>
+  <button class="btng" onclick="signIn()">
+    <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Accedi con Google
+  </button>
+  <p class="l-note">I tuoi dati sono salvati nel tuo Google Drive personale</p>
 </div>
 
 <!-- APP -->
-
 <div id="app">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="hdr-title">📋 Partner CRM</div>
+      <div class="hdr-acts">
+        <button class="ic" onclick="syncData()" title="Sincronizza">🔄</button>
+        <button class="ic" onclick="exportToExcel()" title="Esporta Excel su Drive">📊</button>
+        <button class="ic" onclick="signOut()" title="Esci">🚪</button>
+      </div>
+    </div>
+    <div class="srch-w">
+      <input class="srch" id="search" type="search" placeholder="Cerca per nome, azienda, email, geo…" oninput="render()">
+    </div>
+    <div class="sync-bar"><div class="sdot" id="sdot"></div><span id="stxt">In attesa…</span></div>
+  </div>
 
-<div class="hdr">
+  <div class="chips-row" id="cat-chips">
+    <div class="chip active" data-f="tutti" onclick="setCF(this)">Tutti <span id="n-t">0</span></div>
+    <div class="chip" data-f="Cliente"   onclick="setCF(this)">Clienti <span id="n-cl">0</span></div>
+    <div class="chip" data-f="Partner"   onclick="setCF(this)">Partner <span id="n-pa">0</span></div>
+    <div class="chip" data-f="Fornitore" onclick="setCF(this)">Fornitori <span id="n-fo">0</span></div>
+    <div class="chip" data-f="Prospect"  onclick="setCF(this)">Prospect <span id="n-pr">0</span></div>
+    <div class="chip" data-f="Altro"     onclick="setCF(this)">Altro <span id="n-al">0</span></div>
+  </div>
+  <div id="tag-fw" style="display:none">
+    <div class="chips-lbl">Filtra per tag</div>
+    <div class="chips-row" id="tag-chips"></div>
+  </div>
 
-<div class="hdr-top">
-
-<div class="hdr-title">📋 Partner CRM</div>
-
-<div class="hdr-acts">
-
-<button class="ic" onclick="syncData()" title="Sincronizza">🔄</button>
-
-<button class="ic" onclick="exportToExcel()" title="Esporta Excel su Drive">📊</button>
-
-<button class="ic" onclick="signOut()" title="Esci">🚪</button>
-
-</div>
-
-</div>
-
-<div class="srch-w">
-
-<input class="srch" id="search" type="search" placeholder="Cerca per nome, azienda, email, geo…" oninput="render()">
-
-</div>
-
-<div class="sync-bar"><div class="sdot" id="sdot"></div><span id="stxt">In attesa…</span></div>
-
-</div>
-
-<div class="chips-row" id="cat-chips">
-
-<div class="chip active" data-f="tutti" onclick="setCF(this)">Tutti <span id="n-t">0</span></div>
-
-<div class="chip" data-f="Cliente" onclick="setCF(this)">Clienti <span id="n-cl">0</span></div>
-
-<div class="chip" data-f="Partner" onclick="setCF(this)">Partner <span id="n-pa">0</span></div>
-
-<div class="chip" data-f="Fornitore" onclick="setCF(this)">Fornitori <span id="n-fo">0</span></div>
-
-<div class="chip" data-f="Prospect" onclick="setCF(this)">Prospect <span id="n-pr">0</span></div>
-
-<div class="chip" data-f="Altro" onclick="setCF(this)">Altro <span id="n-al">0</span></div>
-
-</div>
-
-<div id="tag-fw" style="display:none">
-
-<div class="chips-lbl">Filtra per tag</div>
-
-<div class="chips-row" id="tag-chips"></div>
-
-</div>
-
-<div class="list" id="list"></div>
-
-<button class="fab" onclick="openAdd()">+</button>
-
+  <div class="list" id="list"></div>
+  <button class="fab" onclick="openAdd()">+</button>
 </div>
 
 <!-- LOADING / TOAST -->
-
 <div class="ldo" id="loader"><div class="sp"></div><div class="ldt" id="ldtxt">Caricamento…</div></div>
-
 <div class="toast" id="toast"></div>
 
 <!-- ══ FORM MODAL ══ -->
-
 <div class="ov" id="form-ov" onclick="ovc(event,'form-ov')">
-
 <div class="modal">
+  <div class="mh"><div class="mt" id="ftitle">Nuovo Contatto</div><button class="mx" onclick="closeM('form-ov')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="f-id">
 
-<div class="mh"><div class="mt" id="ftitle">Nuovo Contatto</div><button class="mx" onclick="closeM('form-ov')">✕</button></div>
+    <div class="fsec">👤 Identità</div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Nome *</label><input class="fi" id="f-nome" type="text" placeholder="Mario"></div>
+      <div class="fg"><label class="fl">Cognome</label><input class="fi" id="f-cognome" type="text" placeholder="Rossi"></div>
+    </div>
+    <div class="fg"><label class="fl">Azienda</label>
+      <div class="tag-wrap">
+        <input class="fi" id="f-azienda" type="text" placeholder="Acme S.r.l."
+          oninput="showAziendaAC(this.value)"
+          onfocus="showAziendaAC(this.value)"
+          onblur="hideAziendaAC()"
+          autocomplete="off">
+        <div class="tag-ac" id="az-ac"></div>
+      </div>
+    </div>
 
-<div class="mb">
+    <div class="fsec">📬 Contatti</div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="f-email" type="email" placeholder="mario@acme.it"></div>
+      <div class="fg"><label class="fl">Telefono</label><input class="fi" id="f-tel" type="tel" placeholder="+39 333…"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Telegram</label><input class="fi" id="f-telegram" type="text" placeholder="@username"></div>
+      <div class="fg"><label class="fl">LinkedIn</label><input class="fi" id="f-linkedin" type="url" placeholder="https://linkedin.com/in/…"></div>
+    </div>
+    <div class="fg"><label class="fl">Teams</label><input class="fi" id="f-teams" type="text" placeholder="utente@azienda.com"></div>
+    <!-- FONTI multi-entry -->
+    <div class="fg">
+      <label class="fl">Fonti <span style="font-weight:400;text-transform:none;font-size:10px;letter-spacing:0">(premi Invio per aggiungerne un'altra)</span></label>
+      <div id="fonti-container"></div>
+      <button type="button" class="add-fonte" onclick="addFonteRow('')">＋ Aggiungi fonte</button>
+    </div>
 
-<input type="hidden" id="f-id">
+    <div class="fsec">🏷️ Classificazione</div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Categoria</label>
+        <select class="fs" id="f-cat">
+          <option value="">— Seleziona —</option>
+          <option>Cliente</option><option>Partner</option><option>Fornitore</option><option>Prospect</option><option>Altro</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Role</label><input class="fi" id="f-role" type="text" placeholder="CEO, CMO, Affiliato…"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Contatto Hot</label>
+        <select class="fs" id="f-hot">
+          <option value="">— Seleziona —</option>
+          <option value="C-Level">⭐⭐⭐ C-Level</option>
+          <option value="Importante">⭐⭐ Importante</option>
+          <option value="Medio">⭐ Medio</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">CRYPTO</label>
+        <select class="fs" id="f-crypto">
+          <option value="">— Seleziona —</option>
+          <option value="Sì">✅ Sì</option>
+          <option value="No">❌ No</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Regulated</label>
+        <select class="fs" id="f-reg">
+          <option value="">— Seleziona —</option>
+          <option value="Regulated">✅ Regulated</option>
+          <option value="Unregulated">⚠️ Unregulated</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Main GEO</label>
+        <div class="tag-wrap">
+          <div class="tag-box" id="geo-box" onclick="document.getElementById('f-gi').focus()">
+            <div id="geo-pills" style="display:contents"></div>
+            <input class="tag-inner" id="f-gi" placeholder="Cerca GEO…"
+              oninput="showGeoAC(this.value)"
+              onfocus="showGeoAC(this.value)"
+              onblur="hideGeoAC()"
+              autocomplete="off">
+          </div>
+          <div class="tag-ac" id="geo-ac"></div>
+        </div>
+        <div class="tag-hint">Cerca e seleziona più GEO · Clicca × per rimuovere</div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Located In (dove vive)</label><input class="fi" id="f-loc" type="text" placeholder="Milano, Italia"></div>
 
-<div class="fsec">👤 Identità</div>
+    <div class="fsec">🏷️ Tag</div>
+    <div class="fg">
+      <div class="tag-wrap">
+        <div class="tag-box" onclick="document.getElementById('f-ti').focus()">
+          <div id="tag-pills"></div>
+          <input class="tag-inner" id="f-ti" placeholder="Scrivi e premi Invio…"
+            onkeydown="handleTag(event)"
+            oninput="showTagAC(this.value)"
+            onfocus="showTagAC(this.value)"
+            onblur="hideTagAC()"
+            autocomplete="off">
+        </div>
+        <div class="tag-ac" id="tag-ac"></div>
+      </div>
+      <div class="tag-hint">Premi <strong>Invio</strong> o <strong>,</strong> · Suggerimenti dai tag esistenti</div>
+    </div>
 
-<div class="frow">
+    <div class="fsec">🔗 Other Sources <span style="font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">(ogni fonte = nuova colonna nel foglio Drive)</span></div>
+    <div id="src-container"></div>
+    <button type="button" class="add-src" onclick="addSrcRow('','')">＋ Aggiungi fonte</button>
 
-<div class="fg"><label class="fl">Nome *</label><input class="fi" id="f-nome" type="text" placeholder="Mario"></div>
+    <div class="fsec">📝 Note</div>
+    <div class="fg"><textarea class="ft" id="f-note" placeholder="Note libere…"></textarea></div>
 
-<div class="fg"><label class="fl">Cognome</label><input class="fi" id="f-cognome" type="text" placeholder="Rossi"></div>
-
+    <div class="fa">
+      <button class="btn bs" onclick="closeM('form-ov')">Annulla</button>
+      <button class="btn bp" onclick="saveContact()">💾 Salva</button>
+    </div>
+  </div>
 </div>
-
-<div class="fg"><label class="fl">Azienda</label><input class="fi" id="f-azienda" type="text" placeholder="Acme S.r.l."></div>
-
-<div class="fsec">📬 Contatti</div>
-
-<div class="frow">
-
-<div class="fg"><label class="fl">Email</label><input class="fi" id="f-email" type="email" placeholder="mario@acme.it"></div>
-
-<div class="fg"><label class="fl">Telefono</label><input class="fi" id="f-tel" type="tel" placeholder="+39 333…"></div>
-
-</div>
-
-<div class="frow">
-
-<div class="fg"><label class="fl">Telegram</label><input class="fi" id="f-telegram" type="text" placeholder="@username"></div>
-
-<div class="fg"><label class="fl">LinkedIn</label><input class="fi" id="f-linkedin" type="url" placeholder="https://linkedin.com/in/…"></div>
-
-</div>
-
-<!-- FONTI multi-entry -->
-
-<div class="fg">
-
-<label class="fl">Fonti <span style="font-weight:400;text-transform:none;font-size:10px;letter-spacing:0">(premi Invio per aggiungerne un'altra)</span></label>
-
-<div id="fonti-container"></div>
-
-<button type="button" class="add-fonte" onclick="addFonteRow('')">＋ Aggiungi fonte</button>
-
-</div>
-
-<div class="fsec">🏷️ Classificazione</div>
-
-<div class="frow">
-
-<div class="fg"><label class="fl">Categoria</label>
-
-<select class="fs" id="f-cat">
-
-<option value="">— Seleziona —</option>
-
-<option>Cliente</option><option>Partner</option><option>Fornitore</option><option>Prospect</option><option>Altro</option>
-
-</select>
-
-</div>
-
-<div class="fg"><label class="fl">Role</label><input class="fi" id="f-role" type="text" placeholder="CEO, CMO, Affiliato…"></div>
-
-</div>
-
-<div class="frow">
-
-<div class="fg"><label class="fl">Contatto Hot</label>
-
-<select class="fs" id="f-hot">
-
-<option value="">— Seleziona —</option>
-
-<option value="C-Level">⭐⭐⭐ C-Level</option>
-
-<option value="Importante">⭐⭐ Importante</option>
-
-<option value="Medio">⭐ Medio</option>
-
-</select>
-
-</div>
-
-<div class="fg"><label class="fl">CRYPTO</label>
-
-<select class="fs" id="f-crypto">
-
-<option value="">— Seleziona —</option>
-
-<option value="Sì">✅ Sì</option>
-
-<option value="No">❌ No</option>
-
-</select>
-
-</div>
-
-</div>
-
-<div class="frow">
-
-<div class="fg"><label class="fl">Regulated</label>
-
-<select class="fs" id="f-reg">
-
-<option value="">— Seleziona —</option>
-
-<option value="Regulated">✅ Regulated</option>
-
-<option value="Unregulated">⚠️ Unregulated</option>
-
-</select>
-
-</div>
-
-<div class="fg"><label class="fl">Main GEO</label>
-
-<select class="fs" id="f-geo"></select>
-
-</div>
-
-</div>
-
-<div class="fg"><label class="fl">Located In (dove vive)</label><input class="fi" id="f-loc" type="text" placeholder="Milano, Italia"></div>
-
-<div class="fsec">🏷️ Tag</div>
-
-<div class="fg">
-
-<div class="tag-wrap">
-
-<div class="tag-box" onclick="document.getElementById('f-ti').focus()">
-
-<div id="tag-pills"></div>
-
-<input class="tag-inner" id="f-ti" placeholder="Scrivi e premi Invio…"
-
-onkeydown="handleTag(event)"
-
-oninput="showTagAC(this.value)"
-
-onfocus="showTagAC(this.value)"
-
-onblur="hideTagAC()"
-
-autocomplete="off">
-
-</div>
-
-<div class="tag-ac" id="tag-ac"></div>
-
-</div>
-
-<div class="tag-hint">Premi <strong>Invio</strong> o <strong>,</strong> · Suggerimenti dai tag esistenti</div>
-
-</div>
-
-<div class="fsec">🔗 Other Sources <span style="font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">(ogni fonte = nuova colonna nel foglio Drive)</span></div>
-
-<div id="src-container"></div>
-
-<button type="button" class="add-src" onclick="addSrcRow('','')">＋ Aggiungi fonte</button>
-
-<div class="fsec">📝 Note</div>
-
-<div class="fg"><textarea class="ft" id="f-note" placeholder="Note libere…"></textarea></div>
-
-<div class="fa">
-
-<button class="btn bs" onclick="closeM('form-ov')">Annulla</button>
-
-<button class="btn bp" onclick="saveContact()">💾 Salva</button>
-
-</div>
-
-</div>
-
-</div>
-
 </div>
 
 <!-- ══ DETAIL MODAL ══ -->
-
 <div class="ov" id="det-ov" onclick="ovc(event,'det-ov')">
-
-<div class="modal"><div id="det-content"></div></div>
-
+  <div class="modal"><div id="det-content"></div></div>
 </div>
 
 <!-- ══ CALENDAR MODAL ══ -->
-
 <div class="ov" id="cal-ov" onclick="ovc(event,'cal-ov')">
-
 <div class="modal">
-
-<div class="mh"><div class="mt">📅 Crea Evento Calendario</div><button class="mx" onclick="closeM('cal-ov')">✕</button></div>
-
-<div class="mb">
-
-<div class="cal-mode">
-
-<div class="cal-mb active" id="cm-a" onclick="setCalMode('a')">🔔 Solo per me</div>
-
-<div class="cal-mb" id="cm-b" onclick="setCalMode('b')">👥 Con invitati</div>
-
+  <div class="mh"><div class="mt">📅 Crea Evento Calendario</div><button class="mx" onclick="closeM('cal-ov')">✕</button></div>
+  <div class="mb">
+    <div class="cal-mode">
+      <div class="cal-mb active" id="cm-a" onclick="setCalMode('a')">🔔 Solo per me</div>
+      <div class="cal-mb" id="cm-b" onclick="setCalMode('b')">👥 Con invitati</div>
+    </div>
+    <div class="fg"><label class="fl">Titolo evento</label><input class="fi" id="cal-tit" type="text" placeholder="Follow-up con…"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Data</label><input class="fi" id="cal-d" type="date"></div>
+      <div class="frow" style="gap:8px">
+        <div class="fg"><label class="fl">Inizio</label><input class="fi" id="cal-s" type="time" value="10:00"></div>
+        <div class="fg"><label class="fl">Fine</label><input class="fi" id="cal-e" type="time" value="11:00"></div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Descrizione</label><textarea class="ft" id="cal-desc" placeholder="Note sull'evento…" style="min-height:56px"></textarea></div>
+    <div id="guests-sec" style="display:none">
+      <label class="fl" style="margin-bottom:8px">Invitati</label>
+      <div class="guests-list" id="guests-list"></div>
+      <button class="add-guest" onclick="addGuest('')">＋ Aggiungi invitato</button>
+    </div>
+    <div class="fa">
+      <button class="btn bs" onclick="closeM('cal-ov')">Annulla</button>
+      <button class="btn bcal" onclick="createCalEvent()">📅 Crea Evento</button>
+    </div>
+  </div>
 </div>
-
-<div class="fg"><label class="fl">Titolo evento</label><input class="fi" id="cal-tit" type="text" placeholder="Follow-up con…"></div>
-
-<div class="frow">
-
-<div class="fg"><label class="fl">Data</label><input class="fi" id="cal-d" type="date"></div>
-
-<div class="frow" style="gap:8px">
-
-<div class="fg"><label class="fl">Inizio</label><input class="fi" id="cal-s" type="time" value="10:00"></div>
-
-<div class="fg"><label class="fl">Fine</label><input class="fi" id="cal-e" type="time" value="11:00"></div>
-
-</div>
-
-</div>
-
-<div class="fg"><label class="fl">Descrizione</label><textarea class="ft" id="cal-desc" placeholder="Note sull'evento…" style="min-height:56px"></textarea></div>
-
-<div id="guests-sec" style="display:none">
-
-<label class="fl" style="margin-bottom:8px">Invitati</label>
-
-<div class="guests-list" id="guests-list"></div>
-
-<button class="add-guest" onclick="addGuest('')">＋ Aggiungi invitato</button>
-
-</div>
-
-<div class="fa">
-
-<button class="btn bs" onclick="closeM('cal-ov')">Annulla</button>
-
-<button class="btn bcal" onclick="createCalEvent()">📅 Crea Evento</button>
-
-</div>
-
-</div>
-
-</div>
-
 </div>
 
 <script>
-
 // ═══════════════════════════════════════════════════
-
 // CONFIG
-
 // ═══════════════════════════════════════════════════
-
-const CLIENT_ID = '525708495290-u14oducrh67egbjcueh8o1pd088oe60c.apps.googleusercontent.com';
-
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/calendar.events';
-
+const CLIENT_ID   = '525708495290-u14oducrh67egbjcueh8o1pd088oe60c.apps.googleusercontent.com';
+const SCOPES      = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/calendar.events';
 const SHEET_TITLE = 'Partner CRM - Contatti';
-
-const TAB = 'Contatti';
+const TAB         = 'Contatti';
 
 // Fixed headers — 'Fonti' stores multiple URLs pipe-separated (|)
-
 // 'Sito Web' kept for backward-compat reading from older sheets
-
 const FIXED_H = [
-
-'ID','Nome','Cognome','Azienda',
-
-'Email','Telefono','Telegram',
-
-'Categoria','LinkedIn','Fonti',
-
-'Role','Contatto Hot','CRYPTO','Regulated',
-
-'Main GEO','Located In',
-
-'Tags','Note',
-
-'Data Creazione','Ultima Modifica'
-
+  'ID','Nome','Cognome','Azienda',
+  'Email','Telefono','Telegram','Teams',
+  'Categoria','LinkedIn','Fonti',
+  'Role','Contatto Hot','CRYPTO','Regulated',
+  'Main GEO','Located In',
+  'Tags','Note',
+  'Data Creazione','Ultima Modifica'
 ];
 
 const GEOS = ['Any GEO','— Europa —','Albania','Andorra','Austria','Belgio','Bosnia','Bulgaria','Bielorussia','Cipro','Croazia','Danimarca','Estonia','Finlandia','Francia','Germania','Grecia','Irlanda','Islanda','Italia','Kosovo','Lettonia','Lituania','Lussemburgo','Malta','Moldova','Montenegro','Norvegia','Olanda','Polonia','Portogallo','Rep. Ceca','Romania','Russia','Serbia','Slovacchia','Slovenia','Spagna','Svezia','Svizzera','Turchia','Ucraina','UK','Ungheria','— Americhe —','Argentina','Bahamas','Belize','Bolivia','Brasile','Canada','Cile','Colombia','Costa Rica','Ecuador','El Salvador','Giamaica','Guatemala','Honduras','Messico','Panama','Paraguay','Perù','Puerto Rico','Uruguay','USA','Venezuela','— Asia —','Armenia','Azerbaijan','Bangladesh','Cambogia','Cina','Corea del Sud','Filippine','Georgia','Giappone','Hong Kong','India','Indonesia','Kazakistan','Laos','Macau','Malesia','Mongolia','Myanmar','Nepal','Pakistan','Singapore','Sri Lanka','Taiwan','Tailandia','Uzbekistan','Vietnam','— Medio Oriente —','Arabia Saudita','Bahrain','Egitto','Emirati Arabi Uniti','Giordania','Iran','Iraq','Israele','Kuwait','Libano','Oman','Qatar','Yemen','— Africa —','Algeria','Angola','Camerun',"Costa d'Avorio",'Etiopia','Ghana','Kenya','Libia','Marocco','Mauritius','Nigeria','Senegal','Sudafrica','Tanzania','Tunisia','Uganda','Zimbabwe','— Oceania —','Australia','Nuova Zelanda','Papua Nuova Guinea'];
 
 // ═══════════════════════════════════════════════════
-
 // STATE
-
 // ═══════════════════════════════════════════════════
-
-let token = null;
-
-let sheetId = localStorage.getItem('crm_sid') || null;
-
+let token    = null;
+let sheetId  = localStorage.getItem('crm_sid') || null;
 let contacts = [];
-
 let headerMap = {};
-
-let dynCols = {};
-
+let dynCols   = {};
 let catFilter = 'tutti';
-
 let tagFilter = null;
-
 let editingId = null;
-
-let formTags = [];
-
+let formTags  = [];
 let calContactId = null;
-
-let calMode = 'a';
-
-// ═══════════════════════════════════════════════════
-
-// INIT GEO SELECT
+let calMode  = 'a';
 
 // ═══════════════════════════════════════════════════
+// GEO MULTI-SELECT
+// ═══════════════════════════════════════════════════
+let formGeos = [];
 
-(function initGeo(){
+function renderGeoPills(){
+  document.getElementById('geo-pills').innerHTML = formGeos.map(g=>
+    `<span class="tpill" style="background:#1565c0;border-radius:8px">${esc(g)}<button type="button" onmousedown="rmGeo('${esc(g)}')" tabindex="-1">×</button></span>`
+  ).join('');
+}
 
-const sel = document.getElementById('f-geo');
+function showGeoAC(query){
+  const ac = document.getElementById('geo-ac');
+  const q = (query||'').toLowerCase().trim();
+  let html = '';
+  if(q){
+    // Search mode: flat filtered list
+    let shown = 0;
+    for(const g of GEOS){
+      if(g.startsWith('—') || formGeos.includes(g)) continue;
+      if(g.toLowerCase().includes(q)){
+        html += `<div class="tag-ac-item tag-ac-exist" onmousedown="addGeoFromAC('${esc(g)}')">🌍 ${esc(g)}</div>`;
+        if(++shown >= 12) break;
+      }
+    }
+  } else {
+    // Browse mode: grouped by continent
+    for(const g of GEOS){
+      if(g.startsWith('—')){
+        html += `<div class="tag-ac-sep">${g}</div>`;
+      } else if(!formGeos.includes(g)){
+        html += `<div class="tag-ac-item tag-ac-exist" onmousedown="addGeoFromAC('${esc(g)}')">🌍 ${esc(g)}</div>`;
+      }
+    }
+  }
+  if(!html){ ac.style.display='none'; return; }
+  ac.innerHTML = html; ac.style.display = 'block';
+}
 
-sel.innerHTML = '<option value="">— Seleziona —</option>' +
+function hideGeoAC(){ setTimeout(()=>{ document.getElementById('geo-ac').style.display='none'; }, 150); }
 
-GEOS.map(g => g.startsWith('—') ? `<option disabled>${g}</option>` : `<option>${g}</option>`).join('');
+function addGeoFromAC(geo){
+  if(!formGeos.includes(geo)){ formGeos.push(geo); renderGeoPills(); }
+  document.getElementById('f-gi').value = '';
+  document.getElementById('geo-ac').style.display = 'none';
+}
 
-})();
+function rmGeo(g){ formGeos = formGeos.filter(x=>x!==g); renderGeoPills(); }
 
 // ═══════════════════════════════════════════════════
+// AUTOCOMPLETE AZIENDA
+// ═══════════════════════════════════════════════════
+function showAziendaAC(query){
+  const ac = document.getElementById('az-ac');
+  const q = (query||'').toLowerCase().trim();
+  // Frequency map case-insensitive
+  const freq={}, canon={};
+  contacts.forEach(c=>{
+    if(!c.azienda) return;
+    const lc=c.azienda.toLowerCase();
+    freq[lc]=(freq[lc]||0)+1;
+    if(!canon[lc]) canon[lc]=c.azienda;
+  });
+  const allSorted = Object.keys(freq)
+    .sort((a,b)=>(freq[b]-freq[a])||a.localeCompare(b))
+    .map(lc=>canon[lc]);
+  const current = (document.getElementById('f-azienda').value||'').toLowerCase();
+  const matches = allSorted.filter(a=>(!q||a.toLowerCase().includes(q))&&a.toLowerCase()!==current);
+  if(!matches.length){ ac.style.display='none'; return; }
+  ac.innerHTML = matches.slice(0,8).map(a=>
+    `<div class="tag-ac-item tag-ac-exist" onmousedown="selectAzienda('${esc(a)}')">🏢 ${esc(a)}</div>`
+  ).join('');
+  ac.style.display='block';
+}
+function hideAziendaAC(){ setTimeout(()=>{ document.getElementById('az-ac').style.display='none'; },150); }
+function selectAzienda(val){
+  document.getElementById('f-azienda').value=val;
+  document.getElementById('az-ac').style.display='none';
+}
 
+// ═══════════════════════════════════════════════════
 // AUTH
-
 // ═══════════════════════════════════════════════════
-
 function signIn() {
-
-const client = google.accounts.oauth2.initTokenClient({
-
-client_id: CLIENT_ID, scope: SCOPES,
-
-callback: async r => {
-
-if (r.error) { toast('❌ Errore: ' + r.error); return; }
-
-token = r.access_token;
-
-await boot();
-
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID, scope: SCOPES,
+    callback: async r => {
+      if (r.error) { toast('❌ Errore: ' + r.error); return; }
+      token = r.access_token;
+      await boot();
+    }
+  });
+  client.requestAccessToken();
 }
-
-});
-
-client.requestAccessToken();
-
-}
-
 function signOut() {
-
-if (token) google.accounts.oauth2.revoke(token);
-
-token = null; contacts = [];
-
-document.getElementById('ls').style.display = 'flex';
-
-document.getElementById('app').style.display = 'none';
-
+  if (token) google.accounts.oauth2.revoke(token);
+  token = null; contacts = [];
+  document.getElementById('ls').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
 }
 
 // ═══════════════════════════════════════════════════
-
 // BOOT
-
 // ═══════════════════════════════════════════════════
-
 async function boot() {
-
-load('Connessione a Google Drive…');
-
-try {
-
-await ensureSheet();
-
-load('Caricamento contatti…');
-
-await loadHeaders();
-
-await fetchContacts();
-
-document.getElementById('ls').style.display = 'none';
-
-document.getElementById('app').style.display = 'block';
-
-hideLoad(); render(); setSS('ok');
-
-} catch(e) { hideLoad(); toast('❌ ' + e.message); console.error(e); }
-
+  load('Connessione a Google Drive…');
+  try {
+    await ensureSheet();
+    load('Caricamento contatti…');
+    await loadHeaders();
+    await fetchContacts();
+    document.getElementById('ls').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    hideLoad(); render(); setSS('ok');
+  } catch(e) { hideLoad(); toast('❌ ' + e.message); console.error(e); }
 }
 
 // ═══════════════════════════════════════════════════
-
 // SHEETS API — ranges NOT URL-encoded (breaks Google parsing)
-
 // ═══════════════════════════════════════════════════
-
 async function api(path, method='GET', body=null) {
-
-const r = await fetch('https://sheets.googleapis.com/v4/spreadsheets' + path, {
-
-method,
-
-headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
-
-...(body ? {body:JSON.stringify(body)} : {})
-
-});
-
-const d = await r.json();
-
-if (!r.ok) throw new Error(d.error?.message || 'Sheets error ' + r.status);
-
-return d;
-
+  const r = await fetch('https://sheets.googleapis.com/v4/spreadsheets' + path, {
+    method,
+    headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
+    ...(body ? {body:JSON.stringify(body)} : {})
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error?.message || 'Sheets error ' + r.status);
+  return d;
 }
 
 async function driveSearch() {
-
-const q = `name='${SHEET_TITLE}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
-
-const r = await fetch(
-
-`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,
-
-{ headers:{ Authorization:'Bearer '+token } }
-
-);
-
-const d = await r.json();
-
-return d.files || [];
-
+  const q = `name='${SHEET_TITLE}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
+  const r = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`,
+    { headers:{ Authorization:'Bearer '+token } }
+  );
+  const d = await r.json();
+  return d.files || [];
 }
 
 // col index → letter: 0→A, 25→Z, 26→AA …
-
 function CL(n) {
-
-let s=''; n++;
-
-while(n>0){ n--; s=String.fromCharCode(65+n%26)+s; n=Math.floor(n/26); }
-
-return s;
-
+  let s=''; n++;
+  while(n>0){ n--; s=String.fromCharCode(65+n%26)+s; n=Math.floor(n/26); }
+  return s;
 }
 
 // ═══════════════════════════════════════════════════
-
 // SPREADSHEET SETUP
-
 // ═══════════════════════════════════════════════════
-
 async function ensureSheet() {
-
-if (sheetId) {
-
-try { await api('/'+sheetId+'?fields=spreadsheetId'); return; }
-
-catch(e) { sheetId=null; localStorage.removeItem('crm_sid'); }
-
-}
-
-const files = await driveSearch();
-
-if (files.length > 0) {
-
-sheetId = files[0].id;
-
-localStorage.setItem('crm_sid', sheetId);
-
-return;
-
-}
-
-const ss = await api('','POST',{
-
-properties:{title:SHEET_TITLE},
-
-sheets:[{properties:{title:TAB,sheetId:0}}]
-
-});
-
-sheetId = ss.spreadsheetId;
-
-localStorage.setItem('crm_sid', sheetId);
-
-await api(`/${sheetId}/values/${TAB}!A1?valueInputOption=RAW`,'PUT',{values:[FIXED_H]});
-
-await api(`/${sheetId}:batchUpdate`,'POST',{requests:[
-
-{repeatCell:{range:{sheetId:0,startRowIndex:0,endRowIndex:1},
-
-cell:{userEnteredFormat:{backgroundColor:{red:.083,green:.396,blue:.753},
-
-textFormat:{foregroundColor:{red:1,green:1,blue:1},bold:true}}},
-
-fields:'userEnteredFormat(backgroundColor,textFormat)'}},
-
-{updateSheetProperties:{properties:{sheetId:0,gridProperties:{frozenRowCount:1}},fields:'gridProperties.frozenRowCount'}}
-
-]});
-
+  if (sheetId) {
+    try { await api('/'+sheetId+'?fields=spreadsheetId'); return; }
+    catch(e) { sheetId=null; localStorage.removeItem('crm_sid'); }
+  }
+  const files = await driveSearch();
+  if (files.length > 0) {
+    sheetId = files[0].id;
+    localStorage.setItem('crm_sid', sheetId);
+    return;
+  }
+  const ss = await api('','POST',{
+    properties:{title:SHEET_TITLE},
+    sheets:[{properties:{title:TAB,sheetId:0}}]
+  });
+  sheetId = ss.spreadsheetId;
+  localStorage.setItem('crm_sid', sheetId);
+  await api(`/${sheetId}/values/${TAB}!A1?valueInputOption=RAW`,'PUT',{values:[FIXED_H]});
+  await api(`/${sheetId}:batchUpdate`,'POST',{requests:[
+    {repeatCell:{range:{sheetId:0,startRowIndex:0,endRowIndex:1},
+      cell:{userEnteredFormat:{backgroundColor:{red:.083,green:.396,blue:.753},
+        textFormat:{foregroundColor:{red:1,green:1,blue:1},bold:true}}},
+      fields:'userEnteredFormat(backgroundColor,textFormat)'}},
+    {updateSheetProperties:{properties:{sheetId:0,gridProperties:{frozenRowCount:1}},fields:'gridProperties.frozenRowCount'}}
+  ]});
 }
 
 async function loadHeaders() {
-
-const d = await api(`/${sheetId}/values/${TAB}!1:1`);
-
-const existing = d.values?.[0] || [];
-
-headerMap = {};
-
-existing.forEach((h,i) => { if(h) headerMap[h]=i; });
-
-const missing = FIXED_H.filter(h => headerMap[h]===undefined);
-
-if (missing.length > 0) {
-
-const nextIdx = existing.filter(Boolean).length;
-
-await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1:${CL(nextIdx+missing.length-1)}1?valueInputOption=RAW`,'PUT',{values:[missing]});
-
-missing.forEach((h,i) => { headerMap[h]=nextIdx+i; });
-
-}
-
-dynCols = {};
-
-Object.entries(headerMap).forEach(([h,i]) => { if(!FIXED_H.includes(h)) dynCols[h]=i; });
-
+  const d = await api(`/${sheetId}/values/${TAB}!1:1`);
+  const existing = d.values?.[0] || [];
+  headerMap = {};
+  existing.forEach((h,i) => { if(h) headerMap[h]=i; });
+  const missing = FIXED_H.filter(h => headerMap[h]===undefined);
+  if (missing.length > 0) {
+    const nextIdx = existing.filter(Boolean).length;
+    await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1:${CL(nextIdx+missing.length-1)}1?valueInputOption=RAW`,'PUT',{values:[missing]});
+    missing.forEach((h,i) => { headerMap[h]=nextIdx+i; });
+  }
+  dynCols = {};
+  Object.entries(headerMap).forEach(([h,i]) => { if(!FIXED_H.includes(h)) dynCols[h]=i; });
 }
 
 // ═══════════════════════════════════════════════════
-
 // DATA FETCH
-
 // ═══════════════════════════════════════════════════
-
 async function fetchContacts() {
+  const d = await api(`/${sheetId}/values/${TAB}!A:ZZ`);
+  const rows = d.values || [];
+  if (rows.length < 2) { contacts=[]; return; }
+  const hrow = rows[0];
+  headerMap = {};
+  hrow.forEach((h,i) => { if(h) headerMap[h]=i; });
+  dynCols = {};
+  Object.entries(headerMap).forEach(([h,i]) => { if(!FIXED_H.includes(h)) dynCols[h]=i; });
 
-const d = await api(`/${sheetId}/values/${TAB}!A:ZZ`);
+  const g = (row,key) => {
+    const idx = headerMap[key];
+    return (idx!==undefined && row[idx]) ? row[idx] : '';
+  };
 
-const rows = d.values || [];
-
-if (rows.length < 2) { contacts=[]; return; }
-
-const hrow = rows[0];
-
-headerMap = {};
-
-hrow.forEach((h,i) => { if(h) headerMap[h]=i; });
-
-dynCols = {};
-
-Object.entries(headerMap).forEach(([h,i]) => { if(!FIXED_H.includes(h)) dynCols[h]=i; });
-
-const g = (row,key) => {
-
-const idx = headerMap[key];
-
-return (idx!==undefined && row[idx]) ? row[idx] : '';
-
-};
-
-contacts = rows.slice(1).filter(r=>g(r,'ID')).map(r => {
-
-const otherSources={};
-
-Object.entries(dynCols).forEach(([name,idx]) => { if(r[idx]) otherSources[name]=r[idx]; });
-
-// 'Fonti' is pipe-separated; fall back to legacy 'Sito Web' for old contacts
-
-const fontiRaw = g(r,'Fonti') || g(r,'Sito Web');
-
-return {
-
-id: g(r,'ID'),
-
-nome: g(r,'Nome'),
-
-cognome: g(r,'Cognome'),
-
-azienda: g(r,'Azienda'),
-
-email: g(r,'Email'),
-
-telefono: g(r,'Telefono'),
-
-telegram: g(r,'Telegram'),
-
-categoria: g(r,'Categoria'),
-
-linkedin: g(r,'LinkedIn'),
-
-fonti: fontiRaw.split('|').map(f=>f.trim()).filter(Boolean),
-
-role: g(r,'Role'),
-
-contattoHot: g(r,'Contatto Hot'),
-
-crypto: g(r,'CRYPTO'),
-
-regulated: g(r,'Regulated'),
-
-mainGeo: g(r,'Main GEO'),
-
-locatedIn: g(r,'Located In'),
-
-tags: g(r,'Tags').split(',').map(t=>t.trim()).filter(Boolean),
-
-note: g(r,'Note'),
-
-dataCreazione: g(r,'Data Creazione'),
-
-ultimaModifica:g(r,'Ultima Modifica'),
-
-otherSources
-
-};
-
-});
-
+  contacts = rows.slice(1).filter(r=>g(r,'ID')).map(r => {
+    const otherSources={};
+    Object.entries(dynCols).forEach(([name,idx]) => { if(r[idx]) otherSources[name]=r[idx]; });
+    // 'Fonti' is pipe-separated; fall back to legacy 'Sito Web' for old contacts
+    const fontiRaw = g(r,'Fonti') || g(r,'Sito Web');
+    return {
+      id:            g(r,'ID'),
+      nome:          g(r,'Nome'),
+      cognome:       g(r,'Cognome'),
+      azienda:       g(r,'Azienda'),
+      email:         g(r,'Email'),
+      telefono:      g(r,'Telefono'),
+      telegram:      g(r,'Telegram'),
+      teams:         g(r,'Teams'),
+      categoria:     g(r,'Categoria'),
+      linkedin:      g(r,'LinkedIn'),
+      fonti:         fontiRaw.split('|').map(f=>f.trim()).filter(Boolean),
+      role:          g(r,'Role'),
+      contattoHot:   g(r,'Contatto Hot'),
+      crypto:        g(r,'CRYPTO'),
+      regulated:     g(r,'Regulated'),
+      mainGeo:       g(r,'Main GEO').split(',').map(t=>t.trim()).filter(Boolean),
+      locatedIn:     g(r,'Located In'),
+      tags:          g(r,'Tags').split(',').map(t=>t.trim()).filter(Boolean),
+      note:          g(r,'Note'),
+      dataCreazione: g(r,'Data Creazione'),
+      ultimaModifica:g(r,'Ultima Modifica'),
+      otherSources
+    };
+  });
 }
 
 // ═══════════════════════════════════════════════════
-
 // ROW BUILD
-
 // ═══════════════════════════════════════════════════
-
 function buildRow(contact, id, createdAt, updatedAt) {
-
-const totalCols = Math.max(...Object.values(headerMap)) + 1;
-
-const row = new Array(totalCols).fill('');
-
-const set = (key,val) => { const i=headerMap[key]; if(i!==undefined) row[i]=val||''; };
-
-set('ID',id);
-
-set('Nome',contact.nome); set('Cognome',contact.cognome); set('Azienda',contact.azienda);
-
-set('Email',contact.email); set('Telefono',contact.telefono); set('Telegram',contact.telegram);
-
-set('Categoria',contact.categoria); set('LinkedIn',contact.linkedin);
-
-set('Fonti', (contact.fonti||[]).join('|'));
-
-set('Role',contact.role); set('Contatto Hot',contact.contattoHot);
-
-set('CRYPTO',contact.crypto); set('Regulated',contact.regulated);
-
-set('Main GEO',contact.mainGeo); set('Located In',contact.locatedIn);
-
-set('Tags',(contact.tags||[]).join(','));
-
-set('Note',contact.note);
-
-set('Data Creazione',createdAt); set('Ultima Modifica',updatedAt);
-
-Object.entries(contact.otherSources||{}).forEach(([k,v]) => { const i=headerMap[k]; if(i!==undefined) row[i]=v||''; });
-
-return row;
-
+  const totalCols = Math.max(...Object.values(headerMap)) + 1;
+  const row = new Array(totalCols).fill('');
+  const set = (key,val) => { const i=headerMap[key]; if(i!==undefined) row[i]=val||''; };
+  set('ID',id);
+  set('Nome',contact.nome); set('Cognome',contact.cognome); set('Azienda',contact.azienda);
+  set('Email',contact.email); set('Telefono',contact.telefono); set('Telegram',contact.telegram); set('Teams',contact.teams);
+  set('Categoria',contact.categoria); set('LinkedIn',contact.linkedin);
+  set('Fonti', (contact.fonti||[]).join('|'));
+  set('Role',contact.role); set('Contatto Hot',contact.contattoHot);
+  set('CRYPTO',contact.crypto); set('Regulated',contact.regulated);
+  set('Main GEO',(contact.mainGeo||[]).join(',')); set('Located In',contact.locatedIn);
+  set('Tags',(contact.tags||[]).join(','));
+  set('Note',contact.note);
+  set('Data Creazione',createdAt); set('Ultima Modifica',updatedAt);
+  Object.entries(contact.otherSources||{}).forEach(([k,v]) => { const i=headerMap[k]; if(i!==undefined) row[i]=v||''; });
+  return row;
 }
 
 async function ensureDynCol(name) {
-
-if (headerMap[name]!==undefined) return;
-
-const nextIdx = Math.max(...Object.values(headerMap)) + 1;
-
-await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1?valueInputOption=RAW`,'PUT',{values:[[name]]});
-
-headerMap[name]=nextIdx; dynCols[name]=nextIdx;
-
+  if (headerMap[name]!==undefined) return;
+  const nextIdx = Math.max(...Object.values(headerMap)) + 1;
+  await api(`/${sheetId}/values/${TAB}!${CL(nextIdx)}1?valueInputOption=RAW`,'PUT',{values:[[name]]});
+  headerMap[name]=nextIdx; dynCols[name]=nextIdx;
 }
 
 // ═══════════════════════════════════════════════════
-
 // CRUD
-
 // ═══════════════════════════════════════════════════
-
 async function appendRow(row) {
-
-await api(`/${sheetId}/values/${TAB}!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,'POST',{values:[row]});
-
+  await api(`/${sheetId}/values/${TAB}!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,'POST',{values:[row]});
 }
-
 async function updateRow(id, row) {
-
-const d = await api(`/${sheetId}/values/${TAB}!A:A`);
-
-const idx = (d.values||[]).map(r=>r[0]||'').indexOf(id);
-
-if(idx===-1) throw new Error('Contatto non trovato');
-
-await api(`/${sheetId}/values/${TAB}!A${idx+1}:${CL(row.length-1)}${idx+1}?valueInputOption=RAW`,'PUT',{values:[row]});
-
+  const d = await api(`/${sheetId}/values/${TAB}!A:A`);
+  const idx = (d.values||[]).map(r=>r[0]||'').indexOf(id);
+  if(idx===-1) throw new Error('Contatto non trovato');
+  await api(`/${sheetId}/values/${TAB}!A${idx+1}:${CL(row.length-1)}${idx+1}?valueInputOption=RAW`,'PUT',{values:[row]});
 }
-
 async function deleteRow(id) {
-
-const d = await api(`/${sheetId}/values/${TAB}!A:A`);
-
-const idx = (d.values||[]).map(r=>r[0]||'').indexOf(id);
-
-if(idx===-1) throw new Error('Contatto non trovato');
-
-const meta = await api(`/${sheetId}?fields=sheets.properties`);
-
-const tabId = meta.sheets.find(s=>s.properties.title===TAB)?.properties.sheetId??0;
-
-await api(`/${sheetId}:batchUpdate`,'POST',{requests:[{deleteDimension:{range:{sheetId:tabId,dimension:'ROWS',startIndex:idx,endIndex:idx+1}}}]});
-
+  const d = await api(`/${sheetId}/values/${TAB}!A:A`);
+  const idx = (d.values||[]).map(r=>r[0]||'').indexOf(id);
+  if(idx===-1) throw new Error('Contatto non trovato');
+  const meta = await api(`/${sheetId}?fields=sheets.properties`);
+  const tabId = meta.sheets.find(s=>s.properties.title===TAB)?.properties.sheetId??0;
+  await api(`/${sheetId}:batchUpdate`,'POST',{requests:[{deleteDimension:{range:{sheetId:tabId,dimension:'ROWS',startIndex:idx,endIndex:idx+1}}}]});
 }
 
 // ═══════════════════════════════════════════════════
-
 // SYNC + EXPORT
-
 // ═══════════════════════════════════════════════════
-
 async function syncData() {
-
-if(!token) return; setSS('syncing');
-
-try { await loadHeaders(); await fetchContacts(); render(); setSS('ok'); toast('✅ Dati aggiornati!'); }
-
-catch(e) { setSS('er'); toast('❌ '+e.message); }
-
+  if(!token) return; setSS('syncing');
+  try { await loadHeaders(); await fetchContacts(); render(); setSS('ok'); toast('✅ Dati aggiornati!'); }
+  catch(e) { setSS('er'); toast('❌ '+e.message); }
 }
-
 async function exportToExcel() {
-
-if(!sheetId){ toast('❌ Nessun dato'); return; }
-
-load('Esportazione Excel…');
-
-try {
-
-const res = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`,{headers:{Authorization:'Bearer '+token}});
-
-if(!res.ok) throw new Error('Export fallito');
-
-const blob = await res.blob();
-
-const ds = new Date(); const fn = `Partner CRM ${ds.getDate()}-${ds.getMonth()+1}-${ds.getFullYear()}.xlsx`;
-
-const meta = JSON.stringify({name:fn,mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-
-const form = new FormData();
-
-form.append('metadata',new Blob([meta],{type:'application/json'}));
-
-form.append('file',blob,fn);
-
-const up = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:'Bearer '+token},body:form});
-
-if(!up.ok) throw new Error('Upload Drive fallito');
-
-const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click();
-
-hideLoad(); toast('✅ Excel salvato su Drive!');
-
-} catch(e){ hideLoad(); toast('❌ '+e.message); }
-
+  if(!sheetId){ toast('❌ Nessun dato'); return; }
+  load('Esportazione Excel…');
+  try {
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`,{headers:{Authorization:'Bearer '+token}});
+    if(!res.ok) throw new Error('Export fallito');
+    const blob = await res.blob();
+    const ds = new Date(); const fn = `Partner CRM ${ds.getDate()}-${ds.getMonth()+1}-${ds.getFullYear()}.xlsx`;
+    const meta = JSON.stringify({name:fn,mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const form = new FormData();
+    form.append('metadata',new Blob([meta],{type:'application/json'}));
+    form.append('file',blob,fn);
+    const up = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:'Bearer '+token},body:form});
+    if(!up.ok) throw new Error('Upload Drive fallito');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click();
+    hideLoad(); toast('✅ Excel salvato su Drive!');
+  } catch(e){ hideLoad(); toast('❌ '+e.message); }
 }
 
 // ═══════════════════════════════════════════════════
-
 // CALENDAR
-
 // ═══════════════════════════════════════════════════
-
 function openCal(contactId) {
-
-calContactId = contactId;
-
-const c = contacts.find(x=>x.id===contactId);
-
-const name = c ? [c.nome,c.cognome].filter(Boolean).join(' ') : '';
-
-document.getElementById('cal-tit').value = name ? `Follow-up con ${name}` : 'Nuovo evento';
-
-document.getElementById('cal-d').value = new Date().toISOString().split('T')[0];
-
-document.getElementById('cal-s').value = '10:00';
-
-document.getElementById('cal-e').value = '11:00';
-
-document.getElementById('cal-desc').value = '';
-
-setCalMode('a');
-
-closeM('det-ov'); openM('cal-ov');
-
+  calContactId = contactId;
+  const c = contacts.find(x=>x.id===contactId);
+  const name = c ? [c.nome,c.cognome].filter(Boolean).join(' ') : '';
+  document.getElementById('cal-tit').value  = name ? `Follow-up con ${name}` : 'Nuovo evento';
+  document.getElementById('cal-d').value    = new Date().toISOString().split('T')[0];
+  document.getElementById('cal-s').value    = '10:00';
+  document.getElementById('cal-e').value    = '11:00';
+  document.getElementById('cal-desc').value = '';
+  setCalMode('a');
+  closeM('det-ov'); openM('cal-ov');
 }
-
 function setCalMode(m) {
-
-calMode=m;
-
-document.getElementById('cm-a').classList.toggle('active',m==='a');
-
-document.getElementById('cm-b').classList.toggle('active',m==='b');
-
-document.getElementById('guests-sec').style.display = m==='b'?'block':'none';
-
-if(m==='b'){
-
-document.getElementById('guests-list').innerHTML='';
-
-const c=contacts.find(x=>x.id===calContactId);
-
-addGuest(c?.email||'');
-
+  calMode=m;
+  document.getElementById('cm-a').classList.toggle('active',m==='a');
+  document.getElementById('cm-b').classList.toggle('active',m==='b');
+  document.getElementById('guests-sec').style.display = m==='b'?'block':'none';
+  if(m==='b'){
+    document.getElementById('guests-list').innerHTML='';
+    const c=contacts.find(x=>x.id===calContactId);
+    addGuest(c?.email||'');
+  }
 }
-
-}
-
 function addGuest(email) {
-
-const gl=document.getElementById('guests-list');
-
-const d=document.createElement('div'); d.className='guest-r';
-
-d.innerHTML=`<input class="fi" type="email" placeholder="email@esempio.com" value="${esc(email)}"><button class="grm" onclick="this.parentElement.remove()">✕</button>`;
-
-gl.appendChild(d);
-
+  const gl=document.getElementById('guests-list');
+  const d=document.createElement('div'); d.className='guest-r';
+  d.innerHTML=`<input class="fi" type="email" placeholder="email@esempio.com" value="${esc(email)}"><button class="grm" onclick="this.parentElement.remove()">✕</button>`;
+  gl.appendChild(d);
 }
-
 async function createCalEvent() {
-
-const tit = document.getElementById('cal-tit').value.trim();
-
-const data = document.getElementById('cal-d').value;
-
-const s = document.getElementById('cal-s').value;
-
-const e = document.getElementById('cal-e').value;
-
-const desc = document.getElementById('cal-desc').value.trim();
-
-if(!tit) { toast('⚠️ Inserisci un titolo'); return; }
-
-if(!data){ toast('⚠️ Seleziona una data'); return; }
-
-const ev = {
-
-summary:tit, description:desc,
-
-start:{dateTime:`${data}T${s}:00`,timeZone:'Europe/Rome'},
-
-end: {dateTime:`${data}T${e}:00`,timeZone:'Europe/Rome'},
-
-reminders:{useDefault:true}
-
-};
-
-if(calMode==='b'){
-
-const gs=[...document.querySelectorAll('#guests-list .guest-r input')].map(i=>i.value.trim()).filter(Boolean);
-
-if(gs.length){ ev.attendees=gs.map(email=>({email})); ev.sendUpdates='all'; }
-
-}
-
-closeM('cal-ov'); load('Creazione evento…');
-
-try {
-
-const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
-
-method:'POST', headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify(ev)
-
-});
-
-const d2=await r.json();
-
-if(!r.ok) throw new Error(d2.error?.message||'Errore Calendar');
-
-hideLoad(); toast(calMode==='b'?'✅ Invito inviato a tutti!':'✅ Reminder creato nel calendario!');
-
-} catch(e){ hideLoad(); toast('❌ '+e.message); console.error(e); }
-
+  const tit  = document.getElementById('cal-tit').value.trim();
+  const data = document.getElementById('cal-d').value;
+  const s    = document.getElementById('cal-s').value;
+  const e    = document.getElementById('cal-e').value;
+  const desc = document.getElementById('cal-desc').value.trim();
+  if(!tit) { toast('⚠️ Inserisci un titolo'); return; }
+  if(!data){ toast('⚠️ Seleziona una data');   return; }
+  const ev = {
+    summary:tit, description:desc,
+    start:{dateTime:`${data}T${s}:00`,timeZone:'Europe/Rome'},
+    end:  {dateTime:`${data}T${e}:00`,timeZone:'Europe/Rome'},
+    reminders:{useDefault:true}
+  };
+  if(calMode==='b'){
+    const gs=[...document.querySelectorAll('#guests-list .guest-r input')].map(i=>i.value.trim()).filter(Boolean);
+    if(gs.length){ ev.attendees=gs.map(email=>({email})); ev.sendUpdates='all'; }
+  }
+  closeM('cal-ov'); load('Creazione evento…');
+  try {
+    const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
+      method:'POST', headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify(ev)
+    });
+    const d2=await r.json();
+    if(!r.ok) throw new Error(d2.error?.message||'Errore Calendar');
+    hideLoad(); toast(calMode==='b'?'✅ Invito inviato a tutti!':'✅ Reminder creato nel calendario!');
+  } catch(e){ hideLoad(); toast('❌ '+e.message); console.error(e); }
 }
 
 // ═══════════════════════════════════════════════════
-
 // RENDER
-
 // ═══════════════════════════════════════════════════
-
 function render() {
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  document.getElementById('n-t').textContent  = contacts.length;
+  document.getElementById('n-cl').textContent = contacts.filter(c=>c.categoria==='Cliente').length;
+  document.getElementById('n-pa').textContent = contacts.filter(c=>c.categoria==='Partner').length;
+  document.getElementById('n-fo').textContent = contacts.filter(c=>c.categoria==='Fornitore').length;
+  document.getElementById('n-pr').textContent = contacts.filter(c=>c.categoria==='Prospect').length;
+  document.getElementById('n-al').textContent = contacts.filter(c=>!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria)).length;
 
-const q=(document.getElementById('search').value||'').toLowerCase();
+  const allTags=[...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean).sort();
+  document.getElementById('tag-chips').innerHTML=allTags.map(t=>
+    `<div class="chip tg ${tagFilter===t?'active':''}" onclick="setTF('${esc(t)}')">${esc(t)}</div>`
+  ).join('');
+  document.getElementById('tag-fw').style.display=allTags.length?'block':'none';
 
-document.getElementById('n-t').textContent = contacts.length;
+  let list=contacts.filter(c=>{
+    const catOk=catFilter==='tutti'||c.categoria===catFilter||(catFilter==='Altro'&&!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria));
+    const tagOk=!tagFilter||c.tags.includes(tagFilter);
+    const srOk=!q||`${c.nome} ${c.cognome} ${c.azienda} ${c.email} ${c.telefono} ${(c.mainGeo||[]).join(' ')} ${c.tags.join(' ')}`.toLowerCase().includes(q);
+    return catOk&&tagOk&&srOk;
+  }).sort((a,b)=>`${a.nome}${a.cognome}`.localeCompare(`${b.nome}${b.cognome}`));
 
-document.getElementById('n-cl').textContent = contacts.filter(c=>c.categoria==='Cliente').length;
-
-document.getElementById('n-pa').textContent = contacts.filter(c=>c.categoria==='Partner').length;
-
-document.getElementById('n-fo').textContent = contacts.filter(c=>c.categoria==='Fornitore').length;
-
-document.getElementById('n-pr').textContent = contacts.filter(c=>c.categoria==='Prospect').length;
-
-document.getElementById('n-al').textContent = contacts.filter(c=>!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria)).length;
-
-const allTags=[...new Set(contacts.flatMap(c=>c.tags))].filter(Boolean).sort();
-
-document.getElementById('tag-chips').innerHTML=allTags.map(t=>
-
-`<div class="chip tg ${tagFilter===t?'active':''}" onclick="setTF('${esc(t)}')">${esc(t)}</div>`
-
-).join('');
-
-document.getElementById('tag-fw').style.display=allTags.length?'block':'none';
-
-let list=contacts.filter(c=>{
-
-const catOk=catFilter==='tutti'||c.categoria===catFilter||(catFilter==='Altro'&&!['Cliente','Partner','Fornitore','Prospect'].includes(c.categoria));
-
-const tagOk=!tagFilter||c.tags.includes(tagFilter);
-
-const srOk=!q||`${c.nome} ${c.cognome} ${c.azienda} ${c.email} ${c.telefono} ${c.mainGeo} ${c.tags.join(' ')}`.toLowerCase().includes(q);
-
-return catOk&&tagOk&&srOk;
-
-}).sort((a,b)=>`${a.nome}${a.cognome}`.localeCompare(`${b.nome}${b.cognome}`));
-
-const el=document.getElementById('list');
-
-if(!list.length){
-
-el.innerHTML=`<div class="empty"><div class="ei">${q||tagFilter?'🔍':'👥'}</div><div class="et">${q||tagFilter?'Nessun risultato':'Nessun contatto'}</div><div class="es">${q||tagFilter?'Prova altri filtri':'Premi <strong>+</strong> per aggiungere il primo contatto'}</div></div>`;
-
-return;
-
+  const el=document.getElementById('list');
+  if(!list.length){
+    el.innerHTML=`<div class="empty"><div class="ei">${q||tagFilter?'🔍':'👥'}</div><div class="et">${q||tagFilter?'Nessun risultato':'Nessun contatto'}</div><div class="es">${q||tagFilter?'Prova altri filtri':'Premi <strong>+</strong> per aggiungere il primo contatto'}</div></div>`;
+    return;
+  }
+  el.innerHTML=list.map(c=>{
+    const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
+    const bc='b-'+(c.categoria||'altro').toLowerCase();
+    const name=[c.nome,c.cognome].filter(Boolean).join(' ');
+    const sub=c.azienda||c.email||'—';
+    const pills=[
+      ...c.tags.map(t=>`<span class="cpill cpill-tag">${esc(t)}</span>`),
+      c.contattoHot?`<span class="cpill cpill-hot">${esc(c.contattoHot)}</span>`:'',
+      ...(c.mainGeo||[]).map(g=>`<span class="cpill cpill-geo">🌍 ${esc(g)}</span>`),
+    ].join('');
+    return `<div class="card" onclick="openDetail('${c.id}')">
+      <div class="av" style="background:${avBg(c.id)}">${esc(init)}</div>
+      <div class="ci">
+        <div class="cn">${esc(name)}</div>
+        <div class="cs">${esc(sub)}</div>
+        ${pills?`<div class="card-pills">${pills}</div>`:''}
+      </div>
+      ${c.categoria?`<span class="badge ${bc}">${esc(c.categoria)}</span>`:''}
+    </div>`;
+  }).join('');
 }
-
-el.innerHTML=list.map(c=>{
-
-const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
-
-const bc='b-'+(c.categoria||'altro').toLowerCase();
-
-const name=[c.nome,c.cognome].filter(Boolean).join(' ');
-
-const sub=c.azienda||c.email||'—';
-
-const pills=[
-
-...c.tags.map(t=>`<span class="cpill cpill-tag">${esc(t)}</span>`),
-
-c.contattoHot?`<span class="cpill cpill-hot">${esc(c.contattoHot)}</span>`:'',
-
-c.mainGeo?`<span class="cpill cpill-geo">🌍 ${esc(c.mainGeo)}</span>`:'',
-
-].join('');
-
-return `<div class="card" onclick="openDetail('${c.id}')">
-
-<div class="av" style="background:${avBg(c.id)}">${esc(init)}</div>
-
-<div class="ci">
-
-<div class="cn">${esc(name)}</div>
-
-<div class="cs">${esc(sub)}</div>
-
-${pills?`<div class="card-pills">${pills}</div>`:''}
-
-</div>
-
-${c.categoria?`<span class="badge ${bc}">${esc(c.categoria)}</span>`:''}
-
-</div>`;
-
-}).join('');
-
-}
-
 function setCF(el){ catFilter=el.dataset.f; document.querySelectorAll('#cat-chips .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); render(); }
-
 function setTF(t){ tagFilter=tagFilter===t?null:t; render(); }
 
 // ═══════════════════════════════════════════════════
-
 // TAG INPUT + AUTOCOMPLETE
-
 // ═══════════════════════════════════════════════════
-
 function handleTag(e) {
-
-if(e.key==='Enter'||e.key===','){
-
-e.preventDefault();
-
-const v=e.target.value.replace(/,/g,'').trim();
-
-if(v&&!formTags.includes(v)){ formTags.push(v); renderPills(); }
-
-e.target.value='';
-
-document.getElementById('tag-ac').style.display='none';
-
-return;
-
-}
-
-if(e.key==='Backspace'&&!e.target.value&&formTags.length){ formTags.pop(); renderPills(); }
-
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();
+    const v=e.target.value.replace(/,/g,'').trim();
+    // Case-insensitive duplicate check when adding manually
+    if(v&&!formTags.some(t=>t.toLowerCase()===v.toLowerCase())){ formTags.push(v); renderPills(); }
+    e.target.value='';
+    document.getElementById('tag-ac').style.display='none';
+    return;
+  }
+  if(e.key==='Backspace'&&!e.target.value&&formTags.length){ formTags.pop(); renderPills(); }
 }
 
 function showTagAC(query) {
-
-const ac=document.getElementById('tag-ac');
-
-const q=(query||'').toLowerCase();
-
-// Build frequency map: tag → number of contacts using it
-
-const freq={};
-
-contacts.forEach(c=>c.tags.forEach(t=>{ if(t) freq[t]=(freq[t]||0)+1; }));
-
-const allSorted=Object.keys(freq)
-
-.sort((a,b)=>(freq[b]-freq[a])||a.localeCompare(b));
-
-if(!allSorted.length){ ac.style.display='none'; return; }
-
-const matches=allSorted
-
-.filter(t=>(!q||t.toLowerCase().includes(q))&&!formTags.includes(t));
-
-const trimmed=(query||'').trim();
-
-let html=matches.slice(0,8).map(t=>
-
-`<div class="tag-ac-item tag-ac-exist" onmousedown="addTagFromAC('${esc(t)}')">🏷️ ${esc(t)}</div>`
-
-).join('');
-
-// "Crea" option only when user has typed something not already existing
-
-if(trimmed&&!matches.some(t=>t.toLowerCase()===q)&&!formTags.includes(trimmed))
-
-html+=`<div class="tag-ac-item tag-ac-new" onmousedown="addTagFromAC('${esc(trimmed)}')">➕ Crea "<strong>${esc(trimmed)}</strong>"</div>`;
-
-if(!html){ ac.style.display='none'; return; }
-
-ac.innerHTML=html; ac.style.display='block';
-
+  const ac=document.getElementById('tag-ac');
+  const q=(query||'').toLowerCase();
+  // Build frequency map with case-insensitive dedup
+  // canon[lowercase] = first canonical form seen (= form to show)
+  const freq={}, canon={};
+  contacts.forEach(c=>c.tags.forEach(t=>{
+    if(!t) return;
+    const lc=t.toLowerCase();
+    freq[lc]=(freq[lc]||0)+1;
+    if(!canon[lc]) canon[lc]=t;
+  }));
+  const allSorted=Object.keys(freq)
+    .sort((a,b)=>(freq[b]-freq[a])||a.localeCompare(b))
+    .map(lc=>canon[lc]);
+  if(!allSorted.length){ ac.style.display='none'; return; }
+  // Exclude tags already in form (case-insensitive)
+  const formTagsLower=formTags.map(t=>t.toLowerCase());
+  const matches=allSorted
+    .filter(t=>(!q||t.toLowerCase().includes(q))&&!formTagsLower.includes(t.toLowerCase()));
+  const trimmed=(query||'').trim();
+  let html=matches.slice(0,8).map(t=>
+    `<div class="tag-ac-item tag-ac-exist" onmousedown="addTagFromAC('${esc(t)}')">🏷️ ${esc(t)}</div>`
+  ).join('');
+  // "Crea" only if typed text doesn't match any existing tag (case-insensitive)
+  if(trimmed&&!allSorted.some(t=>t.toLowerCase()===trimmed.toLowerCase())&&!formTagsLower.includes(trimmed.toLowerCase()))
+    html+=`<div class="tag-ac-item tag-ac-new" onmousedown="addTagFromAC('${esc(trimmed)}')">➕ Crea "<strong>${esc(trimmed)}</strong>"</div>`;
+  if(!html){ ac.style.display='none'; return; }
+  ac.innerHTML=html; ac.style.display='block';
 }
 
 function addTagFromAC(tag){
-
-if(!formTags.includes(tag)){ formTags.push(tag); renderPills(); }
-
-document.getElementById('f-ti').value='';
-
-document.getElementById('tag-ac').style.display='none';
-
+  // Case-insensitive duplicate check
+  if(!formTags.some(t=>t.toLowerCase()===tag.toLowerCase())){ formTags.push(tag); renderPills(); }
+  document.getElementById('f-ti').value='';
+  document.getElementById('tag-ac').style.display='none';
 }
-
 function hideTagAC(){ setTimeout(()=>{ document.getElementById('tag-ac').style.display='none'; },150); }
 
 function rmTag(t){ formTags=formTags.filter(x=>x!==t); renderPills(); }
-
 function renderPills(){
-
-document.getElementById('tag-pills').innerHTML=formTags.map(t=>
-
-`<span class="tpill">${esc(t)}<button type="button" onmousedown="rmTag('${esc(t)}')" tabindex="-1">×</button></span>`
-
-).join('');
-
+  document.getElementById('tag-pills').innerHTML=formTags.map(t=>
+    `<span class="tpill">${esc(t)}<button type="button" onmousedown="rmTag('${esc(t)}')" tabindex="-1">×</button></span>`
+  ).join('');
 }
 
 // ═══════════════════════════════════════════════════
-
 // FONTI multi-entry
-
 // ═══════════════════════════════════════════════════
-
 function addFonteRow(val) {
-
-const container=document.getElementById('fonti-container');
-
-const row=document.createElement('div'); row.className='fonte-row';
-
-const inp=document.createElement('input');
-
-inp.className='fi'; inp.type='text'; inp.placeholder='https://… o nome canale';
-
-inp.value=val||'';
-
-inp.addEventListener('keydown', function(e){
-
-if(e.key==='Enter'){
-
-e.preventDefault();
-
-const rows=document.querySelectorAll('#fonti-container .fonte-row');
-
-const isLast=rows[rows.length-1]===row;
-
-if(isLast&&this.value.trim()){
-
-addFonteRow('');
-
-setTimeout(()=>{
-
-const nr=document.querySelectorAll('#fonti-container .fonte-row');
-
-nr[nr.length-1].querySelector('input').focus();
-
-},0);
-
-} else if(!isLast){
-
-// move focus to next row
-
-const arr=[...rows]; const idx=arr.indexOf(row);
-
-if(idx<arr.length-1) arr[idx+1].querySelector('input').focus();
-
-}
-
-}
-
-});
-
-const del=document.createElement('button');
-
-del.type='button'; del.className='fonte-del'; del.textContent='✕';
-
-del.onclick=()=>row.remove();
-
-row.appendChild(inp); row.appendChild(del);
-
-container.appendChild(row);
-
-return inp;
-
+  const container=document.getElementById('fonti-container');
+  const row=document.createElement('div'); row.className='fonte-row';
+  const inp=document.createElement('input');
+  inp.className='fi'; inp.type='text'; inp.placeholder='https://… o nome canale';
+  inp.value=val||'';
+  inp.addEventListener('keydown', function(e){
+    if(e.key==='Enter'){
+      e.preventDefault();
+      const rows=document.querySelectorAll('#fonti-container .fonte-row');
+      const isLast=rows[rows.length-1]===row;
+      if(isLast&&this.value.trim()){
+        addFonteRow('');
+        setTimeout(()=>{
+          const nr=document.querySelectorAll('#fonti-container .fonte-row');
+          nr[nr.length-1].querySelector('input').focus();
+        },0);
+      } else if(!isLast){
+        // move focus to next row
+        const arr=[...rows]; const idx=arr.indexOf(row);
+        if(idx<arr.length-1) arr[idx+1].querySelector('input').focus();
+      }
+    }
+  });
+  const del=document.createElement('button');
+  del.type='button'; del.className='fonte-del'; del.textContent='✕';
+  del.onclick=()=>row.remove();
+  row.appendChild(inp); row.appendChild(del);
+  container.appendChild(row);
+  return inp;
 }
 
 function getFonti(){
-
-return [...document.querySelectorAll('#fonti-container .fonte-row input')]
-
-.map(i=>i.value.trim()).filter(Boolean);
-
+  return [...document.querySelectorAll('#fonti-container .fonte-row input')]
+    .map(i=>i.value.trim()).filter(Boolean);
 }
 
 // ═══════════════════════════════════════════════════
-
 // OTHER SOURCES
-
 // ═══════════════════════════════════════════════════
-
 function addSrcRow(name,val){
-
-const c=document.getElementById('src-container');
-
-const d=document.createElement('div'); d.className='src-row';
-
-d.innerHTML=`<input class="fi src-n" type="text" placeholder="Nome fonte (es. Telegram)" value="${esc(name)}">
-
-<input class="fi src-v" type="text" placeholder="Valore" value="${esc(val)}">
-
-<button type="button" class="src-del" onclick="this.parentElement.remove()">✕</button>`;
-
-c.appendChild(d);
-
+  const c=document.getElementById('src-container');
+  const d=document.createElement('div'); d.className='src-row';
+  d.innerHTML=`<input class="fi src-n" type="text" placeholder="Nome fonte (es. Telegram)" value="${esc(name)}">
+    <input class="fi src-v" type="text" placeholder="Valore" value="${esc(val)}">
+    <button type="button" class="src-del" onclick="this.parentElement.remove()">✕</button>`;
+  c.appendChild(d);
 }
-
 function getSources(){
-
-const out={};
-
-document.querySelectorAll('#src-container .src-row').forEach(row=>{
-
-const n=row.querySelector('.src-n').value.trim();
-
-const v=row.querySelector('.src-v').value.trim();
-
-if(n) out[n]=v;
-
-});
-
-return out;
-
+  const out={};
+  document.querySelectorAll('#src-container .src-row').forEach(row=>{
+    const n=row.querySelector('.src-n').value.trim();
+    const v=row.querySelector('.src-v').value.trim();
+    if(n) out[n]=v;
+  });
+  return out;
 }
 
 // ═══════════════════════════════════════════════════
-
 // FORM MODAL
-
 // ═══════════════════════════════════════════════════
-
 function openAdd(){
-
-editingId=null; formTags=[];
-
-document.getElementById('ftitle').textContent='➕ Nuovo Contatto';
-
-['nome','cognome','azienda','email','telegram','linkedin','role','loc'].forEach(f=>document.getElementById('f-'+f).value='');
-
-document.getElementById('f-tel').value=''; document.getElementById('f-cat').value='';
-
-document.getElementById('f-hot').value=''; document.getElementById('f-crypto').value='';
-
-document.getElementById('f-reg').value=''; document.getElementById('f-geo').value='';
-
-document.getElementById('f-note').value=''; document.getElementById('f-id').value='';
-
-document.getElementById('f-ti').value='';
-
-document.getElementById('fonti-container').innerHTML='';
-
-document.getElementById('src-container').innerHTML='';
-
-addFonteRow(''); // start with one empty fonte row
-
-renderPills(); openM('form-ov');
-
-setTimeout(()=>document.getElementById('f-nome').focus(),350);
-
+  editingId=null; formTags=[];
+  document.getElementById('ftitle').textContent='➕ Nuovo Contatto';
+  ['nome','cognome','azienda','email','telegram','linkedin','teams','role','loc'].forEach(f=>document.getElementById('f-'+f).value='');
+  document.getElementById('f-tel').value=''; document.getElementById('f-cat').value='';
+  document.getElementById('f-hot').value=''; document.getElementById('f-crypto').value='';
+  document.getElementById('f-reg').value=''; formGeos=[]; renderGeoPills();
+  document.getElementById('f-note').value=''; document.getElementById('f-id').value='';
+  document.getElementById('f-ti').value='';
+  document.getElementById('fonti-container').innerHTML='';
+  document.getElementById('src-container').innerHTML='';
+  addFonteRow(''); // start with one empty fonte row
+  renderPills(); openM('form-ov');
+  setTimeout(()=>document.getElementById('f-nome').focus(),350);
 }
 
 function openEdit(id){
-
-const c=contacts.find(x=>x.id===id); if(!c) return;
-
-editingId=id; formTags=[...(c.tags||[])];
-
-document.getElementById('ftitle').textContent='✏️ Modifica Contatto';
-
-document.getElementById('f-id').value=id;
-
-document.getElementById('f-nome').value=c.nome; document.getElementById('f-cognome').value=c.cognome;
-
-document.getElementById('f-azienda').value=c.azienda; document.getElementById('f-email').value=c.email;
-
-document.getElementById('f-tel').value=c.telefono; document.getElementById('f-telegram').value=c.telegram||'';
-
-document.getElementById('f-linkedin').value=c.linkedin; document.getElementById('f-role').value=c.role;
-
-document.getElementById('f-cat').value=c.categoria; document.getElementById('f-hot').value=c.contattoHot;
-
-document.getElementById('f-crypto').value=c.crypto; document.getElementById('f-reg').value=c.regulated;
-
-document.getElementById('f-geo').value=c.mainGeo; document.getElementById('f-loc').value=c.locatedIn;
-
-document.getElementById('f-note').value=c.note; document.getElementById('f-ti').value='';
-
-// Fonti
-
-document.getElementById('fonti-container').innerHTML='';
-
-if(c.fonti&&c.fonti.length) c.fonti.forEach(f=>addFonteRow(f));
-
-else addFonteRow('');
-
-// Other sources
-
-document.getElementById('src-container').innerHTML='';
-
-Object.entries(c.otherSources||{}).forEach(([n,v])=>addSrcRow(n,v));
-
-renderPills(); closeM('det-ov'); openM('form-ov');
-
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  editingId=id; formTags=[...(c.tags||[])];
+  document.getElementById('ftitle').textContent='✏️ Modifica Contatto';
+  document.getElementById('f-id').value=id;
+  document.getElementById('f-nome').value=c.nome; document.getElementById('f-cognome').value=c.cognome;
+  document.getElementById('f-azienda').value=c.azienda; document.getElementById('f-email').value=c.email;
+  document.getElementById('f-tel').value=c.telefono; document.getElementById('f-telegram').value=c.telegram||'';
+  document.getElementById('f-teams').value=c.teams||'';
+  document.getElementById('f-linkedin').value=c.linkedin; document.getElementById('f-role').value=c.role;
+  document.getElementById('f-cat').value=c.categoria; document.getElementById('f-hot').value=c.contattoHot;
+  document.getElementById('f-crypto').value=c.crypto; document.getElementById('f-reg').value=c.regulated;
+  formGeos=[...(c.mainGeo||[])]; renderGeoPills(); document.getElementById('f-loc').value=c.locatedIn;
+  document.getElementById('f-note').value=c.note; document.getElementById('f-ti').value='';
+  // Fonti
+  document.getElementById('fonti-container').innerHTML='';
+  if(c.fonti&&c.fonti.length) c.fonti.forEach(f=>addFonteRow(f));
+  else addFonteRow('');
+  // Other sources
+  document.getElementById('src-container').innerHTML='';
+  Object.entries(c.otherSources||{}).forEach(([n,v])=>addSrcRow(n,v));
+  renderPills(); closeM('det-ov'); openM('form-ov');
 }
 
 async function saveContact(){
-
-const nome=document.getElementById('f-nome').value.trim();
-
-if(!nome){ toast('⚠️ Il nome è obbligatorio'); return; }
-
-const sources=getSources();
-
-const data={
-
-nome, cognome:document.getElementById('f-cognome').value.trim(),
-
-azienda:document.getElementById('f-azienda').value.trim(),
-
-email:document.getElementById('f-email').value.trim(),
-
-telefono:document.getElementById('f-tel').value.trim(),
-
-telegram:document.getElementById('f-telegram').value.trim(),
-
-linkedin:document.getElementById('f-linkedin').value.trim(),
-
-fonti:getFonti(),
-
-role:document.getElementById('f-role').value.trim(),
-
-categoria:document.getElementById('f-cat').value,
-
-contattoHot:document.getElementById('f-hot').value,
-
-crypto:document.getElementById('f-crypto').value,
-
-regulated:document.getElementById('f-reg').value,
-
-mainGeo:document.getElementById('f-geo').value,
-
-locatedIn:document.getElementById('f-loc').value.trim(),
-
-note:document.getElementById('f-note').value.trim(),
-
-tags:[...formTags], otherSources:sources
-
-};
-
-closeM('form-ov');
-
-const isEdit=!!editingId;
-
-load(isEdit?'Aggiornamento…':'Salvataggio…'); setSS('syncing');
-
-try {
-
-for(const name of Object.keys(sources)) await ensureDynCol(name);
-
-const now=fmtDate(new Date());
-
-if(isEdit){
-
-const orig=contacts.find(c=>c.id===editingId);
-
-const row=buildRow(data,editingId,orig?.dataCreazione||now,now);
-
-await updateRow(editingId,row);
-
-const i=contacts.findIndex(c=>c.id===editingId);
-
-if(i!==-1) contacts[i]={...contacts[i],...data,ultimaModifica:now};
-
-toast('✅ Contatto aggiornato!');
-
-} else {
-
-const id=Date.now().toString();
-
-const row=buildRow(data,id,now,now);
-
-await appendRow(row);
-
-contacts.push({...data,id,dataCreazione:now,ultimaModifica:now});
-
-toast('✅ Contatto salvato!');
-
-}
-
-setSS('ok'); hideLoad(); render();
-
-} catch(e){ setSS('er'); hideLoad(); toast('❌ '+e.message); console.error(e); }
-
+  const nome=document.getElementById('f-nome').value.trim();
+  if(!nome){ toast('⚠️ Il nome è obbligatorio'); return; }
+  const sources=getSources();
+  const data={
+    nome, cognome:document.getElementById('f-cognome').value.trim(),
+    azienda:document.getElementById('f-azienda').value.trim(),
+    email:document.getElementById('f-email').value.trim(),
+    telefono:document.getElementById('f-tel').value.trim(),
+    telegram:document.getElementById('f-telegram').value.trim(),
+    teams:document.getElementById('f-teams').value.trim(),
+    linkedin:document.getElementById('f-linkedin').value.trim(),
+    fonti:getFonti(),
+    role:document.getElementById('f-role').value.trim(),
+    categoria:document.getElementById('f-cat').value,
+    contattoHot:document.getElementById('f-hot').value,
+    crypto:document.getElementById('f-crypto').value,
+    regulated:document.getElementById('f-reg').value,
+    mainGeo:[...formGeos],
+    locatedIn:document.getElementById('f-loc').value.trim(),
+    note:document.getElementById('f-note').value.trim(),
+    tags:[...formTags], otherSources:sources
+  };
+  closeM('form-ov');
+  const isEdit=!!editingId;
+  load(isEdit?'Aggiornamento…':'Salvataggio…'); setSS('syncing');
+  try {
+    for(const name of Object.keys(sources)) await ensureDynCol(name);
+    const now=fmtDate(new Date());
+    if(isEdit){
+      const orig=contacts.find(c=>c.id===editingId);
+      const row=buildRow(data,editingId,orig?.dataCreazione||now,now);
+      await updateRow(editingId,row);
+      const i=contacts.findIndex(c=>c.id===editingId);
+      if(i!==-1) contacts[i]={...contacts[i],...data,ultimaModifica:now};
+      toast('✅ Contatto aggiornato!');
+    } else {
+      const id=Date.now().toString();
+      const row=buildRow(data,id,now,now);
+      await appendRow(row);
+      contacts.push({...data,id,dataCreazione:now,ultimaModifica:now});
+      toast('✅ Contatto salvato!');
+    }
+    setSS('ok'); hideLoad(); render();
+  } catch(e){ setSS('er'); hideLoad(); toast('❌ '+e.message); console.error(e); }
 }
 
 // ═══════════════════════════════════════════════════
-
 // DETAIL MODAL
+// ═══════════════════════════════════════════════════
+function openDetail(id){
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  const name=[c.nome,c.cognome].filter(Boolean).join(' ');
+  const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
+  const bc='b-'+(c.categoria||'altro').toLowerCase();
+  const F=(icon,lbl,val,link=null)=>val?`<div class="df"><div class="dfi">${icon}</div><div class="dfc"><div class="dfl">${lbl}</div><div class="dfv">${link?`<a href="${link}" target="_blank">${esc(val)}</a>`:esc(val)}</div></div></div>`:'';
+
+  // Fonti: each on its own line, as clickable links
+  const fontiHtml = c.fonti&&c.fonti.length
+    ? `<div class="df"><div class="dfi">🔗</div><div class="dfc"><div class="dfl">Fonti</div><div class="dfv dfv-list">${
+        c.fonti.map(f=>{
+          const isUrl=f.startsWith('http')||f.startsWith('www');
+          return isUrl?`<a href="${esc(f)}" target="_blank">${esc(f)}</a>`:`<span>${esc(f)}</span>`;
+        }).join('')
+      }</div></div></div>` : '';
+
+  const srcHtml=Object.entries(c.otherSources||{}).map(([k,v])=>F('📌',k,v)).join('');
+  document.getElementById('det-content').innerHTML=`
+    <div class="mh"><div class="mt">Dettagli</div><button class="mx" onclick="closeM('det-ov')">✕</button></div>
+    <div class="dav-w">
+      <div class="dav" style="background:${avBg(c.id)}">${esc(init)}</div>
+      <div class="dname">${esc(name)}</div>
+      ${c.azienda?`<div class="dco">${esc(c.azienda)}</div>`:''}
+      <div class="dtags-w">
+        ${c.categoria?`<span class="badge ${bc}">${esc(c.categoria)}</span>`:''}
+        ${c.contattoHot?`<span class="dtag dtag-hot">${esc(c.contattoHot)}</span>`:''}
+        ${(c.mainGeo||[]).map(g=>`<span class="dtag dtag-geo">🌍 ${esc(g)}</span>`).join('')}
+        ${c.tags.map(t=>`<span class="dtag dtag-tag">${esc(t)}</span>`).join('')}
+      </div>
+    </div>
+    <div class="dfs">
+      ${F('📧','Email',c.email,'mailto:'+c.email)}
+      ${F('📞','Telefono',c.telefono,'tel:'+c.telefono)}
+      ${c.telegram?F('✈️','Telegram',c.telegram, c.telegram.startsWith('@')?`https://t.me/${c.telegram.slice(1)}`:null):''}
+      ${c.teams?F('💬','Teams',c.teams):''}
+      ${F('💼','LinkedIn',c.linkedin,c.linkedin)}
+      ${fontiHtml}
+      ${F('👤','Role',c.role)}
+      ${F('🔐','CRYPTO',c.crypto)}
+      ${F('📋','Regulated',c.regulated)}
+      ${F('📍','Located In',c.locatedIn)}
+      ${srcHtml?`<div style="font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin:12px 0 6px">Other Sources</div>${srcHtml}`:''}
+      ${F('📝','Note',c.note?c.note.replace(/\n/g,'<br>'):'')}
+      ${F('📅','Creato il',c.dataCreazione)}
+      ${F('🔄','Ultima modifica',c.ultimaModifica)}
+    </div>
+    <div class="cal-btns">
+      <button class="btn bcal" onclick="openCal('${c.id}');setCalMode('a')">🔔 Reminder (solo io)</button>
+      <button class="btn bgrn" onclick="openCal('${c.id}');setCalMode('b')">👥 Invito con ospiti</button>
+    </div>
+    <div class="da">
+      <button class="btn br" onclick="doDelete('${c.id}')">🗑️ Elimina</button>
+      <button class="btn bp" onclick="openEdit('${c.id}')">✏️ Modifica</button>
+    </div>`;
+  openM('det-ov');
+}
+
+async function doDelete(id){
+  const c=contacts.find(x=>x.id===id);
+  const name=c?[c.nome,c.cognome].filter(Boolean).join(' '):id;
+  if(!confirm(`Eliminare "${name}"?\nQuesta azione non può essere annullata.`)) return;
+  closeM('det-ov'); load('Eliminazione…'); setSS('syncing');
+  try {
+    await deleteRow(id); contacts=contacts.filter(x=>x.id!==id);
+    setSS('ok'); hideLoad(); render(); toast('✅ Contatto eliminato');
+  } catch(e){ setSS('er'); hideLoad(); toast('❌ '+e.message); }
+}
 
 // ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
+function openM(id){document.getElementById(id).classList.add('show')}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+function ovc(e,id){if(e.target.id===id)closeM(id)}
+function load(t){document.getElementById('ldtxt').textContent=t||'Caricamento…';document.getElementById('loader').style.display='flex'}
+function hideLoad(){document.getElementById('loader').style.display='none'}
+let _tt;
+function toast(msg,ms=3500){clearTimeout(_tt);const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');_tt=setTimeout(()=>el.classList.remove('show'),ms)}
+function setSS(s){const d=document.getElementById('sdot'),t=document.getElementById('stxt');d.className='sdot'+(s==='syncing'||s==='sy'?' sy':s==='er'||s==='error'?' er':'');if(s==='syncing'||s==='sy'){t.textContent='Sincronizzazione…'}else if(s==='ok'){const n=new Date();t.textContent=`Sincronizzato alle ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`}else{t.textContent='Errore sync'}}
+function fmtDate(d){return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function avBg(id){const c=['#1565c0','#2e7d32','#e65100','#6a1b9a','#c62828','#00695c','#283593','#4e342e','#37474f','#880e4f'];return c[parseInt(id||'0')%c.length]}
 
-function openDetail(id){
-
-const c=contacts.find(x=>x.id===id); if(!c) return;
-
-const name=[c.nome,c.cognome].filter(Boolean).join(' ');
-
-const init=((c.nome[0]||'')+(c.cognome[0]||'')).toUpperCase()||'?';
-
-const bc='b-'+(c.categoria||'altro').toLowerCase();
-
-const F=(icon,lbl,val,link=null)=>val?`<div class="df"><div class="dfi">${icon}</div><div class="dfc"><div class="dfl">${lbl}</div><div class="dfv">${link?`<a href="${link}" target="_blank">${esc(val)}</a>`:esc(val)}</div></div></div>`:'';
-
-// Fonti: each on its own line, as clickable links
-
-const fontiHtml = c.fonti&&c.fonti.length
-
-? `<div class="df"><div class="dfi">🔗</div><div class="dfc"><div class="dfl">Fonti</div><div class="dfv dfv-list">${
-
-c.fonti.map(f=>{
-
-const isUrl=f.startsWith('http')||f.startsWith('www');
-
-return isUrl?`<a href="${esc(f)}" target="_blank">${esc(f)}</a>`:`<span>${esc(f)}</span>`;
-
-}).join('')
-
-}</div></div></div>` : '';
-
-[View remainder of file in raw view](https://github.com/cm16marketing-bit/partner-crm/raw/refs/heads/main/index.html)
-
-## Footer
-
-[https://github.com](https://github.com) © 2026 GitHub, Inc.
-
-### Footer navigation
-
-- [Terms](https://docs.github.com/site-policy/github-terms/github-terms-of-service)
-- [Privacy](https://docs.github.com/site-policy/privacy-policies/github-privacy-statement)
-- [Security](https://github.com/security)
-- [Status](https://www.githubstatus.com/)
-- [Community](https://github.community/)
-- [Docs](https://docs.github.com/)
-- [Contact](https://support.github.com?tags=dotcom-footer)
-- Manage cookies
-
+hideLoad();
+</script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+</body>
+</html>
