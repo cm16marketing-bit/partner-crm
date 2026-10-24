@@ -1,38 +1,31 @@
-// Partner CRM Service Worker v5
-// Network-first for everything. API calls are NEVER cached.
-// v5: bumped to force cache invalidation after sync bug fix
-const CACHE = 'partner-crm-v5';
-const SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
-const NO_CACHE = ['googleapis.com', 'accounts.google.com', 'docs.google.com'];
+var CACHE = 'crm-v3';
+var ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
+self.addEventListener('install', function(e) {
+  e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(ASSETS); }));
   self.skipWaiting();
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
+self.addEventListener('activate', function(e) {
+  e.waitUntil(caches.keys().then(function(keys) {
+    return Promise.all(keys.filter(function(k) { return k !== CACHE; }).map(function(k) { return caches.delete(k); }));
+  }));
   self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  // Never cache Google API calls — always fresh data
-  if (NO_CACHE.some(p => e.request.url.includes(p))) {
-    e.respondWith(fetch(e.request));
-    return;
+self.addEventListener('fetch', function(e) {
+  var url = e.request.url;
+  if (url.indexOf('googleapis.com') !== -1 || url.indexOf('accounts.google.com') !== -1 || url.indexOf('apis.google.com') !== -1 || url.indexOf('gstatic.com') !== -1 || url.indexOf('cdn.jsdelivr.net') !== -1) {
+    e.respondWith(fetch(e.request).catch(function() { return caches.match(e.request); }));
+  } else {
+    if (e.request.mode === 'navigate' || url.indexOf('.html') !== -1) {
+      e.respondWith(fetch(e.request).then(function(resp) {
+        var clone = resp.clone();
+        caches.open(CACHE).then(function(c) { c.put(e.request, clone); });
+        return resp;
+      }).catch(function() { return caches.match(e.request); }));
+    } else {
+      e.respondWith(caches.match(e.request).then(function(r) { return r || fetch(e.request); }));
+    }
   }
-  // App shell: network first, cache fallback
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return res;
-      })
-      .catch(() => caches.match(e.request))
-  );
 });
