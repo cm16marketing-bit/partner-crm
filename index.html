@@ -293,7 +293,7 @@ tr:hover td{background:#f8fbff}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Nome</th><th>Azienda</th><th>Ruolo</th><th>Progetto</th><th>Tag</th><th>Reminder</th><th></th></tr></thead>
+            <thead><tr><th>Nome</th><th>Azienda</th><th>Ruolo</th><th>Progetto</th><th>Tag</th><th>Reminder</th><th>Azioni</th></tr></thead>
             <tbody id="contactsBody"></tbody>
           </table>
         </div>
@@ -306,6 +306,74 @@ tr:hover td{background:#f8fbff}
 <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal" id="editModalContent">
+    <button class="close-btn" onclick="closeEditModal()">&times;</button>
+    <h2 style="display:flex;align-items:center;gap:8px">&#9998; Modifica contatto</h2>
+    <form id="editForm" onsubmit="return false" style="margin-top:16px">
+      <div class="field-row">
+        <div class="field"><label>Nome</label><input type="text" id="e_nome"></div>
+        <div class="field"><label>Cognome</label><input type="text" id="e_cognome"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Azienda</label><input type="text" id="e_azienda"></div>
+        <div class="field"><label>Ruolo</label><input type="text" id="e_ruolo"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Telefono</label><input type="tel" id="e_telefono"></div>
+        <div class="field"><label>Email</label><input type="email" id="e_email"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Telegram</label><input type="text" id="e_telegram"></div>
+        <div class="field"><label>Teams</label><input type="text" id="e_teams"></div>
+      </div>
+      <div class="field"><label>Progetto</label><input type="text" id="e_progetto"></div>
+      <div class="field"><label>Tag</label><input type="text" id="e_tags" placeholder="tag1, tag2, tag3"></div>
+      <div class="field"><label>Note</label><textarea id="e_nota" rows="3"></textarea></div>
+      <div class="btn-row" style="justify-content:flex-end;gap:8px">
+        <button class="btn btn-outline" type="button" onclick="closeEditModal()">Annulla</button>
+        <button class="btn btn-primary" type="button" id="btnSaveEdit" onclick="saveEdit()">&#10003; Salva modifiche</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CALENDAR INVITE MODAL -->
+<div class="modal-overlay" id="calModal">
+  <div class="modal" id="calModalContent">
+    <button class="close-btn" onclick="closeCalModal()">&times;</button>
+    <h2 style="display:flex;align-items:center;gap:8px">&#128197; Invia invito calendar</h2>
+    <div id="calContactBadge" style="background:#e1f5fe;border-radius:var(--radius);padding:10px 14px;margin:12px 0;font-size:13px;color:var(--primary-dark);font-weight:500"></div>
+    <form id="calForm" onsubmit="return false" style="margin-top:12px">
+      <div class="field">
+        <label>Organizzatore (tu)</label>
+        <input type="text" id="cal_organizer" disabled style="opacity:.7">
+      </div>
+      <div class="field">
+        <label>Invitato/i (email separati da virgola, o lascia vuoto per reminder solo per te)</label>
+        <input type="text" id="cal_attendees" placeholder="email@esempio.com, altro@esempio.com">
+      </div>
+      <div class="field">
+        <label>Titolo evento</label>
+        <input type="text" id="cal_title">
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Data</label><input type="date" id="cal_date"></div>
+        <div class="field"><label>Ora</label><input type="time" id="cal_time" value="10:00"></div>
+      </div>
+      <div class="field">
+        <label>Descrizione (opzionale)</label>
+        <textarea id="cal_desc" rows="3" placeholder="Aggiungi dettagli sull'incontro..."></textarea>
+      </div>
+      <div class="btn-row" style="justify-content:flex-end;gap:8px">
+        <button class="btn btn-outline" type="button" onclick="closeCalModal()">Annulla</button>
+        <button class="btn btn-primary" type="button" id="btnSendCal" onclick="sendCalendarInvite()" style="background:var(--success)">&#9993; Invia invito</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -633,7 +701,7 @@ function renderTable() {
   body.innerHTML = filtered.map(function(c, i) {
     var tagsHtml = c.tags ? c.tags.split(',').map(function(t) { return '<span class="badge" style="background:#e1f5fe;color:var(--primary-dark);margin:1px">' + t.trim() + '</span>'; }).join('') : '';
     var reminderBadge = c.reminder ? '<span class="badge" style="background:#fff8e1;color:#e65100">' + c.reminder.split(' ')[0] + '</span>' : '&mdash;';
-    return '<tr onclick="showDetail(' + i + ')" style="cursor:pointer"><td class="contact-name">' + c.nome + ' ' + c.cognome + '</td><td>' + c.azienda + '</td><td>' + c.ruolo + '</td><td>' + c.progetto + '</td><td>' + tagsHtml + '</td><td>' + reminderBadge + '</td><td><button class="btn btn-outline" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation();showDetail(' + i + ')">Dettagli</button></td></tr>';
+    return '<tr onclick="showDetail(' + i + ')" style="cursor:pointer"><td class="contact-name">' + c.nome + ' ' + c.cognome + '</td><td>' + c.azienda + '</td><td>' + c.ruolo + '</td><td>' + c.progetto + '</td><td>' + tagsHtml + '</td><td>' + reminderBadge + '</td><td style="white-space:nowrap"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;margin-right:4px" onclick="event.stopPropagation();editContact(' + i + ')">&#9998; Modifica</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--success);border-color:var(--success)" onclick="event.stopPropagation();showCalendarModal(' + i + ')">&#128197; Invita</button></td></tr>';
   }).join('');
 }
 
@@ -664,7 +732,8 @@ function showDetail(i) {
     '<div class="detail-row"><span class="detail-label">Tag</span><span>' + (c.tags || '&mdash;') + '</span></div>' +
     '<div class="detail-row"><span class="detail-label">Reminder</span><span>' + (c.reminder || '&mdash;') + '</span></div>' +
     '<div class="detail-row"><span class="detail-label">Note</span><span>' + (c.nota || '&mdash;') + '</span></div>' +
-    '<div class="detail-row"><span class="detail-label">Aggiunto il</span><span>' + c.data + '</span></div>';
+    '<div class="detail-row"><span class="detail-label">Aggiunto il</span><span>' + c.data + '</span></div>' +
+    '<div style="display:flex;gap:8px;margin-top:20px;justify-content:flex-end"><button class="btn btn-primary" style="padding:8px 16px;font-size:13px" onclick="closeModal();editContact(' + i + ')">&#9998; Modifica</button><button class="btn btn-outline" style="padding:8px 16px;font-size:13px;color:var(--success);border-color:var(--success)" onclick="closeModal();showCalendarModal(' + i + ')">&#128197; Invita</button></div>';
   document.getElementById('detailModal').classList.add('show');
 }
 
@@ -1082,6 +1151,149 @@ function executeImport() {
   }
 
   sendBatch();
+}
+
+// ====== EDIT CONTACT ======
+var editingIndex = -1;
+
+function editContact(i) {
+  editingIndex = i;
+  var c = contacts[i];
+  document.getElementById('e_nome').value = c.nome || '';
+  document.getElementById('e_cognome').value = c.cognome || '';
+  document.getElementById('e_azienda').value = c.azienda || '';
+  document.getElementById('e_ruolo').value = c.ruolo || '';
+  document.getElementById('e_telefono').value = c.telefono || '';
+  document.getElementById('e_email').value = c.email || '';
+  document.getElementById('e_telegram').value = c.telegram || '';
+  document.getElementById('e_teams').value = c.teams || '';
+  document.getElementById('e_progetto').value = c.progetto || '';
+  document.getElementById('e_tags').value = c.tags || '';
+  document.getElementById('e_nota').value = c.nota || '';
+  document.getElementById('editModal').classList.add('show');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('show');
+  editingIndex = -1;
+}
+document.getElementById('editModal').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeEditModal(); });
+
+function saveEdit() {
+  if (editingIndex < 0 || !SPREADSHEET_ID) return;
+  var btn = document.getElementById('btnSaveEdit');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
+  var rowNum = editingIndex + 2; // row 1 is header, data starts at row 2
+  var ev = function(id) { return document.getElementById(id).value.trim(); };
+  var updatedRow = [
+    contacts[editingIndex].data, // keep original date
+    ev('e_nome'), ev('e_cognome'), ev('e_azienda'), ev('e_ruolo'),
+    ev('e_telefono'), ev('e_email'), ev('e_telegram'), ev('e_teams'),
+    ev('e_nota'), ev('e_progetto'), ev('e_tags'),
+    contacts[editingIndex].reminder // keep existing reminder
+  ];
+
+  gapi.client.sheets.spreadsheets.values.update({
+    spreadsheetId: SPREADSHEET_ID,
+    range: SHEET_NAME + '!A' + rowNum + ':M' + rowNum,
+    valueInputOption: 'RAW',
+    resource: { values: [updatedRow] }
+  }).then(function() {
+    // Update local array
+    contacts[editingIndex] = {
+      data: updatedRow[0], nome: updatedRow[1], cognome: updatedRow[2],
+      azienda: updatedRow[3], ruolo: updatedRow[4], telefono: updatedRow[5],
+      email: updatedRow[6], telegram: updatedRow[7], teams: updatedRow[8],
+      nota: updatedRow[9], progetto: updatedRow[10], tags: updatedRow[11],
+      reminder: updatedRow[12]
+    };
+    renderTable();
+    renderStats();
+    closeEditModal();
+    showToast('Contatto aggiornato!');
+  }).catch(function(e) {
+    showToast('Errore: ' + (e.result ? e.result.error.message : e.message));
+  }).finally(function() {
+    btn.disabled = false;
+    btn.innerHTML = '&#10003; Salva modifiche';
+  });
+}
+
+// ====== CALENDAR INVITE ======
+var calContactIndex = -1;
+
+function showCalendarModal(i) {
+  calContactIndex = i;
+  var c = contacts[i];
+  var userEmail = document.getElementById('userEmail').textContent || '';
+  document.getElementById('cal_organizer').value = userEmail;
+  document.getElementById('cal_attendees').value = c.email || '';
+  document.getElementById('cal_title').value = 'Meeting con ' + c.nome + ' ' + c.cognome + (c.azienda ? ' (' + c.azienda + ')' : '');
+  // Default date: 3 days from now
+  var d = new Date();
+  d.setDate(d.getDate() + 3);
+  document.getElementById('cal_date').value = d.toISOString().split('T')[0];
+  document.getElementById('cal_time').value = '10:00';
+  document.getElementById('cal_desc').value = '';
+  document.getElementById('calContactBadge').innerHTML = '&#128100; ' + c.nome + ' ' + c.cognome + (c.azienda ? ' &mdash; ' + c.azienda : '') + (c.email ? ' &mdash; ' + c.email : '');
+  document.getElementById('calModal').classList.add('show');
+}
+
+function closeCalModal() {
+  document.getElementById('calModal').classList.remove('show');
+  calContactIndex = -1;
+}
+document.getElementById('calModal').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeCalModal(); });
+
+function sendCalendarInvite() {
+  var title = document.getElementById('cal_title').value.trim();
+  var date = document.getElementById('cal_date').value;
+  var time = document.getElementById('cal_time').value || '10:00';
+  var desc = document.getElementById('cal_desc').value.trim();
+  var attendeesStr = document.getElementById('cal_attendees').value.trim();
+
+  if (!title || !date) { showToast('Inserisci almeno titolo e data.'); return; }
+
+  var btn = document.getElementById('btnSendCal');
+  btn.disabled = true;
+  btn.textContent = 'Invio...';
+
+  var startDT = date + 'T' + time + ':00';
+  var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  var endMs = new Date(startDT).getTime() + 3600000;
+  var endDT = new Date(endMs).toISOString();
+
+  var eventResource = {
+    summary: title,
+    description: desc,
+    start: { dateTime: startDT, timeZone: tz },
+    end: { dateTime: endDT, timeZone: tz },
+    reminders: { useDefault: false, overrides: [{ method: 'popup', minutes: 30 }, { method: 'email', minutes: 60 }] }
+  };
+
+  // Add attendees if any
+  if (attendeesStr) {
+    var emails = attendeesStr.split(',').map(function(e) { return e.trim(); }).filter(function(e) { return e && e.indexOf('@') !== -1; });
+    if (emails.length > 0) {
+      eventResource.attendees = emails.map(function(e) { return { email: e }; });
+    }
+  }
+
+  gapi.client.calendar.events.insert({
+    calendarId: 'primary',
+    sendUpdates: 'all',
+    resource: eventResource
+  }).then(function() {
+    closeCalModal();
+    showToast('Invito calendar inviato!');
+  }).catch(function(e) {
+    showToast('Errore: ' + (e.result ? e.result.error.message : e.message));
+  }).finally(function() {
+    btn.disabled = false;
+    btn.innerHTML = '&#9993; Invia invito';
+  });
 }
 
 // ====== INIT ======
