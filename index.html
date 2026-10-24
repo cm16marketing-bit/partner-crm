@@ -386,8 +386,7 @@ var API_KEY = 'AIzaSyDnZ4-ZLGyWwMLFBe5Wdpg1bLOJ-q47yJI';
 var SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/drive.metadata.readonly';
 var DISCOVERY_DOCS = [
   'https://sheets.googleapis.com/$discovery/rest?version=v4',
-  'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-  'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+  'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'
 ];
 
 var SPREADSHEET_ID = null;
@@ -577,13 +576,13 @@ function ensureSpreadsheet() {
 }
 
 function searchOrCreateSpreadsheet() {
-  // Search Drive for existing "Partner CRM - Contatti" spreadsheet
-  gapi.client.drive.files.list({
-    q: "name='Partner CRM - Contatti' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false",
-    fields: 'files(id,name)',
-    pageSize: 1
-  }).then(function(res) {
-    var files = res.result.files || [];
+  // Search Drive for existing "Partner CRM - Contatti" spreadsheet using fetch (no discovery doc needed)
+  var token = gapi.client.getToken();
+  if (!token || !token.access_token) { createSpreadsheet(); return; }
+  fetch('https://www.googleapis.com/drive/v3/files?q=' + encodeURIComponent("name='Partner CRM - Contatti' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false") + '&fields=files(id,name)&pageSize=1', {
+    headers: { 'Authorization': 'Bearer ' + token.access_token }
+  }).then(function(r) { return r.json(); }).then(function(res) {
+    var files = (res.files || []);
     if (files.length > 0) {
       SPREADSHEET_ID = files[0].id;
       localStorage.setItem('crm_spreadsheet_id', SPREADSHEET_ID);
