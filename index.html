@@ -823,19 +823,23 @@ function loadContacts() {
 function renderTable() {
   var q = document.getElementById('searchInput').value.toLowerCase();
   var tagFilter = document.getElementById('filterTag').value;
-  var filtered = contacts.filter(function(c) {
+  // Build filtered list keeping original index
+  var filtered = [];
+  contacts.forEach(function(c, idx) {
     var match = (c.nome + ' ' + c.cognome + ' ' + c.azienda + ' ' + c.progetto + ' ' + c.ruolo).toLowerCase().includes(q);
     var tagMatch = !tagFilter || (c.tags && c.tags.split(',').map(function(t){return t.trim();}).includes(tagFilter));
-    return match && tagMatch;
+    if (match && tagMatch) filtered.push({ c: c, idx: idx });
   });
   var body = document.getElementById('contactsBody');
   var empty = document.getElementById('emptyMsg');
   if (filtered.length === 0) { body.innerHTML = ''; empty.style.display = ''; return; }
   empty.style.display = 'none';
-  body.innerHTML = filtered.map(function(c, i) {
+  body.innerHTML = filtered.map(function(item) {
+    var c = item.c;
+    var oi = item.idx; // original index in contacts array
     var tagsHtml = c.tags ? c.tags.split(',').map(function(t) { return '<span class="badge" style="background:#e1f5fe;color:var(--primary-dark);margin:1px">' + t.trim() + '</span>'; }).join('') : '';
     var reminderBadge = c.reminder ? '<span class="badge" style="background:#fff8e1;color:#e65100">' + c.reminder.split(' ')[0] + '</span>' : '&mdash;';
-    return '<tr onclick="showDetail(' + i + ')" style="cursor:pointer"><td class="contact-name">' + c.nome + ' ' + c.cognome + '</td><td>' + c.azienda + '</td><td>' + c.ruolo + '</td><td>' + c.progetto + '</td><td>' + tagsHtml + '</td><td>' + reminderBadge + '</td><td style="white-space:nowrap"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;margin-right:4px" onclick="event.stopPropagation();editContact(' + i + ')">&#9998; Modifica</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--success);border-color:var(--success)" onclick="event.stopPropagation();showCalendarModal(' + i + ')">&#128197; Invita</button></td></tr>';
+    return '<tr onclick="showDetail(' + oi + ')" style="cursor:pointer"><td class="contact-name">' + c.nome + ' ' + c.cognome + '</td><td>' + c.azienda + '</td><td>' + c.ruolo + '</td><td>' + c.progetto + '</td><td>' + tagsHtml + '</td><td>' + reminderBadge + '</td><td style="white-space:nowrap"><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;margin-right:4px" onclick="event.stopPropagation();editContact(' + oi + ')">&#9998; Modifica</button><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;color:var(--success);border-color:var(--success)" onclick="event.stopPropagation();showCalendarModal(' + oi + ')">&#128197; Invita</button></td></tr>';
   }).join('');
 }
 
